@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "site": {
+    "tagline": "",
+    "intro": "applied engineering design"
+  },
+  "projects": {
+    "flacmn": {
+      "summary": "Manages your digital music library: analyses each album’s quality, fixes tags and cover art, and sends your music to the flacmn phone app in the format you choose.",
+      "intro": "",
+      "steps": {
+        "search": {
+          "title": "Search your tags",
+          "caption": "One box searches artist, album, song, genre and label across the whole library.",
+          "body": ""
+        },
+        "quality": {
+          "title": "Check the real quality",
+          "caption": "Each track's spectrum is measured. A FLAC made from an MP3 or AAC shows its cutoff and is flagged as a lossy source.",
+          "body": ""
+        },
+        "tags": {
+          "title": "Fix tags and covers",
+          "caption": "Tags are checked against MusicBrainz and missing covers come from the Cover Art Archive, only when you ask.",
+          "body": ""
+        },
+        "send": {
+          "title": "Send it to your phone",
+          "caption": "Pair the phone with a code over Wi-Fi, then send albums as the original, FLAC, ALAC, AAC or MP3, with every size shown first.",
+          "body": ""
+        },
+        "play": {
+          "title": "Play it on the phone",
+          "caption": "The phone app plays it with its quality shown, and swipes to an XY scope in the cover's colour.",
+          "body": ""
+        }
+      }
+    },
+    "pivmn": {
+      "summary": "A desktop app or CLI tool for particle image velocimetry: turns DaVis projects or image pairs into velocity fields, planar or stereo, on your CPU or GPU.",
+      "intro": "",
+      "steps": {
+        "source": {
+          "title": "Choose the input",
+          "caption": "A DaVis .set project, a folder of .set files to run as a batch, or a folder of image pairs in .im7, TIFF or PNG.",
+          "body": ""
+        },
+        "mode": {
+          "title": "Pick planar or stereo, CPU or GPU",
+          "caption": "Both modes run on either backend. The CPU backend works on any computer; the GPU one needs an NVIDIA card with CUDA.",
+          "body": ""
+        },
+        "setup": {
+          "title": "Set units, output and calibration",
+          "caption": "Calibration is read straight from the project's own Calibration.xml, and stereo viewing angles are worked out at every correlation point.",
+          "body": ""
+        },
+        "tune": {
+          "title": "Tune the passes and filters",
+          "caption": "Set the multi-pass window schedule, then the filters that reject spurious vectors and fill and smooth the field.",
+          "body": ""
+        },
+        "preview": {
+          "title": "Preview the first pair",
+          "caption": "Check the result on one pair before committing to the whole batch.",
+          "body": ""
+        },
+        "run": {
+          "title": "Run the batch",
+          "caption": "The batch runs in the background, and the results can be plotted as vector fields.",
+          "body": ""
+        }
+      }
+    },
+    "phdmn": {
+      "summary": "PhD research in experimental fluid mechanics: turbulence from a random jet array, porous disk settling, and machine-learning control of the tank.",
+      "intro": "",
+      "steps": {
+        "rja": {
+          "title": "Random jet array turbulence",
+          "caption": "",
+          "body": ""
+        },
+        "settling": {
+          "title": "Porous disk settling",
+          "caption": "",
+          "body": ""
+        },
+        "control": {
+          "title": "Machine-learning tank control",
+          "caption": "",
+          "body": ""
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1896 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>spcmn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a deck of full-screen slides, light in every theme: the spcmn title on off-white (--paper), then one slide per project in its
+   own hue of the palette (flowmn green, flacmn purple, tankmn amber, rigmn red). */
+:root {
+  /* the palette */
+  --lavender: #DFD9E2; --paper: #F6F4EE;     /* the site's off-white: page, and light text and marks on the covers */ --purple: #5C53A2; --green: #20A76B; --amber: #F4B73E; --red: #BC3843;
+  --charcoal: #2E2E33;  /* the title slide: wordmark, words and controls, with no purple cast */
+
+  --bg: var(--paper);
+  --surface: #F7F6F8;
+  --text: #0F0D1A;
+  --text-2: #2C284E;
+  --muted: #5E5A6B;
+  --line: #CFC9DA;
+  --project: var(--purple);          /* fills: tiles, buttons, numbers */
+  --project-text: #4A4284;           /* the project's hue as text */
+  --project-tint: #F0F0F7;
+  --on-project: #FFFFFF;
+  --good-tint: #E2F4EC; --good-text: #1A634E;
+  --warn-tint: #FDF1D8; --warn-text: #6D5332;
+  --bad-tint: #F8EBEC;  --bad-text: #922E3D;
+  --edit: var(--amber);
+  --edit-tint: #FDF1D8;
+  --hint: #7B7782;
+  --bar: #0F0D1A; --on-bar: #FFFFFF;
+
+  color-scheme: light;
+  --display: "Heros", "Helvetica Neue", Helvetica, Arial, sans-serif;   /* headings: regular width (the condensed cut is kept for the project marks) */
+  --body: "Heros", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+@font-face { font-family: "Heros"; src: url("fonts/texgyreheros-regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Heros"; src: url("fonts/texgyreheros-bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Heros Cn"; src: url("fonts/texgyreheroscn-bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 1.0625rem/1.6 var(--body); }
+body { overflow-x: clip; }                    /* nothing may widen the page sideways (phones, and Safari's framed pages, grow to fit) */
+[hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.wrap { max-width: 68rem; margin: 0 auto; padding-inline: 1rem; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+a { color: var(--project-text); }
+a:focus-visible, button:focus-visible, [contenteditable]:focus-visible {
+  outline: 2px solid var(--purple); outline-offset: 3px; border-radius: 4px;
+}
+h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; line-height: 1.05; text-wrap: balance; margin: 0; }
+.label { font: 500 0.72rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+
+/* ---- the deck: one full-screen slide at a time, the title then one per project. A swipe up (or the wheel, the arrow
+   keys, or a dot at the side) slides the whole slide up and the next one in under it, while the wordmark holds still
+   and morphs: spc flows into the project's letters and sets solid; the mn stays fluid throughout. */
+html, body { height: 100%; }
+body { overflow: hidden; overscroll-behavior: none; }
+.deck { position: fixed; inset: 0; overflow: clip; touch-action: none; }
+.editing .deck { touch-action: auto; }
+.slide { position: absolute; inset: 0; overflow: clip; box-sizing: border-box; display: flex; flex-direction: column;
+         background: var(--project); color: var(--on-cover); transform: translateY(100%); visibility: hidden; }
+.slide.shown { visibility: visible; }
+.s-title { --project: var(--paper); --on-cover: var(--charcoal); }
+.slide :focus-visible { outline-color: var(--on-cover); }
+.editing .slide [data-slot] { outline-color: var(--on-cover); }
+
+/* the wordmark: each slide carries its own, which rides up with it: spcmn as ferrofluid (charcoal) on the title, and on
+   each project its mark (name and still dot mn, off-white) centred. On the title it sits a little above the middle of
+   the screen; on the projects, at the top. The frame leaves room above for the tall letters (f, l, k, t) and below for
+   the p's tail. */
+:root { --logo-w: min(100vw, 54rem, 78vh); --logo-w: min(100vw, 54rem, 78svh);   /* the frame is 34.4 units wide; spcmn's letters 32 */
+        --logo-top: clamp(0.25rem, 6vh, 5rem); --logo-top: clamp(0.25rem, 6svh, 5rem); }
+.logo-band { flex: none; padding-top: var(--logo-top); height: calc(var(--logo-w) * 12.4 / 34.4); }
+.logo-hold { width: var(--logo-w); height: 100%; margin-left: calc((100% - var(--logo-w)) / 2); }
+.logo { display: block; width: 100%; height: 100%; overflow: visible; fill: currentColor; }
+/* the other slides carry their mark at the top with the text and run just under it: the mark's frame is cropped close around its letters */
+.slide:not(.s-title) { justify-content: flex-start; padding-block: clamp(1rem, 5vh, 3rem) 0; }   /* the name at the top */
+/* a project's mark is a size down from spcmn's on the title, and its text and run with it */
+.slide:not(.s-title) .logo-hold { width: calc(var(--logo-w) * 0.86); margin-left: calc((100% - var(--logo-w) * 0.86) / 2); }
+.slide:not(.s-title) .tagline { font-size: clamp(0.95rem, 1.9vw, 1.18rem); }
+.slide:not(.s-title) .gh, .slide:not(.s-title) .more { font-size: 0.86rem; padding: 0.72rem 0.95rem; }
+.slide:not(.s-title) .logo-band { height: auto; padding-top: 0; }
+.slide:not(.s-title) .logo { height: auto; }
+.slide:not(.s-title) .slide-body { flex: 1 1 auto; align-content: center; padding-block: clamp(2rem, 7vh, 4.5rem) clamp(1.5rem, 6vh, 4rem); }   /* centred in the room under the mark, never close to it (the run shrinks to keep this room) */
+.slide[data-id="contact"] .p-text { justify-items: center; text-align: center; }    /* nothing beside it: centred across too */
+.slide:not(.s-title) .logo { color: var(--paper); }                /* every project's mark is off-white */
+.slide.hue-paper .logo { color: var(--charcoal); }                       /* the shop's word: charcoal on off-white */
+.shop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(0.5rem, 2vw, 1rem); width: 100%; }
+/* a product: a picture (the project's mark on its hue), its name, a line, the price and a Buy link to its Gumroad page */
+.shop-card { display: grid; grid-template-rows: auto 1fr; min-width: 0; border-radius: 14px; overflow: hidden; background: #FFFFFF;
+             box-shadow: 0 10px 30px rgba(46, 46, 51, 0.12), 0 0 0 1px rgba(46, 46, 51, 0.08); }
+.shop-art { aspect-ratio: 4 / 3; background: var(--c); display: grid; place-items: center; padding: 0 14%; }
+.shop-art svg { display: block; width: 100%; height: auto; fill: var(--paper); overflow: visible; }
+.shop-art-blank { background: #ECEAE4; color: var(--muted); font: 500 0.68rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.shop-info { display: grid; gap: 0.35rem; align-content: start; padding: 0.75rem 0.85rem 0.85rem; }
+.shop-info h3 { font-size: 1rem; color: var(--charcoal); }
+.shop-desc { margin: 0; font-size: 0.82rem; line-height: 1.35; }
+.shop-buy { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.4rem; }
+.shop-price { font: 500 0.85rem/1 var(--mono); color: var(--charcoal); }
+.shop-btn { padding: 0.5rem 0.7rem; border-radius: 8px; background: var(--charcoal); color: var(--paper); text-decoration: none; font: 700 0.78rem/1 var(--body); white-space: nowrap; }
+.shop-btn:hover { filter: brightness(1.25); }
+/* flacmn: the installer is sold; the source stays free to build */
+.shop-free { justify-self: start; margin-top: 0.15rem; font: 500 0.72rem/1.3 var(--mono); color: var(--charcoal); text-underline-offset: 2px; }
+.shop-short { display: none; }
+@media (max-width: 40rem) {                                            /* phones: three narrow cards, just the essentials */
+  .shop-desc, .shop-btn-more, .shop-long { display: none; }
+  .shop-short { display: inline; }
+  .shop-info { padding: 0.55rem 0.55rem 0.6rem; }
+  .shop-info h3 { font-size: 0.85rem; }
+  .shop-buy { flex-wrap: wrap; gap: 0.35rem; }
+}
+
+.slide-body { flex: 1 1 auto; min-height: 0; width: 100%; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr);
+              align-content: center; gap: clamp(1rem, 3vh, 2rem); padding-block: clamp(0.5rem, 2.5vh, 1.5rem) clamp(1rem, 5vh, 3rem); }
+.p-body { padding-right: max(1rem, 2.4rem - max(0px, (100vw - 68rem) / 2)); }   /* clear of the dots at the side */
+
+/* the title slide: the subtitle under the wordmark, a cue at the foot, GitHub in the corner */
+/* the title's wordmark and subtitle sit together a little above the middle of the screen */
+.s-title { justify-content: center; padding-bottom: 17vh; padding-bottom: 17svh; }
+.s-title .logo-band { padding-top: 0; }
+.s-title .slide-body { flex: none; align-content: start; justify-items: center; text-align: center; }
+.s-title .intro { margin: 0; max-width: 44ch; color: var(--charcoal);
+                  font: 700 clamp(1.05rem, 2.2vw, 1.3rem)/1.5 "Heros", "Helvetica Neue", Helvetica, Arial, sans-serif; }   /* bold Heros: Helvetica's look on every device */
+.next-cue { position: absolute; left: 50%; bottom: clamp(0.75rem, 3vh, 1.75rem); transform: translateX(-50%); display: grid; justify-items: center; gap: 0.3rem;
+            border: 0; background: none; padding: 0.25rem 0.5rem; cursor: pointer; color: rgba(46, 46, 51, 0.7);
+            font: 500 0.68rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }
+.next-cue svg { width: 1.1rem; height: 1.1rem; animation: cue 2.2s ease-in-out infinite; }
+.next-cue:hover { color: var(--charcoal); }
+@keyframes cue { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(0.3rem); } }
+@media (prefers-reduced-motion: reduce) { .next-cue svg { animation: none; } }
+@media (max-height: 560px) { .next-cue { display: none; } }
+/* the menu: a button in the title's top-right corner that drops a list of the projects (each a block in its hue), About me and GitHub */
+.menu { position: absolute; top: 0.6rem; right: 0.6rem; z-index: 2; }
+.menu-btn { display: grid; align-content: center; justify-items: center; gap: 5px; width: 2.75rem; height: 2.75rem; padding: 0; border: 0; border-radius: 999px;
+            background: none; color: var(--charcoal); cursor: pointer; }
+.menu-btn:hover { background: rgba(46, 46, 51, 0.07); }
+.menu-btn span { display: block; width: 1.3rem; height: 2px; border-radius: 2px; background: currentColor; transition: transform 0.3s ease, opacity 0.2s ease; }
+.menu-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.menu-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.menu-panel { position: absolute; top: calc(100% + 0.35rem); right: 0; min-width: 12.5rem; padding: 0.4rem; border-radius: 14px; background: var(--paper);
+              box-shadow: 0 14px 40px rgba(46, 46, 51, 0.18), 0 0 0 1px rgba(46, 46, 51, 0.08);
+              opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s; }
+.menu.open .menu-panel { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.menu-panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; }
+.menu-panel a { display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.85rem; border-radius: 9px; color: var(--charcoal); text-decoration: none;
+                font: 700 1rem/1.2 var(--body); }
+.menu-panel a:hover, .menu-panel a:focus-visible { background: rgba(46, 46, 51, 0.07); }
+/* each project is a block in its own hue, carrying its mark (name and dot mn, copied from its slide), off-white */
+.menu-panel .m-proj { background: var(--c); color: var(--paper); padding: 0.7rem 0.9rem 0.8rem; font: 700 1.6rem/1 "Heros Cn", "Helvetica Neue", "Arial Narrow", sans-serif; }
+.menu-panel .m-proj:hover, .menu-panel .m-proj:focus-visible { background: var(--c); filter: brightness(1.1); }
+.menu-panel .m-proj:focus-visible { outline-color: var(--charcoal); }
+.menu-panel .m-mark { display: block; height: 1.75rem; width: auto; fill: currentColor; overflow: visible; }
+.menu-sep { margin-top: 0.35rem; padding-top: 0.35rem; border-top: 1px solid rgba(46, 46, 51, 0.12); }
+@media (prefers-reduced-motion: reduce) { .menu-btn span, .menu-panel { transition: none; } }
+
+/* a project slide: what it is, then its sample run (side by side on wide screens) */
+.p-text { display: grid; gap: 0.9rem; justify-items: start; align-content: start; min-width: 0; }
+.slide .label { color: var(--on-cover); opacity: 0.8; }
+.slide .tagline { margin: 0; max-width: 42ch; color: var(--on-cover); font: 400 clamp(1.02rem, 2.2vw, 1.35rem)/1.45 var(--body); }
+.slide .gh { background: var(--cover-btn); color: var(--cover-btn-text); }
+.demo-pending { width: 100%; box-sizing: border-box; }
+@media (min-width: 60rem) {
+  .p-body { grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr); gap: 3rem; align-items: center; }
+  .slide[data-id="contact"] .p-body { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 40rem) { .p-text { gap: 0.6rem; } .slide .gh, .slide .more { padding: 0.7rem 0.95rem; } .slide .gh .repo { display: none; } }
+@media (max-width: 22rem) { .slide .gh-view { display: none; } }
+@media (max-height: 600px) { .slide .tagline { font-size: 0.95rem; line-height: 1.35; } .slide-body { gap: 0.75rem; } .slide .gh, .slide .more { padding-block: 0.55rem; } }
+
+.p-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+.slide .more { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.85rem 1.1rem; border-radius: 10px; color: var(--on-cover); text-decoration: none;
+               font: 700 0.95rem/1 var(--body); box-shadow: inset 0 0 0 1.5px currentColor; }
+.slide .more:hover { background: color-mix(in srgb, var(--on-cover) 12%, transparent); }
+
+/* ---- a project's own page ("More info"): a blog-style article that slides up over the deck and scrolls on its own */
+.detail { position: fixed; inset: 0; z-index: 5; overflow-y: auto; overscroll-behavior: contain; background: var(--paper); color: var(--text);
+          transform: translateY(100%); visibility: hidden; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1), visibility 0s linear 0.6s; }
+.detail.open { transform: none; visibility: visible; transition-delay: 0s; }
+@media (prefers-reduced-motion: reduce) { .detail, .detail.open { transition: none; } }
+.d-wrap { max-width: 44rem; margin: 0 auto; padding-inline: 1.25rem; box-sizing: border-box; }
+.d-head { background: var(--project); color: var(--on-cover); padding-block: 1.25rem clamp(2rem, 6vw, 3.5rem); }
+.d-head .d-wrap { display: grid; gap: 0.9rem; justify-items: start; }
+.d-back { font: 500 0.8rem/1.2 var(--mono); color: inherit; text-decoration: none; opacity: 0.85; }
+.d-back:hover { opacity: 1; text-decoration: underline; }
+.d-mark { width: min(100%, 28rem); margin-top: 1.25rem; }
+.d-mark .logo { height: auto; color: var(--paper); }
+.d-head .label { color: var(--on-cover); opacity: 0.8; }
+.d-head .tagline { margin: 0; max-width: 40ch; font: 400 clamp(1.1rem, 2.4vw, 1.4rem)/1.45 var(--body); }
+.d-head :focus-visible { outline-color: var(--on-cover); }
+.d-body { padding-block: clamp(2rem, 6vw, 3.5rem) 5rem; }
+.d-lede { margin: 0; font: 400 clamp(1.15rem, 2.4vw, 1.35rem)/1.55 var(--body); }
+.d-sec { display: grid; gap: 0.85rem; margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid var(--line); }
+.d-num { font: 500 0.75rem/1 var(--mono); letter-spacing: 0.08em; color: var(--project-text); }
+.d-sec h2 { font-size: clamp(1.5rem, 4vw, 2rem); }
+.d-sec p { margin: 0; }
+.ph { color: var(--muted); }                                          /* placeholder text, until the real text is written */
+.d-fig { margin: 0.5rem 0 0; display: grid; gap: 0.5rem; }
+.d-sub { display: grid; gap: 0.6rem; margin-top: 1.5rem; }                /* one part of a walkthrough: its heading, words and run */
+.d-sub h3 { margin: 0; font-size: clamp(1.1rem, 3vw, 1.3rem); }
+.d-pending { aspect-ratio: 16 / 9; border-radius: 12px; border: 1.5px dashed var(--project); background: var(--project-tint); display: grid; place-items: center;
+             color: var(--project-text); font: 500 0.75rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.d-fig figcaption { font: 500 0.72rem/1.4 var(--mono); color: var(--hint); }
+.hue-charcoal { --project: var(--charcoal); --project-text: var(--charcoal); --project-tint: #ECEAE4; --on-cover: var(--paper); --cover-btn: var(--paper); --cover-btn-text: var(--charcoal); }
+.hue-paper { --project: var(--paper); --project-text: var(--charcoal); --project-tint: #ECEAE4; --on-cover: var(--charcoal); --cover-btn: var(--charcoal); --cover-btn-text: var(--paper); }
+.d-title { margin-top: 1.5rem; font-size: clamp(2.4rem, 8vw, 4rem); }
+.ph-on { opacity: 0.75; }                                             /* placeholder text on a coloured band */
+.d-photo { width: min(100%, 15rem); aspect-ratio: 4 / 5; margin-bottom: 2rem; border-radius: 12px; border: 1.5px dashed var(--line); background: #ECEAE4;
+           display: grid; place-items: center; color: var(--muted); font: 500 0.75rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.d-links { margin: 2.5rem 0 0; padding-top: 2.5rem; border-top: 1px solid var(--line); font: 500 0.9rem/1.4 var(--mono); }
+.d-links a { color: var(--charcoal); }
+.d-end { display: inline-block; margin-top: 3rem; color: var(--project-text); opacity: 1; }
+
+/* the dots at the side: where you are, and a way to jump */
+.deck-dots { position: fixed; right: clamp(0.15rem, 1.2vw, 1rem); top: 50%; transform: translateY(-50%); z-index: 4; display: grid;
+             color: var(--charcoal); transition: color 0.5s ease, opacity 0.4s ease, visibility 0.4s; }
+.deck-dots.off { opacity: 0; visibility: hidden; }                    /* not on the title: they appear from the first project on */
+.deck-dots button { display: grid; place-items: center; width: 1.1rem; height: 1.1rem; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+.deck-dots button::before { content: ""; width: 0.3rem; height: 0.3rem; border-radius: 50%; box-sizing: border-box; border: 1px solid currentColor; opacity: 0.75;
+                            transition: background 0.3s, opacity 0.3s, transform 0.3s; }
+.deck-dots button[aria-current]::before { background: currentColor; opacity: 1; transform: scale(1.15); }
+.deck-dots :focus-visible { outline-color: currentColor; }
+.editbar { z-index: 6; }
+
+/* the sample run beside each cover */
+.demo { margin: 0; display: grid; gap: 0.6rem; min-width: 0; }
+.demo-frame { position: relative; aspect-ratio: 560 / 380; border-radius: 12px; overflow: hidden; background: #E6E2EC;
+              box-shadow: 0 18px 50px rgba(15, 13, 26, 0.35), 0 0 0 1px rgba(15, 13, 26, 0.08); }
+.demo figcaption { display: flex; justify-content: space-between; align-items: center; gap: 1rem; font: 500 0.72rem/1.3 var(--mono); color: var(--on-cover); }
+.demo .demo-step { min-height: 2.6em; display: flex; align-items: center; }
+.demo .demo-step.swap { animation: demo-step 0.4s ease both; }
+@keyframes demo-step { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+.demo .demo-toggle { flex: none; display: inline-block; width: auto; overflow: visible; font: inherit; color: inherit; background: none; border: 1px solid currentColor; border-radius: 999px; padding: 0.3rem 0.75rem; cursor: pointer; }
+.d-fig.demo figcaption { color: var(--hint); }                     /* a run on a project's own page: on the page's paper, not a cover */
+/* a video run (tankmn): the portrait CAD render centred in the same full-width window as flacmn's run */
+.demo-frame.video { background: #FDFDFD; }
+.demo-frame video { display: block; width: 100%; height: 100%; object-fit: contain; }
+.demo-pending { aspect-ratio: 560 / 380; border-radius: 12px; border: 1.5px dashed var(--on-cover); display: grid; place-items: center; color: var(--on-cover);
+                background: color-mix(in srgb, var(--on-cover) 8%, transparent); font: 500 0.75rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* flacmn's sample run: a 730 x 400 mock of the desktop app (flacmn library: Albums, quality check, Send to app) beside
+   the phone app that receives and plays the album, scaled to fit. Elements switch on and off on a timeline (data-t). */
+.demo-frame.duo { aspect-ratio: 730 / 400; background: none; box-shadow: none; border-radius: 0; overflow: visible; }
+.nf { position: absolute; left: 0; top: 0; width: 730px; height: 400px; transform-origin: 0 0; transform: scale(var(--s, 1)); transition: opacity 0.35s ease;
+      font: 400 7px/1.3 var(--body); color: #2E2E33; }
+.nf *, .nf *::before, .nf *::after { box-sizing: border-box; }
+.nf .fx { transition: opacity 0.35s ease, transform 0.35s ease; }
+.nf .fx:not(.on) { opacity: 0; pointer-events: none; }
+.nf .rise:not(.on) { transform: translateY(4px); }
+.nf.snap, .nf.snap * { transition: none !important; }
+.nf.out { opacity: 0; }
+.nf b { font-weight: 700; }
+.nf small { font-size: 0.86em; color: #6E6D72; }
+.nf .mu { color: #77767D; }
+.nf h4, .nf h5, .nf p { margin: 0; }
+.nf h5 { font-size: 7.5px; font-weight: 700; margin-bottom: 4px; }
+.nf-stack { display: inline-grid; } .nf-stack > * { grid-area: 1 / 1; }
+.nf-ell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.nf-ic { width: 8px; height: 8px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* the desktop window */
+.nf-win { position: absolute; left: 4px; top: 8px; width: 544px; height: 384px; border-radius: 8px; overflow: hidden; background: #F6F4EE;
+          box-shadow: 0 16px 44px rgba(15, 13, 26, 0.38), 0 0 0 0.6px rgba(15, 13, 26, 0.25); }
+.nf-title { height: 15px; display: flex; align-items: center; gap: 4px; padding: 0 7px; background: #ECE9E1; border-bottom: 0.6px solid #DCD9D0; position: relative; }
+.nf-title i { width: 6px; height: 6px; border-radius: 50%; background: #E5675C; } .nf-title i:nth-child(2) { background: #E9B84D; } .nf-title i:nth-child(3) { background: #69B85A; }
+.nf-title span { position: absolute; left: 0; right: 0; text-align: center; font-size: 6.5px; font-weight: 700; color: #6E6D72; }
+.nf-bar { height: 24px; display: flex; align-items: center; gap: 3px; padding: 0 9px; border-bottom: 0.6px solid #E2DED5; background: #F1EFE8; }
+.nf-logo { height: 9px; margin-right: 7px; }
+.nf-tab { font-size: 6.8px; font-weight: 700; padding: 3.5px 6px; border-radius: 4px; transition: background 0.3s, color 0.3s; }
+.nf-tab.on { background: #2E2E33; color: #F6F4EE; }
+.nf-gear { margin-left: auto; color: #6E6D72; }
+.nf-body { position: absolute; left: 0; right: 0; top: 39px; bottom: 0; }
+.nf-scene { position: absolute; inset: 0; padding: 8px; display: flex; gap: 8px; }
+.nf-card { background: #FDFCF8; border: 0.6px solid #E2DED5; border-radius: 6px; }
+
+/* Albums: the list, with tag search */
+.nf-list { width: 160px; flex: none; display: flex; flex-direction: column; overflow: hidden; }
+.nf-search { margin: 7px 7px 5px; height: 17px; border: 0.6px solid #D9D5CC; border-radius: 5px; display: flex; align-items: center; gap: 4px; padding: 0 6px;
+             font-size: 6.6px; background: #FFFFFF; position: relative; transition: border-color 0.3s, box-shadow 0.3s; }
+.nf-search.focus { border-color: #5C53A2; box-shadow: 0 0 0 1.5px rgba(92, 83, 162, 0.2); }
+.nf-search .ph { position: absolute; left: 17px; color: #9A999E; white-space: nowrap; }
+.nf .ty.typing::after { content: ""; display: inline-block; width: 0.6px; height: 7px; margin-left: 0.5px; background: #2E2E33; vertical-align: -1px; animation: nf-caret 0.8s steps(1) infinite; }
+@keyframes nf-caret { 50% { opacity: 0; } }
+.nf-count { font-size: 5.6px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #6E6D72; padding: 0 8px 5px; border-bottom: 0.6px solid #ECE9E1; }
+.nf-rows { padding: 3px 0; }
+.nf-row { display: flex; align-items: center; gap: 6px; padding: 0 7px; height: 30px; overflow: hidden; border-left: 1.5px solid transparent;
+          transition: height 0.4s ease, opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease; }
+.nf-row.gone { height: 0; opacity: 0; }
+.nf-row.sel { background: #ECEAF3; border-left-color: #5C53A2; }
+.nf-row .m { flex: 1; min-width: 0; display: grid; }
+.nf-row .m b { font-size: 6.8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nf-row .m small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nf-cv { width: 22px; height: 22px; flex: none; border-radius: 2px; overflow: hidden; display: block; }
+.nf-cv svg { width: 100%; height: 100%; display: block; }
+.nf-radio { width: 8px; height: 8px; border-radius: 50%; border: 0.8px solid #9A999E; flex: none; transition: border 0.25s; }
+.nf-radio.sel { border: 2.6px solid #5C53A2; }
+.nf-q { font-style: normal; font-size: 5.6px; font-weight: 700; border-radius: 99px; padding: 1.5px 4px 1.5px 3.5px; display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; flex: none; }
+.nf-q::before { content: ""; width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+.nf-q.good { color: #0F6E56; background: #DDF2EA; }
+.nf-q.bad { color: #A32D2D; background: #FCEBEB; }
+.nf-q.wait { color: #77767D; background: #ECE9E1; }
+
+/* Albums: the pane beside the list */
+.nf-pane { flex: 1; min-width: 0; position: relative; }
+.nf-pane > .fx { position: absolute; inset: 0; }
+.nf-empty { display: grid; place-content: center; text-align: center; gap: 3px; color: #77767D; }
+.nf-empty b { color: #2E2E33; }
+.nf-dh { display: flex; gap: 9px; padding: 2px 0 9px; }
+.nf-cv.lg { width: 70px; height: 70px; border-radius: 3px; }
+.nf-dh h4 { font-size: 10px; } .nf-dh p { margin-top: 1px; color: #6E6D72; }
+.nf-dh .nf-q { margin-top: 5px; font-size: 6px; padding: 2px 5px 2px 4px; }
+.nf-btns { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
+.nf-btn { display: inline-flex; align-items: center; gap: 3px; font-size: 6.2px; font-weight: 700; padding: 4px 6px; border-radius: 4px; border: 0.6px solid #D9D5CC;
+          background: #FFFFFF; white-space: nowrap; transition: transform 0.12s ease, background 0.2s ease, opacity 0.3s; }
+.nf-btn.dark { background: #2E2E33; border-color: #2E2E33; color: #F6F4EE; }
+.nf-btn.press { transform: scale(0.94); background: #E7E4DC; }
+.nf-btn.dark.press { background: #4F4E55; }
+.nf-btn.off { opacity: 0.4; }
+.nf-cols { display: grid; grid-template-columns: 1.25fr 1fr; gap: 9px; }
+.nf-box { background: #FDFCF8; border: 0.6px solid #E2DED5; border-radius: 5px; padding: 3px 0; }
+.nf-trk { display: flex; gap: 5px; align-items: center; height: 14px; padding: 0 7px; font-size: 6.4px; white-space: nowrap; }
+.nf-trk > span:first-child { width: 7px; color: #77767D; }
+.nf-trk .n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.nf-trk .f { color: #77767D; font-size: 5.6px; }
+.nf-trk.sel { background: #ECEAF3; box-shadow: inset 1.5px 0 #5C53A2; font-weight: 700; }
+
+/* the quality check */
+.nf-qh { display: flex; align-items: center; gap: 8px; padding-bottom: 7px; }
+.nf-back { font-weight: 700; font-size: 6.4px; text-decoration: underline; }
+.nf-qh > span:nth-child(2) { display: grid; flex: 1; } .nf-qh b { font-size: 8px; }
+.nf-qb { display: flex; gap: 8px; }
+.nf-qt { width: 178px; flex: none; }
+.nf-qs { flex: 1; min-width: 0; }
+.nf-qsh { display: flex; justify-content: space-between; align-items: center; }
+.nf-qsh h5 { font-size: 8.5px; margin: 0; }
+.nf-seg { display: inline-flex; gap: 2px; font-size: 5.8px; font-weight: 700; }
+.nf-seg span { padding: 2px 5px; border-radius: 99px; border: 0.6px solid #D9D5CC; }
+.nf-seg span.on { border-color: #5C53A2; background: #ECEAF3; color: #4A4284; }
+.nf-spec { display: flex; gap: 3px; margin-top: 5px; height: 126px; }
+.nf-axis { width: 17px; display: flex; flex-direction: column; justify-content: space-between; text-align: right; font-size: 4.8px; color: #77767D; padding: 6px 0 0; }
+.nf-plot { position: relative; flex: 1; border-radius: 3px; overflow: hidden; background: #F9F8F4; }
+.nf-plot canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.nf-cut { position: absolute; left: 0; right: 0; top: 23%; border-top: 0.8px dashed #2E2E33; }
+.nf-cut span { position: absolute; left: 3px; top: -8px; font-size: 5.2px; background: rgba(249, 248, 244, 0.85); padding: 0 2px; }
+.nf-verdict { margin-top: 6px !important; font-size: 6.2px; line-height: 1.4; color: #4F4E55; }
+.nf-verdict b { color: #2E2E33; }
+
+/* Send to app: pairing, then choosing albums and a format */
+.nf-sync { margin: auto; width: 236px; padding: 14px 16px; text-align: center; display: grid; gap: 6px; justify-items: center; }
+.nf-note { width: 22px; height: 22px; border-radius: 50%; border: 0.6px solid #D9D5CC; display: grid; place-items: center; color: #5C53A2; font-size: 10px; }
+.nf-sync h4 { font-size: 9.5px; }
+.nf-sync ol { margin: 0; padding-left: 10px; text-align: left; font-size: 6.2px; line-height: 1.55; justify-self: stretch; }
+.nf-code { font: 700 17px/1 var(--body); letter-spacing: 0.08em; background: #ECE9E1; border-radius: 5px; padding: 6px 12px; transition: background 0.4s, color 0.4s; }
+.nf-code.ok { background: #DDF2EA; color: #0F6E56; }
+.nf-sendr { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.nf-synced { display: flex; align-items: center; gap: 6px; }
+.nf-synced > i { width: 11px; height: 11px; border-radius: 50%; background: #DDF2EA; color: #0F6E56; font-style: normal; font-size: 7px; display: grid; place-items: center; }
+.nf-synced > span { display: grid; flex: 1; }
+.nf-synced u { font-weight: 700; font-size: 6.2px; }
+.nf-fmts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+.nf-fmt { display: flex; align-items: center; gap: 4px; padding: 4px 5px; border: 0.6px solid #D9D5CC; border-radius: 4px; background: #FFFFFF; font-size: 6px; font-weight: 700;
+          white-space: nowrap; transition: border-color 0.25s, box-shadow 0.25s; }
+.nf-fmt .nf-radio { width: 6px; height: 6px; }
+.nf-fmt .nf-radio.sel { border-width: 2px; }
+.nf-fmt.sel { border-color: #5C53A2; box-shadow: 0 0 0 1px rgba(92, 83, 162, 0.25); }
+.nf-fmt > .nf-stack { margin-left: auto; font-weight: 400; color: #6E6D72; }
+.nf-act { display: flex; align-items: center; justify-content: space-between; padding: 6px 7px; font-size: 6.2px; }
+.nf-act .nf-btn { background: #9A999E; border-color: #9A999E; color: #FFFFFF; transition: background 0.3s, transform 0.12s; }
+.nf-act .nf-btn.go { background: #2E2E33; border-color: #2E2E33; }
+.nf-act .nf-btn.press { transform: scale(0.94); }
+.nf-ready { padding: 5px 7px; display: grid; gap: 2px; min-height: 40px; }
+.nf-ready .r1 { display: flex; justify-content: space-between; font-size: 6.2px; }
+.nf-ready .r1 > .nf-stack { font-weight: 700; color: #0F6E56; }
+.nf-pbar { display: block; position: relative; height: 2.5px; border-radius: 2px; background: #ECE9E1; overflow: hidden; }
+.nf-pbar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #B9B6C9; }
+.nf-pbar i + i { background: #20A76B; }
+
+/* flowmn's sample run: a 730 x 400 mock of its desktop app, in its own chrome (a charcoal bar with pill tabs, white cards
+   on the off-white ground), on the same timeline scheme as flacmn's */
+.pv-win { width: 722px; }
+.pv-bar { height: 26px; display: flex; align-items: center; gap: 3px; padding: 0 9px; background: #2E2E33; color: #E4E2DB; }
+.pv-mark { font: 700 12px/1 "Heros Cn", var(--body); color: #F6F4EE; margin-right: 10px; letter-spacing: -0.01em; }
+.pv-mark span { font-weight: 400; opacity: 0.85; }
+.pv-tab { font-size: 6.8px; font-weight: 700; padding: 3.5px 7px; border-radius: 99px; transition: background 0.3s, color 0.3s; }
+.pv-tab.on { background: #F6F4EE; color: #2E2E33; }
+.pv-proj { margin-left: auto; font-size: 6.4px; }
+.pv-pill { margin-left: 8px; font: 500 5.6px/1 var(--mono); border: 0.6px solid #5F5E63; border-radius: 99px; padding: 2.5px 6px; }
+.pv-body { position: absolute; left: 0; right: 0; top: 41px; bottom: 0; }
+.pv-card { background: #FFFFFF; border: 0.6px solid #E6E3DA; border-radius: 6px; padding: 9px; display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: none; }
+.pv-grow { flex: 1; min-width: 0; }
+.pv-col { display: flex; flex-direction: column; gap: 8px; }
+.pv h5 { font-size: 8.5px; margin: 0; }
+.pv-sub { font-size: 6px; color: #5F5E63; margin-top: -4px; }
+.pv-lab { font: 500 5.2px/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: #5F5E63; }
+.pv-rowf { display: flex; gap: 5px; align-items: center; }
+.pv-field { height: 17px; border: 0.6px solid #D3D0C8; border-radius: 4px; display: flex; align-items: center; padding: 0 6px; font-size: 6.6px; background: #FFFFFF;
+            flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; position: relative; transition: border-color 0.3s, box-shadow 0.3s; }
+.pv-field.focus { border-color: #2E2E33; box-shadow: 0 0 0 1.5px rgba(46, 46, 51, 0.15); }
+.pv-field .ph { position: absolute; left: 6px; color: #86848A; }
+.pv-badge { font-size: 6px; font-weight: 700; border-radius: 99px; padding: 2.5px 7px; background: #ECEAE4; color: #2E2E33; white-space: nowrap; justify-self: start; }
+.pv-frames { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.pv-frames > div { display: grid; gap: 3px; }
+.pv-cv { display: block; width: 100%; height: auto; border-radius: 4px; background: #FFFFFF; }
+.pv-tabs { display: flex; gap: 10px; font-size: 6.4px; font-weight: 700; color: #86848A; border-bottom: 0.6px solid #ECE9E2; padding-bottom: 5px; }
+.pv-tabs .on { color: #2E2E33; box-shadow: 0 5.6px 0 -4.4px #2E2E33; }
+.pv-form { display: grid; grid-template-columns: 50px 1fr; gap: 7px 8px; align-items: center; font-size: 6.6px; }
+.pv-form > span:nth-child(odd) { color: #5F5E63; }
+.pv-seg { display: inline-flex; align-self: flex-start; background: #ECEAE4; border-radius: 5px; padding: 1.5px; gap: 1.5px; }
+.pv-seg span { font-size: 6.2px; font-weight: 700; padding: 3px 8px; border-radius: 4px; color: #45454B; transition: background 0.3s, color 0.3s; }
+.pv-seg span.on { background: #2E2E33; color: #F6F4EE; }
+.pv-note { font-size: 6px; font-weight: 700; color: #2E2E33; }
+.pv-more { margin-top: auto; font-size: 6.2px; color: #5F5E63; text-decoration: underline; text-decoration-thickness: 0.5px; }
+.pv-cams { display: grid; gap: 3px; }
+.pv-cams > div { display: flex; gap: 6px; align-items: center; font-size: 6.4px; padding: 4px 6px; border-radius: 4px; background: #F3F1EB; }
+.pv-cams span { color: #5F5E63; flex: 1; }
+.pv-ok { font-style: normal; font-size: 5.6px; font-weight: 700; color: #0F6E56; }
+.pv-scale { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.pv-ramp { flex: 1; height: 4px; border-radius: 99px; background: linear-gradient(90deg, #30123B, #4686FB, #1AE4B6, #A2FC3C, #FABA39, #E4460A, #7A0403); }
+.pv-chips { display: flex; flex-wrap: wrap; gap: 3px; }
+.pv-chip { font-size: 6px; font-weight: 700; padding: 2.5px 6px; border-radius: 99px; border: 0.6px solid #D3D0C8; color: #45454B; transition: background 0.3s, color 0.3s, border-color 0.3s; }
+.pv-chip.on { background: #2E2E33; border-color: #2E2E33; color: #F6F4EE; }
+.pv-head { display: flex; justify-content: space-between; align-items: baseline; }
+.pv-status { font: 500 5.6px/1 var(--mono); color: #5F5E63; text-align: right; }
+.pv-status > span { justify-self: end; }
+.pv-key { display: flex; gap: 9px; font-size: 5.8px; color: #5F5E63; }
+.pv-key i { display: inline-block; width: 7px; height: 1.6px; margin-right: 3px; vertical-align: 1.5px; }
+.pv-auto { font-size: 5.8px; color: #5F5E63; }
+.pv-pass { display: flex; gap: 6px; align-items: center; font-size: 6.2px; padding: 4px 6px; border-radius: 4px; background: #F3F1EB; }
+.pv-pass b { font: 500 5.6px/1 var(--mono); color: #5F5E63; }
+.pv-tg { display: flex; justify-content: space-between; align-items: center; font-size: 6.4px; }
+.pv-sw { width: 14px; height: 8px; border-radius: 99px; background: #D3D0C8; position: relative; transition: background 0.3s; }
+.pv-sw::after { content: ""; position: absolute; left: 1px; top: 1px; width: 6px; height: 6px; border-radius: 50%; background: #FFFFFF; transition: transform 0.3s; }
+.pv-sw.on { background: #2E2E33; } .pv-sw.on::after { transform: translateX(6px); }
+.pv-job { display: grid; gap: 5px; padding: 7px; border-radius: 5px; background: #F3F1EB; font-size: 6.6px; }
+.pv-job .mu { font-size: 6px; }
+.pv-dim { opacity: 0.6; }
+.pv-right { margin-left: auto; }
+.pv-foot { margin-top: auto; }
+.pv-prog { height: 4px; border-radius: 99px; background: #E6E3DA; overflow: hidden; }
+.pv-prog i { display: block; height: 100%; width: 0; background: #2E2E33; }
+.pv-play { font-size: 7px; }
+
+/* the phone */
+.nf-phone { position: absolute; left: 556px; top: 16px; width: 170px; height: 368px; border-radius: 27px; background: #1E1E22; padding: 6px;
+            box-shadow: 0 16px 40px rgba(15, 13, 26, 0.4), inset 0 0 0 1.2px #4F4E55; }
+.nf-ph { position: relative; width: 100%; height: 100%; border-radius: 21px; overflow: hidden; background: #F6F4EE; font-size: 6.4px; }
+.nf-island { position: absolute; left: 50%; top: 5px; width: 44px; height: 12px; margin-left: -22px; border-radius: 8px; background: #000000; z-index: 5; }
+.nf-sb { position: absolute; left: 0; right: 0; top: 0; height: 22px; display: flex; align-items: center; justify-content: space-between; padding: 2px 16px 0 19px; z-index: 4; font-size: 6.6px; }
+.nf-sb i { width: 11px; height: 5px; border-radius: 1.5px; border: 0.7px solid #2E2E33; position: relative; }
+.nf-sb i::after { content: ""; position: absolute; inset: 0.8px; right: 2.5px; background: #2E2E33; border-radius: 0.5px; }
+.nf-scr { position: absolute; left: 0; right: 0; top: 22px; bottom: 0; background: #F6F4EE; display: flex; flex-direction: column; }
+.nf-scr.fx:not(.on) { transform: translateX(14px); }
+.nf-appbar { height: 20px; display: flex; align-items: center; gap: 4px; padding: 0 9px; flex: none; }
+.nf-appbar .bk { font-size: 12px; line-height: 1; margin-top: -1px; }
+.nf-appbar b { font-size: 8px; white-space: nowrap; }
+.nf-appbar.c { justify-content: center; position: relative; }
+.nf-appbar.c b { font-weight: 400; color: #4F4E55; font-size: 7px; }
+.nf-appbar.c .bk { position: absolute; left: 9px; } .nf-appbar.c .more { position: absolute; right: 10px; font-size: 8px; letter-spacing: 0.5px; }
+.nf-hlogo { width: 62%; margin: 20px auto 14px; display: block; }
+.nf-menu { padding: 0 12px; }
+.nf-menu > span { display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; height: 22px; border-radius: 4px; padding: 0 2px;
+                  transition: background 0.2s; }
+.nf-menu > span::after { content: "\203A"; color: #9A999E; font-size: 10px; }
+.nf-menu > span.press, .nf-li.press, .nf-cvbtn.press { background: #E7E4DC; }
+.nf-recent { padding: 12px 12px 0; }
+.nf-recent b { font-size: 7.2px; display: block; margin-bottom: 5px; }
+.nf-two { display: flex; gap: 7px; }
+.nf-cvbtn { flex: 1; min-width: 0; border-radius: 3px; padding: 1px; transition: background 0.2s; }
+.nf-cvbtn .nf-cv { width: 100%; height: auto; aspect-ratio: 1; }
+.nf-cvbtn em { font-style: normal; display: block; font-size: 6px; font-weight: 700; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nf-cvbtn small { display: block; font-size: 5.6px; }
+.nf-txt { padding: 2px 10px 6px; font-size: 5.8px; line-height: 1.45; color: #4F4E55; }
+.nf-li { display: grid; padding: 4px 10px; gap: 1px; font-size: 7px; transition: background 0.2s; }
+.nf-li small { font-size: 5.6px; color: #77767D; }
+.nf-li.row { display: flex; align-items: center; gap: 6px; }
+.nf-li.row > span { display: grid; flex: 1; min-width: 0; }
+.nf-head { font-size: 5.2px; letter-spacing: 0.06em; color: #77767D; padding: 6px 10px 2px; }
+.nf-pill { margin: 4px 10px; padding: 4px 8px; border-radius: 99px; border: 0.7px solid #2E2E33; font-size: 6.4px; font-weight: 700; text-align: center;
+           transition: transform 0.12s, background 0.2s; }
+.nf-pill.dark { background: #2E2E33; color: #F6F4EE; }
+.nf-pill.press { transform: scale(0.95); }
+.nf-ph .nf-pbar { margin-top: 3px; }
+.nf-dlg { position: absolute; inset: 0; background: rgba(30, 30, 34, 0.32); display: grid; place-items: center; z-index: 3; }
+.nf-dlg > div { width: 126px; background: #F6F4EE; border-radius: 10px; padding: 9px 10px 6px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); display: grid; gap: 6px; }
+.nf-dlg b { font-size: 7.6px; font-weight: 400; }
+.nf-dlg .fld { border-bottom: 1px solid #5C53A2; height: 13px; font-size: 8px; letter-spacing: 0.08em; display: flex; align-items: center; }
+.nf-dlg .acts { display: flex; justify-content: flex-end; gap: 10px; font-size: 6.6px; font-weight: 700; color: #4A4284; }
+.nf-dlg .acts span { padding: 2px 3px; border-radius: 3px; transition: background 0.2s; }
+.nf-dlg .acts span.press { background: #E7E4DC; }
+.nf-alb { display: flex; gap: 8px; padding: 4px 10px 8px; }
+.nf-alb .nf-cv { width: 58px; height: 58px; }
+.nf-alb > span { display: grid; align-content: start; gap: 2px; min-width: 0; }
+.nf-alb h4 { font-size: 8.5px; }
+.nf-alb .q { display: flex; align-items: center; gap: 3px; font-size: 5.4px; color: #77767D; margin-top: 2px; }
+.nf-alb .nf-pill { margin: 4px 0 0; justify-self: start; padding: 3px 9px; }
+.nf-ptrk { display: flex; gap: 6px; padding: 0 10px; height: 15px; align-items: center; font-size: 6.4px; border-top: 0.6px solid #E7E4DC; }
+.nf-ptrk span:first-child { width: 6px; color: #77767D; font-size: 5.8px; }
+.nf-ptrk span:nth-child(2) { flex: 1; }
+.nf-ptrk span:last-child { color: #77767D; font-size: 5.8px; }
+.nf-pages { flex: 1; min-height: 0; overflow: hidden; position: relative; }
+.nf-track { position: absolute; left: 0; top: 0; bottom: 0; width: 200%; display: flex; transition: transform 0.55s cubic-bezier(.3, .7, .2, 1); }
+.nf-track.p2 { transform: translateX(-50%); }
+.nf-track > div { width: 50%; padding: 4px 12px 0; display: flex; flex-direction: column; justify-content: center; }
+.nf-np .nf-cv { width: 100%; height: auto; aspect-ratio: 1; border-radius: 3px; }
+.nf-np h4 { font-size: 9px; margin-top: 8px; }
+.nf-np p { font-size: 6.2px; color: #4F4E55; margin-top: 1px; }
+.nf-np .q { display: flex; align-items: center; gap: 3px; font-size: 5.4px; color: #77767D; margin-top: 4px; }
+.nf-scope { width: 100%; aspect-ratio: 1; display: block; }
+.nf-dots { display: flex; justify-content: center; gap: 3px; padding: 5px 0 3px; }
+.nf-dots i { width: 3px; height: 3px; border-radius: 50%; background: #DCD9D0; transition: background 0.3s; }
+.nf-dots i.on { background: #2E2E33; }
+.nf-slider { margin: 3px 12px 0; height: 1px; background: #DCD9D0; position: relative; }
+.nf-slider i { position: absolute; left: 0; top: 0; bottom: 0; background: #2E2E33; }
+.nf-slider i::after { content: ""; position: absolute; right: -2.5px; top: -2px; width: 5px; height: 5px; border-radius: 50%; background: #2E2E33; }
+.nf-times { display: flex; justify-content: space-between; padding: 3px 12px 0; font-size: 5.2px; color: #77767D; }
+.nf-ctl { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 4px 0 12px; position: relative; }
+.nf-ctl .sk { width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; position: relative; }
+.nf-ctl .sk.prev { border-right: 6px solid #2E2E33; } .nf-ctl .sk.next { border-left: 6px solid #2E2E33; }
+.nf-ctl .sk::before { content: ""; position: absolute; top: -4px; width: 1.4px; height: 8px; background: #2E2E33; }
+.nf-ctl .sk.prev::before { left: -7.4px; } .nf-ctl .sk.next::before { right: -7.4px; }
+.nf-ctl .pp { width: 22px; height: 22px; border-radius: 50%; background: #2E2E33; position: relative; }
+.nf-ctl .pp::before, .nf-ctl .pp::after { content: ""; position: absolute; top: 7px; width: 2.2px; height: 8px; background: #F6F4EE; border-radius: 0.5px; }
+.nf-ctl .pp::before { left: 8px; } .nf-ctl .pp::after { right: 8px; }
+.nf-ctl .un { position: absolute; right: 13px; width: 8px; height: 6px; border-top: 1px solid #2E2E33; border-bottom: 1px solid #2E2E33; }
+.nf-ctl .un::after { content: ""; position: absolute; left: 0; right: 2px; top: 1.5px; border-top: 1px solid #2E2E33; }
+
+.gh { display: inline-flex; align-items: center; gap: 0.55rem; justify-self: start; background: var(--project); color: var(--on-project); text-decoration: none;
+      font: 700 0.95rem/1 var(--body); padding: 0.85rem 1.1rem; border-radius: 10px; }
+.gh:hover { filter: brightness(1.08); }
+.gh svg { width: 1.15rem; height: 1.15rem; fill: currentColor; }
+.gh .repo { font: 500 0.78rem/1 var(--mono); opacity: 0.8; }
+
+/* each project wears its own hue */
+.hue-purple { --project: var(--purple); --project-text: #4A4284; --project-tint: #F0F0F7; --on-cover: var(--paper); --cover-btn: var(--paper); --cover-btn-text: #4A4284; }
+.hue-green  { --project: var(--green);  --project-text: #1A634E; --project-tint: #E2F4EC; --on-cover: #0F0D1A; --cover-btn: #0F0D1A; --cover-btn-text: var(--paper); }
+.hue-amber  { --project: var(--amber);  --project-text: #6D5332; --project-tint: #FDF1D8; --on-project: #0F0D1A; --on-cover: #0F0D1A; --cover-btn: #0F0D1A; --cover-btn-text: var(--paper); }
+.hue-red    { --project: var(--red);    --project-text: #922E3D; --project-tint: #F8EBEC; --on-cover: var(--paper); --cover-btn: var(--paper); --cover-btn-text: #922E3D; }
+
+/* ---- your text */
+[data-slot] { white-space: pre-wrap; overflow-wrap: anywhere; }
+.editing [data-slot] { outline: 1.5px dashed var(--edit); outline-offset: 4px; border-radius: 4px; cursor: text; }
+.editing [data-slot]:focus { background: var(--edit-tint); outline-style: solid; }
+.editing [data-slot].empty::before { content: attr(data-hint); color: var(--hint); font-style: italic; pointer-events: none; }
+
+/* ---- edit bar: amber while unsaved, green once saved, red if it can't save */
+.editbar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; pointer-events: none;
+           padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px)); }
+.editbar .inner { pointer-events: auto; display: flex; align-items: center; gap: 0.75rem; background: var(--bar); color: var(--on-bar);
+                  border-radius: 999px; padding: 0.4rem 0.4rem 0.4rem 1rem; box-shadow: 0 8px 28px rgba(16, 14, 30, 0.28); max-width: 100%; }
+.editbar .status { font: 500 0.78rem/1.3 var(--mono); min-width: 0; display: flex; align-items: center; gap: 0.5rem; }
+.editbar .status::before { content: ""; flex: none; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--lavender); }
+.editbar[data-state="unsaved"] .status::before, .editbar[data-state="saving"] .status::before { background: var(--amber); }
+.editbar[data-state="saved"] .status::before { background: var(--green); }
+.editbar[data-state="error"] .status::before { background: var(--red); }
+.editbar button { border: 0; border-radius: 999px; padding: 0.6rem 1rem; font: 700 0.9rem/1 var(--body); cursor: pointer;
+                  background: var(--purple); color: #FFFFFF; white-space: nowrap; }
+</style>
+
+<!-- the flacmn mock that the sample run clones (desktop app and phone app), its icons and its made-up album covers -->
+<svg width="0" height="0" style="position:absolute"><symbol id="nf-i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol><symbol id="nf-i-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></symbol><symbol id="nf-kob" viewBox="0 0 10 10"><rect width="10" height="10" fill="#14213A"/><rect y="6.6" width="10" height="3.4" fill="#2C4F7C"/><g fill="#9FB7D6" fill-opacity="0.6"><circle cx="1.5" cy="1.5" r="0.32"/><circle cx="2.5" cy="1.5" r="0.32"/><circle cx="3.5" cy="1.5" r="0.32"/><circle cx="1.5" cy="2.5" r="0.32"/><circle cx="1.5" cy="3.5" r="0.32"/><circle cx="2.5" cy="3.5" r="0.32"/><circle cx="3.5" cy="3.5" r="0.32"/><circle cx="3.5" cy="4.5" r="0.32"/><circle cx="1.5" cy="5.5" r="0.32"/><circle cx="2.5" cy="5.5" r="0.32"/><circle cx="3.5" cy="5.5" r="0.32"/></g><rect x="1.2" y="7.6" width="5" height="0.5" fill="#DFD9E2"/><rect x="1.2" y="8.5" width="3.2" height="0.4" fill="#9FB7D6"/></symbol><symbol id="nf-lines" viewBox="0 0 10 10"><rect width="10" height="10" fill="#E9E7E1"/><g fill="#3B6EA8"><rect x="1.3" y="2.2" width="7.4" height="0.55"/><rect x="1.3" y="3.6" width="5.6" height="0.55"/><rect x="1.3" y="5" width="6.6" height="0.55"/></g><circle cx="7.6" cy="7.6" r="0.9" fill="#BC3843"/></symbol><symbol id="nf-train" viewBox="0 0 10 10"><rect width="10" height="10" fill="#173A47"/><rect x="0" y="0" width="3.6" height="10" fill="#2D6475"/><rect x="4.4" y="7.4" width="4.6" height="0.7" fill="#E7B04A"/><rect x="4.4" y="8.5" width="3" height="0.45" fill="#CFE0E4"/></symbol><symbol id="nf-homo" viewBox="0 0 10 10"><rect width="10" height="10" fill="#6E1F2B"/><circle cx="5" cy="4.6" r="2.4" fill="#D79B3C"/><circle cx="5" cy="4.6" r="1.2" fill="#6E1F2B"/></symbol><symbol id="nf-rain" viewBox="0 0 10 10"><rect width="10" height="10" fill="#121214"/><g fill-opacity="0.9"><rect x="1" y="1" width="1.1" height="6.5" fill="#E96A2E"/><rect x="2.7" y="1" width="1.1" height="4.6" fill="#F0C33C"/><rect x="4.4" y="1" width="1.1" height="7.6" fill="#3FA06B"/><rect x="6.1" y="1" width="1.1" height="5.4" fill="#3C83C4"/><rect x="7.8" y="1" width="1.1" height="3.8" fill="#C64B8C"/></g></symbol><symbol id="nf-moan" viewBox="0 0 10 10"><rect width="10" height="10" fill="#5E432B"/><rect x="1.4" y="1.4" width="7.2" height="4.4" fill="#E8DCC2"/><rect x="1.4" y="7" width="4.6" height="0.6" fill="#E8DCC2"/></symbol></svg>
+<template id="nf-tpl"><div class="nf">
+  <div class="nf-win">
+    <div class="nf-title"><i></i><i></i><i></i><span>flacmn</span></div>
+    <div class="nf-bar"><img class="nf-logo" src="logo.svg" alt=""><span class="nf-tab" data-t="on:0-7400">Albums</span><span class="nf-tab">Artists</span><span class="nf-tab">Playlists</span><span class="nf-tab" data-t="on:7400">Send to app</span><svg class="nf-ic nf-gear"><use href="#nf-i-sliders"/></svg></div>
+    <div class="nf-body">
+      <!-- Albums: tag search, then the quality check -->
+      <div class="nf-scene fx" data-t="on:0-7400">
+        <div class="nf-card nf-list">
+          <span class="nf-search" data-t="focus:200-1500"><svg class="nf-ic"><use href="#nf-i-search"/></svg><span class="ty" data-type="500" data-text="blue"></span><span class="ph fx" data-t="on:0-480">Search tags: artist, album, song, genre</span></span>
+          <div class="nf-count"><span class="nf-stack"><span class="fx" data-t="on:0-1000">6 albums</span><span class="fx" data-t="on:1000">3 albums</span></span></div>
+          <div class="nf-rows">
+            <div class="nf-row" data-t="sel:1800"><span class="nf-cv"><svg><use href="#nf-lines"/></svg></span><span class="m"><b>Blue Lines</b><small>Massive Attack &middot; 1991</small></span><i class="nf-q good">Lossless</i></div>
+            <div class="nf-row"><span class="nf-cv"><svg><use href="#nf-train"/></svg></span><span class="m"><b>Blue Train</b><small>John Coltrane &middot; 1957</small></span><i class="nf-q good">Hi-res</i></div>
+            <div class="nf-row" data-t="gone:1000"><span class="nf-cv"><svg><use href="#nf-homo"/></svg></span><span class="m"><b>Homogenic</b><small>Bj&ouml;rk &middot; 1997</small></span><i class="nf-q bad">Lossy</i></div>
+            <div class="nf-row" data-t="gone:1000"><span class="nf-cv"><svg><use href="#nf-rain"/></svg></span><span class="m"><b>In Rainbows</b><small>Radiohead &middot; 2007</small></span><i class="nf-q good">Lossless</i></div>
+            <div class="nf-row"><span class="nf-cv"><svg><use href="#nf-kob"/></svg></span><span class="m"><b>Kind of Blue</b><small>Miles Davis &middot; 1959</small></span><i class="nf-q good">Lossless</i></div>
+            <div class="nf-row" data-t="gone:1000"><span class="nf-cv"><svg><use href="#nf-moan"/></svg></span><span class="m"><b>Moanin&rsquo;</b><small>Art Blakey &middot; 1958</small></span><i class="nf-q good">Lossless</i></div>
+          </div>
+        </div>
+        <div class="nf-pane">
+          <div class="nf-empty fx" data-t="on:0-1900"><b>Choose an album</b><span>Its tracks, what needs fixing and its cover show here.</span></div>
+          <div class="fx" data-t="on:1900-3300">
+            <div class="nf-dh"><span class="nf-cv lg"><svg><use href="#nf-lines"/></svg></span>
+              <div><h4>Blue Lines</h4><p>Massive Attack &middot; 1991</p><p class="mu">9 tracks &middot; 45:05</p><i class="nf-q good">Lossless &middot; FLAC 16/44.1</i>
+                <div class="nf-btns"><span class="nf-btn dark">&#9655; Play album</span><span class="nf-btn">+ Add to playlist</span><span class="nf-btn">Edit tags</span><span class="nf-btn" data-t="press:2900-3100">Check quality</span></div></div></div>
+            <div class="nf-cols">
+              <div><h5>Tracks</h5><div class="nf-box"><div class="nf-trk"><span>1</span><span class="n">Safe From Harm</span><span class="f">5:18</span></div><div class="nf-trk"><span>2</span><span class="n">One Love</span><span class="f">4:48</span></div><div class="nf-trk"><span>3</span><span class="n">Blue Lines</span><span class="f">4:21</span></div><div class="nf-trk"><span>4</span><span class="n">Be Thankful for What You&rsquo;ve Got</span><span class="f">4:09</span></div><div class="nf-trk"><span>5</span><span class="n">Five Man Army</span><span class="f">6:04</span></div><div class="nf-trk"><span>6</span><span class="n">Unfinished Sympathy</span><span class="f">5:08</span></div></div></div>
+              <div><h5>Needs attention</h5><p class="mu">Nothing to fix.</p></div>
+            </div>
+          </div>
+          <div class="fx" data-t="on:3300">
+            <div class="nf-qh"><span class="nf-back">&larr; Back</span><span><b>Quality check</b><small>Massive Attack/Blue Lines (1991)</small></span>
+              <span class="nf-stack"><i class="nf-q wait fx" data-t="on:0-5900">Checking 9 tracks</i><i class="nf-q bad fx" data-t="on:5900">9 of 9 likely from a lossy file</i></span></div>
+            <div class="nf-qb">
+              <div class="nf-qt"><h5>Tracks</h5><div class="nf-box">
+                <div class="nf-trk sel"><span>1</span><span class="n">Safe From Harm</span><span class="f">FLAC 16/44.1</span><span class="nf-stack"><i class="nf-q wait fx" data-t="on:0-4300">Checking</i><i class="nf-q bad fx" data-t="on:4300">Lossy source</i></span></div>
+                <div class="nf-trk"><span>2</span><span class="n">One Love</span><span class="f">FLAC 16/44.1</span><span class="nf-stack"><i class="nf-q wait fx" data-t="on:0-4700">Checking</i><i class="nf-q bad fx" data-t="on:4700">Lossy source</i></span></div>
+                <div class="nf-trk"><span>3</span><span class="n">Blue Lines</span><span class="f">FLAC 16/44.1</span><span class="nf-stack"><i class="nf-q wait fx" data-t="on:0-5100">Checking</i><i class="nf-q bad fx" data-t="on:5100">Lossy source</i></span></div>
+                <div class="nf-trk"><span>4</span><span class="n">Be Thankful&hellip;</span><span class="f">FLAC 16/44.1</span><span class="nf-stack"><i class="nf-q wait fx" data-t="on:0-5400">Checking</i><i class="nf-q bad fx" data-t="on:5400">Lossy source</i></span></div>
+                <div class="nf-trk"><span>5</span><span class="n">Five Man Army</span><span class="f">FLAC 16/44.1</span><span class="nf-stack"><i class="nf-q wait fx" data-t="on:0-5700">Checking</i><i class="nf-q bad fx" data-t="on:5700">Lossy source</i></span></div>
+                <div class="nf-trk"><span>6</span><span class="n">Unfinished&hellip;</span><span class="f">FLAC 16/44.1</span><span class="nf-stack"><i class="nf-q wait fx" data-t="on:0-5900">Checking</i><i class="nf-q bad fx" data-t="on:5900">Lossy source</i></span></div>
+              </div></div>
+              <div class="nf-qs">
+                <div class="nf-qsh"><h5>Spectrogram</h5><span class="nf-seg"><span class="on">Flat</span><span>3D</span></span></div>
+                <div class="nf-spec"><span class="nf-axis"><span>20 kHz</span><span>15</span><span>10</span><span>5</span><span>0</span></span>
+                  <div class="nf-plot"><canvas width="400" height="250" data-draw="3500-5900" data-cut="16000"></canvas><div class="nf-cut fx" data-t="on:5900"><span>sound stops near 16.0 kHz</span></div></div></div>
+                <p class="nf-verdict fx" data-t="on:6000"><b>Likely from a lossy file.</b> The sound stops at a lossy encoder&rsquo;s cutoff: this FLAC was probably made from an MP3 or AAC. 44.1 kHz file, limit 22.1 kHz.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Send to app: pairing -->
+      <div class="nf-scene fx" data-t="on:7400-10000">
+        <div class="nf-card nf-sync"><span class="nf-note">&#9835;</span><h4>Syncing with your phone</h4><span class="mu">Looking for flacmn on a phone on the same Wi-Fi as this computer.</span>
+          <ol><li>On your phone, open flacmn, then Music Folder &rsaquo; <b>Receive from a computer</b>.</li><li>Tap <b>MacBook Air</b>.</li><li>Type this code when it asks:</li></ol>
+          <span class="nf-code" data-t="ok:9900">632 276</span></div>
+      </div>
+      <!-- Send to app: choose albums and a format -->
+      <div class="nf-scene fx" data-t="on:10000">
+        <div class="nf-card nf-list">
+          <div class="nf-count" style="padding-top:8px">6 albums</div>
+          <div class="nf-rows">
+            <div class="nf-row"><span class="nf-radio"></span><span class="nf-cv"><svg><use href="#nf-lines"/></svg></span><span class="m"><b>Blue Lines</b><small>Massive Attack &middot; 1991</small></span></div>
+            <div class="nf-row"><span class="nf-radio"></span><span class="nf-cv"><svg><use href="#nf-train"/></svg></span><span class="m"><b>Blue Train</b><small>John Coltrane &middot; 1957</small></span></div>
+            <div class="nf-row"><span class="nf-radio"></span><span class="nf-cv"><svg><use href="#nf-homo"/></svg></span><span class="m"><b>Homogenic</b><small>Bj&ouml;rk &middot; 1997</small></span></div>
+            <div class="nf-row"><span class="nf-radio"></span><span class="nf-cv"><svg><use href="#nf-rain"/></svg></span><span class="m"><b>In Rainbows</b><small>Radiohead &middot; 2007</small></span></div>
+            <div class="nf-row" data-t="sel:10500"><span class="nf-radio" data-t="sel:10500"></span><span class="nf-cv"><svg><use href="#nf-kob"/></svg></span><span class="m"><b>Kind of Blue</b><small>Miles Davis &middot; 1959</small></span></div>
+            <div class="nf-row"><span class="nf-radio"></span><span class="nf-cv"><svg><use href="#nf-moan"/></svg></span><span class="m"><b>Moanin&rsquo;</b><small>Art Blakey &middot; 1958</small></span></div>
+          </div>
+        </div>
+        <div class="nf-sendr">
+          <div class="nf-synced"><i>&#10003;</i><span><b>Synced with iPhone</b><small>Found as flacmn on MacBook Air on the network</small></span><u>Pair another phone</u></div>
+          <div><h5>File format</h5>
+            <div class="nf-fmts">
+              <span class="nf-fmt" data-t="sel:0-11100"><span class="nf-radio" data-t="sel:0-11100"></span>Original<span class="nf-stack"><span class="fx" data-t="on:0-10500">&mdash;</span><span class="fx" data-t="on:10500">352 MB</span></span></span>
+              <span class="nf-fmt"><span class="nf-radio"></span>FLAC 16/44.1<span class="nf-stack"><span class="fx" data-t="on:0-10500">&mdash;</span><span class="fx" data-t="on:10500">352 MB</span></span></span>
+              <span class="nf-fmt" data-t="sel:11100"><span class="nf-radio" data-t="sel:11100"></span>ALAC 16/44.1<span class="nf-stack"><span class="fx" data-t="on:0-10500">&mdash;</span><span class="fx" data-t="on:10500">361 MB</span></span></span>
+              <span class="nf-fmt"><span class="nf-radio"></span>AAC 256 kbps<span class="nf-stack"><span class="fx" data-t="on:0-10500">&mdash;</span><span class="fx" data-t="on:10500">88.1 MB</span></span></span>
+              <span class="nf-fmt"><span class="nf-radio"></span>AAC 128 kbps<span class="nf-stack"><span class="fx" data-t="on:0-10500">&mdash;</span><span class="fx" data-t="on:10500">44.2 MB</span></span></span>
+              <span class="nf-fmt"><span class="nf-radio"></span>MP3 320 kbps<span class="nf-stack"><span class="fx" data-t="on:0-10500">&mdash;</span><span class="fx" data-t="on:10500">110 MB</span></span></span>
+              <span class="nf-fmt"><span class="nf-radio"></span>MP3 192 kbps<span class="nf-stack"><span class="fx" data-t="on:0-10500">&mdash;</span><span class="fx" data-t="on:10500">66.1 MB</span></span></span>
+            </div></div>
+          <div class="nf-card nf-act"><span class="nf-stack"><span class="fx" data-t="on:0-10500">Choose albums on the left</span><span class="fx" data-t="on:10500-11100">1 album &middot; Original &middot; 352 MB</span><span class="fx" data-t="on:11100">1 album &middot; ALAC 16-bit/44.1 kHz &middot; 361 MB</span></span>
+            <span class="nf-btn" data-t="go:10500 press:11600-11800">&#8615; Send to phone</span></div>
+          <div><h5>Ready on your phone</h5>
+            <div class="nf-card nf-ready"><div class="fx rise" data-t="on:11800">
+              <span class="r1"><span><b>Kind of Blue</b> <small>Miles Davis &middot; 361 MB</small></span><span class="nf-stack"><small class="fx" data-t="on:0-12800">Converting to ALAC</small><small class="fx" data-t="on:12800-13300">Waiting for the phone</small><small class="fx" data-t="on:13300-15000">Sending</small><span class="fx" data-t="on:15000">On the phone</span></span></span>
+              <span class="nf-pbar"><i data-fill="11900-12800"></i><i data-fill="13300-15000"></i></span></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nf-phone"><div class="nf-ph">
+    <span class="nf-island"></span><span class="nf-sb"><b>9:41</b><i></i></span>
+    <!-- Home -->
+    <div class="nf-scr fx" data-t="on:0-7700 on:15600-16200">
+      <img class="nf-hlogo" src="logo.svg" alt="">
+      <div class="nf-menu"><span>Artists</span><span>Albums</span><span>Playlists</span><span data-t="press:7450-7700">Music Folder</span></div>
+      <div class="nf-recent"><b>Recently added</b>
+        <div class="nf-stack" style="display:grid">
+          <div class="nf-two fx" data-t="on:0-15600"><span class="nf-cvbtn"><span class="nf-cv"><svg><use href="#nf-rain"/></svg></span><em>In Rainbows</em><small>Radiohead</small></span><span class="nf-cvbtn"><span class="nf-cv"><svg><use href="#nf-moan"/></svg></span><em>Moanin&rsquo;</em><small>Art Blakey</small></span></div>
+          <div class="nf-two fx" data-t="on:15600"><span class="nf-cvbtn" data-t="press:15950-16200"><span class="nf-cv"><svg><use href="#nf-kob"/></svg></span><em>Kind of Blue</em><small>Miles Davis</small></span><span class="nf-cvbtn"><span class="nf-cv"><svg><use href="#nf-rain"/></svg></span><em>In Rainbows</em><small>Radiohead</small></span></div>
+        </div></div>
+    </div>
+    <!-- Music Folder -->
+    <div class="nf-scr fx" data-t="on:7700-8400">
+      <div class="nf-appbar"><span class="bk">&lsaquo;</span><b>Music Folder</b></div>
+      <p class="nf-txt">flacmn plays music from the folders you choose here, read where they are.</p>
+      <div class="nf-li"><span>On My iPhone &rsaquo; flacmn</span></div>
+      <div class="nf-pill">+ Add a folder</div>
+      <div class="nf-li" data-t="press:8150-8400"><span>Receive from a computer</span><small>Albums sent from flacmn on the same Wi-Fi</small></div>
+    </div>
+    <!-- Receive from a computer -->
+    <div class="nf-scr fx" data-t="on:8400-15600">
+      <div class="nf-appbar"><span class="bk">&lsaquo;</span><b>Receive from a computer</b></div>
+      <p class="nf-txt">In flacmn on your computer, choose albums and Send to phone. Keep this screen open while they arrive.</p>
+      <div class="nf-head">COMPUTERS ON THIS WI-FI</div>
+      <div class="nf-stack" style="display:grid">
+        <div class="nf-li fx" data-t="on:8400-8900"><small>Looking for flacmn&hellip;</small></div>
+        <div class="nf-li row fx" data-t="on:8900 press:9050-9300"><span><span>MacBook Air</span><small class="nf-stack"><span class="fx" data-t="on:0-10000">flacmn &middot; tap to pair</span><span class="fx" data-t="on:10000">Paired</span></small></span><span style="flex:none;color:#9A999E">&rsaquo;</span></div>
+      </div>
+      <div class="fx" data-t="on:10000">
+        <div class="nf-head">FROM MACBOOK AIR</div>
+        <div class="nf-stack" style="display:grid">
+          <p class="nf-txt fx" data-t="on:0-12900">Nothing to send yet: choose albums in flacmn on the computer, then pull down or tap Look again.</p>
+          <div class="nf-li fx rise" data-t="on:12900"><b>Kind of Blue</b><small>Miles Davis &middot; 361 MB</small><span class="nf-pbar"><i></i><i data-fill="13300-15000"></i></span></div>
+        </div>
+        <div class="nf-pill dark fx" data-t="on:12900 press:13050-13300"><span class="nf-stack"><span class="fx" data-t="on:0-13300">Receive 361 MB</span><span class="fx" data-t="on:13300-15000">Stop</span><span class="fx" data-t="on:15000">All received</span></span></div>
+      </div>
+      <div class="nf-dlg fx" data-t="on:9300-10000"><div><b>Code shown on MacBook Air</b><span class="fld"><span class="ty" data-type="9400" data-text="632276"></span></span><span class="acts"><span>Cancel</span><span data-t="press:9820-10000">Save</span></span></div></div>
+    </div>
+    <!-- the album -->
+    <div class="nf-scr fx" data-t="on:16200-17200">
+      <div class="nf-appbar"><span class="bk">&lsaquo;</span><b>Kind of Blue</b></div>
+      <div class="nf-alb"><span class="nf-cv"><svg><use href="#nf-kob"/></svg></span>
+        <span><h4>Kind of Blue</h4><small>Miles Davis</small><small>1959 &middot; 5 tracks &middot; 45:44</small><span class="q"><i class="nf-q good">Lossless</i>ALAC &middot; 44.1 kHz</span><span class="nf-pill dark" data-t="press:16850-17100">&#9654; Play</span></span></div>
+      <div class="nf-ptrk"><span>1</span><span>So What</span><span>9:25</span></div><div class="nf-ptrk"><span>2</span><span>Freddie Freeloader</span><span>9:49</span></div><div class="nf-ptrk"><span>3</span><span>Blue in Green</span><span>5:38</span></div><div class="nf-ptrk"><span>4</span><span>All Blues</span><span>11:36</span></div><div class="nf-ptrk"><span>5</span><span>Flamenco Sketches</span><span>9:26</span></div>
+    </div>
+    <!-- Now playing: the cover, then a swipe to the XY scope -->
+    <div class="nf-scr fx" data-t="on:17200">
+      <div class="nf-appbar c"><span class="bk">&lsaquo;</span><b>Now playing</b><span class="more">&middot;&middot;&middot;</span></div>
+      <div class="nf-pages"><div class="nf-track" data-t="p2:19000">
+        <div class="nf-np"><span class="nf-cv"><svg><use href="#nf-kob"/></svg></span><h4>So What</h4><p>Miles Davis &middot; Kind of Blue</p><span class="q"><i class="nf-q good">Lossless</i>ALAC 16-bit &middot; 44.1 kHz</span></div>
+        <div><canvas class="nf-scope" width="300" height="300" data-scope="18700" data-colour="#3D6699"></canvas></div>
+      </div></div>
+      <div class="nf-dots"><i data-t="on:0-19000"></i><i data-t="on:19000"></i></div>
+      <div class="nf-slider"><i data-fill="17200-582200"></i></div>
+      <div class="nf-times"><span data-clock="17200">0:00</span><span>1 of 5</span><span>9:25</span></div>
+      <div class="nf-ctl"><span class="sk prev"></span><span class="pp"></span><span class="sk next"></span><span class="un"></span></div>
+    </div>
+  </div></div>
+</div></template>
+<!-- flowmn's sample run: a mock of the desktop app (Project, Calibration, Preview, Processing, Results) on the same
+     timeline scheme as flacmn's. The canvases draw made-up data: particle images, the calibration's viewing angles
+     and a vector field over two drifting vortices, refined pass by pass (pv-draw in the script). -->
+<template id="pv-tpl"><div class="nf pv">
+  <div class="nf-win pv-win">
+    <div class="nf-title"><i></i><i></i><i></i><span>flowmn</span></div>
+    <div class="pv-bar"><b class="pv-mark">flow<span>mn</span></b><span class="pv-tab" data-t="on:0-5200">Project</span><span class="pv-tab" data-t="on:5200-9800">Calibration</span><span class="pv-tab" data-t="on:9800-16000">Preview</span><span class="pv-tab" data-t="on:16000-21600">Processing</span><span class="pv-tab" data-t="on:21600">Results</span>
+      <span class="pv-proj">jet-array.pivproj</span><span class="pv-pill nf-stack"><span class="fx" data-t="on:0-16000 on:21000">&#9679; Queue &middot; idle</span><span class="fx" data-t="on:16000-21000">&#9679; Queue &middot; 1 running</span></span></div>
+    <div class="pv-body">
+      <!-- Project: the input, then planar or stereo, CPU or GPU -->
+      <div class="nf-scene fx" data-t="on:0-5200">
+        <div class="pv-card" style="width: 380px">
+          <h5>Input</h5><span class="pv-sub">A DaVis project, a folder of projects, or a folder of image pairs</span>
+          <span class="pv-lab">Input file</span>
+          <div class="pv-rowf"><span class="pv-field" data-t="focus:300-2300"><span class="ty" data-type="700" data-text="D:/PIV/jet-array/Recording.set"></span><span class="ph fx" data-t="on:0-650">Choose a .set project or a folder</span></span><span class="nf-btn" data-t="press:350-550">Browse</span></div>
+          <div class="nf-stack"><span class="pv-badge fx" data-t="on:0-2400">No input selected</span><span class="pv-badge fx" data-t="on:2400">DaVis project &middot; 2 cameras &middot; 400 samples &middot; &Delta;t 1000 &micro;s</span></div>
+          <div class="pv-frames fx rise" data-t="on:2400">
+            <div><canvas class="pv-cv" width="340" height="230" data-piv="frame" data-seed="3"></canvas><span class="pv-lab">Camera 1 &middot; frame A</span></div>
+            <div><canvas class="pv-cv" width="340" height="230" data-piv="frame" data-seed="7"></canvas><span class="pv-lab">Camera 2 &middot; frame A</span></div>
+          </div>
+        </div>
+        <div class="pv-card pv-grow">
+          <div class="pv-tabs"><span class="on">Project</span><span>Passes</span><span>Validation</span><span>Output</span></div>
+          <div class="pv-form">
+            <span>Name</span><span class="pv-field">jet-array</span>
+            <span>Mode</span><span><span class="pv-seg"><span data-t="on:0-3200">Planar</span><span data-t="on:3200">Stereo</span></span></span>
+            <span>Backend</span><span><span class="pv-seg"><span data-t="on:0-4200">CPU</span><span data-t="on:4200">GPU</span></span></span>
+            <span></span><span class="pv-note fx" data-t="on:4200">NVIDIA GPU found &middot; CUDA 12</span>
+          </div>
+          <span class="pv-more">Show advanced settings</span>
+        </div>
+      </div>
+      <!-- Calibration: read from the project, viewing angles, units and output -->
+      <div class="nf-scene fx" data-t="on:5200-9800">
+        <div class="pv-card" style="width: 380px">
+          <h5>Calibration</h5><span class="pv-sub">Read from the project, or loaded from a file</span>
+          <div class="pv-rowf"><span class="nf-btn dark" data-t="press:5600-5800">Load from DaVis project</span></div>
+          <div class="pv-cams fx rise" data-t="on:6000">
+            <div><b>Camera 1</b><span>Calibration.xml</span><i class="pv-ok">&#10003; loaded</i></div>
+            <div><b>Camera 2</b><span>Calibration.xml</span><i class="pv-ok">&#10003; loaded</i></div>
+          </div>
+          <div class="fx" data-t="on:6800">
+            <canvas class="pv-cv" width="700" height="300" data-piv="angles" data-sweep="6900-8000"></canvas>
+            <div class="pv-scale"><span class="pv-lab">Viewing angle, camera 1</span><span class="pv-ramp"></span><span class="pv-lab">28&deg; &ndash; 31&deg;</span></div>
+          </div>
+        </div>
+        <div class="pv-col pv-grow">
+          <div class="pv-card">
+            <h5>Scale and timing</h5>
+            <div class="pv-form">
+              <span>Separation</span><span class="pv-field">1000 &micro;s &middot; from project</span>
+              <span>Units</span><span class="pv-field">mm &middot; m/s</span>
+              <span>Origin</span><span class="pv-field">Calibration origin</span>
+            </div>
+          </div>
+          <div class="pv-card">
+            <h5>Output</h5>
+            <div class="pv-chips"><span class="pv-chip on">HDF5</span><span class="pv-chip" data-t="on:8600">Tecplot</span><span class="pv-chip">CSV</span><span class="pv-chip">NPZ</span><span class="pv-chip">PNG</span></div>
+            <div class="pv-form"><span>Folder</span><span class="pv-field">results/</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- Preview: one pair, refined pass by pass, then filtered, then shown over vorticity -->
+      <div class="nf-scene fx" data-t="on:9800-16000">
+        <div class="pv-card pv-grow">
+          <div class="pv-head"><h5>Vector field</h5><span class="nf-stack pv-status"><span class="fx" data-t="on:9800-10200">Press Preview to process a sample</span><span class="fx" data-t="on:10200-10600 on:11500-11800">processing sample 0&hellip;</span><span class="fx" data-t="on:10600-11500 on:11800">1 of 400 &middot; 0001</span></span></div>
+          <canvas class="pv-cv" width="760" height="370" data-piv="preview" data-vec="10600" data-fine="11800" data-valid="13000" data-vort="14600"></canvas>
+          <div class="pv-key"><span><i style="background: #2E2E33"></i>measured</span><span class="fx" data-t="on:10600-13000"><i style="background: #BC3843"></i>rejected</span><span class="fx" data-t="on:13000"><i style="background: #F4B73E"></i>replaced</span></div>
+        </div>
+        <div class="pv-card" style="width: 196px">
+          <div class="pv-rowf"><span class="nf-btn dark" data-t="press:10000-10200">&#9654; Preview</span><span class="pv-auto">Auto-refresh</span></div>
+          <span class="pv-lab">Passes</span>
+          <div class="pv-pass"><b>1</b>64 px &middot; 50% overlap</div>
+          <div class="pv-pass fx rise" data-t="on:11200"><b>2</b>32 px &middot; 75% overlap</div>
+          <div class="pv-pass fx rise" data-t="on:11400"><b>3</b>32 px &middot; 75% overlap</div>
+          <span class="pv-lab">Validation</span>
+          <div class="pv-tg">Peak ratio<i class="pv-sw" data-t="on:13000"></i></div>
+          <div class="pv-tg">Median test<i class="pv-sw" data-t="on:13200"></i></div>
+          <div class="pv-tg">Fill and smooth<i class="pv-sw" data-t="on:13400"></i></div>
+          <span class="pv-lab">Display</span>
+          <span class="pv-seg"><span data-t="on:0-14600">Image</span><span data-t="on:14600">Vorticity</span></span>
+        </div>
+      </div>
+      <!-- Processing: the batch, live -->
+      <div class="nf-scene fx" data-t="on:16000-21600">
+        <div class="pv-card pv-grow">
+          <h5>Queue</h5><span class="pv-sub">Projects run one after another, in the background</span>
+          <div class="pv-job">
+            <div class="pv-rowf"><b>jet-array</b><span class="mu">Recording.set &middot; stereo &middot; GPU</span><span class="nf-stack pv-right"><i class="nf-q wait fx" data-t="on:16000-21000">Running</i><i class="nf-q good fx" data-t="on:21000">Done</i></span></div>
+            <div class="pv-prog"><i data-fill="16600-21000"></i></div>
+            <span class="mu"><span data-count="16600-21000-0-400">0</span> of 400 samples &middot; valid 98.7%</span>
+          </div>
+          <div class="pv-job pv-dim"><div class="pv-rowf"><b>jet-array-2</b><span class="mu">Recording-2.set &middot; waiting</span></div></div>
+          <div class="pv-rowf pv-foot"><span class="nf-btn" data-t="press:21200-21400">Open results</span></div>
+        </div>
+        <div class="pv-card" style="width: 250px">
+          <h5>Latest result</h5><span class="pv-sub">Sample <span data-count="16600-21000-0-400">0</span></span>
+          <canvas class="pv-cv" width="480" height="300" data-piv="latest" data-play="16600-21000"></canvas>
+        </div>
+      </div>
+      <!-- Results: play through the samples, then export -->
+      <div class="nf-scene fx" data-t="on:21600">
+        <div class="pv-card pv-grow">
+          <div class="pv-head"><h5>Results</h5><span class="pv-status">results.h5 &middot; 400 samples</span></div>
+          <canvas class="pv-cv" width="760" height="360" data-piv="results" data-play="21600-25000"></canvas>
+          <div class="pv-rowf"><span class="pv-play">&#9654;</span><div class="pv-prog pv-grow"><i data-fill="21600-25000"></i></div><span class="mu">Sample <span data-count="21600-25000-1-120">1</span> of 400</span></div>
+        </div>
+        <div class="pv-card" style="width: 150px">
+          <span class="pv-lab">Export</span>
+          <span class="nf-btn">CSV</span><span class="nf-btn" data-t="press:23400-23600">Tecplot</span><span class="nf-btn">NPZ</span><span class="nf-btn">HDF5</span><span class="nf-btn">PNG figures</span>
+          <span class="pv-note fx" data-t="on:23800">Saved to results/tecplot/</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></template>
+
+<!-- ===== the deck: the title, then one slide per project ===== -->
+<main class="deck">
+  <section class="slide s-title" data-id="" data-word="" aria-labelledby="name-spcmn">
+    <div class="menu">
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="menu-panel" aria-label="Menu"><span></span><span></span><span></span></button>
+      <nav class="menu-panel" id="menu-panel" aria-label="Site">
+        <ul>
+          <li><a class="m-proj" href="#flacmn" style="--c: var(--purple)">flacmn</a></li>
+          <li><a class="m-proj" href="#flowmn" style="--c: var(--green)">flowmn</a></li>
+          <li class="menu-sep"><a href="#shop">Shop</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#about">About me</a></li>
+          <li><a href="https://github.com/spcmn-studio" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="logo-band"><div class="logo-hold"></div></div>
+    <div class="wrap slide-body">
+      <h1 class="sr-only" id="name-spcmn">spcmn</h1>
+      <p class="intro" data-slot="site.intro" data-hint="What spcmn does, in a few words"></p>
+    </div>
+    <button type="button" class="next-cue" aria-label="Go to the projects">Projects<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+  </section>
+
+  <!-- ===== flacmn ===== -->
+  <section class="slide hue-purple" data-id="flacmn" data-word="flac" aria-labelledby="name-flacmn">
+    <div class="logo-band"><div class="logo-hold"></div></div>
+    <div class="wrap slide-body p-body">
+      <div class="p-text">
+        <h2 class="sr-only" id="name-flacmn">flacmn</h2>
+        <span class="label">Desktop app + phone app</span>
+        <p class="tagline" data-slot="projects.flacmn.summary" data-hint="One line on what flacmn does"></p>
+        <div class="p-actions"><a class="more" href="#flacmn/more">More info<span class="sr-only"> about flacmn</span> &rarr;</a></div>
+      </div>
+      <figure class="demo">
+        <div class="demo-frame duo" aria-hidden="true" data-window="0-23500" data-hold="1400" data-still="14000"></div>
+        <figcaption><span class="demo-step">Sample run: check, send to the phone, play</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== flowmn ===== -->
+  <section class="slide hue-green" data-id="flowmn" data-word="flow" aria-labelledby="name-flowmn">
+    <div class="logo-band"><div class="logo-hold"></div></div>
+    <div class="wrap slide-body p-body">
+      <div class="p-text">
+        <h2 class="sr-only" id="name-flowmn">flowmn</h2>
+        <span class="label">Desktop app + CLI</span>
+        <p class="tagline" data-slot="projects.pivmn.summary" data-hint="One line on what flowmn does"></p>
+        <div class="p-actions"><a class="more" href="#flowmn/more">More info<span class="sr-only"> about flowmn</span> &rarr;</a></div>
+      </div>
+      <figure class="demo">
+        <div class="demo-frame duo" aria-hidden="true" data-run="flowmn" data-window="0-25000" data-hold="1400" data-still="15200"></div>
+        <figcaption><span class="demo-step">Sample run: input, calibration, preview, batch</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+      </figure>
+    </div>
+  </section>
+
+
+  <!-- ===== shop ===== -->
+  <section class="slide hue-paper" data-id="shop" data-word="shop" data-plain aria-labelledby="name-shop">
+    <div class="logo-band"><div class="logo-hold"></div></div>
+    <div class="wrap slide-body p-body">
+      <div class="p-text">
+        <h2 class="sr-only" id="name-shop">Shop</h2>
+        <span class="label">Shop</span>
+        <p class="tagline ph-on">Placeholder: what you sell, and how it's made.</p>
+      </div>
+      <!-- a template: each card's Buy link goes to its Gumroad product page (https://<name>.gumroad.com/l/<product>), in a new tab.
+           flacmn sells the built installer; its source stays free to build from GitHub. -->
+      <div class="shop-grid">
+        <article class="shop-card">
+          <div class="shop-art" data-for="flacmn" style="--c: var(--purple)"></div>
+          <div class="shop-info">
+            <h3>flacmn</h3>
+            <p class="shop-desc">The ready-to-run app for macOS and Windows.</p>
+            <div class="shop-buy"><span class="shop-price">$00</span><a class="shop-btn" href="#shop">Buy<span class="shop-btn-more"> installer</span></a></div>
+          </div>
+        </article>
+        <article class="shop-card">
+          <div class="shop-art" data-for="flowmn" style="--c: var(--green)"></div>
+          <div class="shop-info">
+            <h3>flowmn</h3>
+            <p class="shop-desc ph">Placeholder: what you get, in a line.</p>
+            <div class="shop-buy"><span class="shop-price">$00</span><a class="shop-btn" href="#shop">Buy<span class="shop-btn-more"> on Gumroad</span></a></div>
+          </div>
+        </article>
+        <article class="shop-card">
+          <div class="shop-art shop-art-blank">Image</div>
+          <div class="shop-info">
+            <h3>Product name</h3>
+            <p class="shop-desc ph">Placeholder: what you get, in a line.</p>
+            <div class="shop-buy"><span class="shop-price">$00</span><a class="shop-btn" href="#shop">Buy<span class="shop-btn-more"> on Gumroad</span></a></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== contact ===== -->
+  <section class="slide hue-charcoal" data-id="contact" data-word="contact" data-plain aria-labelledby="name-contact">
+    <div class="logo-band"><div class="logo-hold"></div></div>
+    <div class="wrap slide-body p-body">
+      <div class="p-text">
+        <h2 class="sr-only" id="name-contact">Contact</h2>
+        <span class="label">Contact</span>
+        <p class="tagline ph-on">Placeholder: the best way to reach you, and what you're happy to hear about.</p>
+        <div class="p-actions"><a class="gh" href="https://github.com/spcmn-studio" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub <span class="repo">SPC3MN</span></a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== flowmn: its own page ("More info") ===== -->
+<article class="detail hue-green" id="more-flowmn" data-page="flowmn" aria-labelledby="more-name-flowmn" inert>
+  <header class="d-head">
+    <div class="d-wrap">
+      <a class="d-back" href="#flowmn">&larr; Back to projects</a>
+      <div class="d-mark" data-for="flowmn"></div>
+      <h1 class="sr-only" id="more-name-flowmn">flowmn</h1>
+      <span class="label">Desktop app + CLI</span>
+      <p class="tagline" data-slot="projects.pivmn.summary" data-hint="One line on what flowmn does"></p>
+    </div>
+  </header>
+  <div class="d-wrap d-body">
+    <section class="d-sec">
+      <span class="d-num">01</span>
+      <h2>Overview</h2>
+      <p>flowmn processes particle image velocimetry (PIV) recordings. It reads LaVision DaVis projects or plain image pairs and turns them into velocity fields, planar (two components from one camera) or stereo (three components from two). It runs as a desktop app or from the command line, on a CPU or an NVIDIA GPU, with its own correlation engine written from scratch.</p>
+    </section>
+    <section class="d-sec">
+      <span class="d-num">02</span>
+      <h2>How it works</h2>
+      <div class="d-sub">
+        <h3>Choose the input and mode</h3>
+        <p>A DaVis .set project, a folder of .set files to run as a batch, or a folder of image pairs in .im7, TIFF or PNG. Then planar or stereo, on the CPU, which works on any computer, or on an NVIDIA GPU with CUDA.</p>
+        <figure class="d-fig demo">
+          <div class="demo-frame duo" aria-hidden="true" data-run="flowmn" data-window="0-5199" data-hold="1600" data-still="4600"></div>
+          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+        </figure>
+      </div>
+      <div class="d-sub">
+        <h3>Set units, output and calibration</h3>
+        <p>Calibration is read straight from the project&rsquo;s own Calibration.xml, and stereo viewing angles are worked out at every correlation point.</p>
+        <figure class="d-fig demo">
+          <div class="demo-frame duo" aria-hidden="true" data-run="flowmn" data-window="5200-9799" data-hold="1600" data-still="9000"></div>
+          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+        </figure>
+      </div>
+      <div class="d-sub">
+        <h3>Tune the passes and filters</h3>
+        <p>Set the multi-pass window schedule, then the filters that reject spurious vectors and fill and smooth the field.</p>
+        <figure class="d-fig demo">
+          <div class="demo-frame duo" aria-hidden="true" data-run="flowmn" data-window="9800-15999" data-hold="1600" data-still="15200"></div>
+          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+        </figure>
+      </div>
+      <div class="d-sub">
+        <h3>Preview, then run the batch</h3>
+        <p>Check the result on one pair before committing to the whole batch, which then runs in the background; the results can be plotted as vector fields. The same steps also run from the command line.</p>
+        <figure class="d-fig demo">
+          <div class="demo-frame duo" aria-hidden="true" data-run="flowmn" data-window="16000-25000" data-hold="1400" data-still="22800"></div>
+          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+        </figure>
+      </div>
+    </section>
+    <section class="d-sec">
+      <span class="d-num">03</span>
+      <h2>Results</h2>
+      <p>A run writes every sample&rsquo;s velocity field to one HDF5 file along with the settings that made it, a summary table, and any of CSV, Tecplot, NPZ or PNG figures. Saved results open again to step or play through, mask and export.</p>
+    </section>
+    <a class="d-back d-end" href="#flowmn">&larr; Back to projects</a>
+  </div>
+</article>
+<!-- ===== flacmn: its own page ("More info") ===== -->
+<article class="detail hue-purple" id="more-flacmn" data-page="flacmn" aria-labelledby="more-name-flacmn" inert>
+  <header class="d-head">
+    <div class="d-wrap">
+      <a class="d-back" href="#flacmn">&larr; Back to projects</a>
+      <div class="d-mark" data-for="flacmn"></div>
+      <h1 class="sr-only" id="more-name-flacmn">flacmn</h1>
+      <span class="label">Desktop app + phone app</span>
+      <p class="tagline" data-slot="projects.flacmn.summary" data-hint="One line on what flacmn does"></p>
+    </div>
+  </header>
+  <div class="d-wrap d-body">
+    <section class="d-sec">
+      <span class="d-num">01</span>
+      <h2>Overview</h2>
+      <p>flacmn is a desktop app for people who maintain a digital music library. It looks at every album, verifies the file format and quality, lets you adjust the tags and album art, and sends the music to your phone in whatever format you want.</p>
+    </section>
+    <section class="d-sec">
+      <span class="d-num">02</span>
+      <h2>How it works</h2>
+      <div class="d-sub">
+        <h3>Search your library</h3>
+        <p>One box searches artist, album, song, genre and label across the whole library. Every album is marked Lossless, Hi-res or Lossy from its files, so the ones worth a closer look stand out.</p>
+        <figure class="d-fig demo">
+          <div class="demo-frame duo" aria-hidden="true" data-window="0-3299" data-hold="1400" data-still="2600"></div>
+          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+        </figure>
+      </div>
+      <div class="d-sub">
+        <h3>Check the real quality</h3>
+        <p>Each track&rsquo;s spectrum is measured. A FLAC made from an MP3 or AAC shows the encoder&rsquo;s cutoff and is flagged as a lossy source: here every track of Blue Lines stops near 16 kHz.</p>
+        <figure class="d-fig demo">
+          <div class="demo-frame duo" aria-hidden="true" data-window="3300-7399" data-hold="1800" data-still="6800"></div>
+          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+        </figure>
+      </div>
+      <div class="d-sub">
+        <h3>Fix tags and covers</h3>
+        <p>Tags are checked against MusicBrainz, and missing covers come from the Cover Art Archive, only when you ask.</p>
+      </div>
+      <div class="d-sub">
+        <h3>Pair your phone</h3>
+        <p>The phone app finds the computer on the same Wi-Fi. Type the six-digit code shown on the computer and the two are paired.</p>
+        <figure class="d-fig demo">
+          <div class="demo-frame duo" aria-hidden="true" data-window="7400-9999" data-hold="1600" data-still="9700"></div>
+          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+        </figure>
+      </div>
+      <div class="d-sub">
+        <h3>Choose a format and send</h3>
+        <p>Choose albums and a format: the original, FLAC, ALAC, AAC or MP3, with every size shown before anything is sent. flacmn converts them if needed and sends them to the phone.</p>
+        <figure class="d-fig demo">
+          <div class="demo-frame duo" aria-hidden="true" data-window="10000-15599" data-hold="1600" data-still="14000"></div>
+          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+        </figure>
+      </div>
+      <div class="d-sub">
+        <h3>Play it on the phone</h3>
+        <p>New albums show first under Recently added. The phone app plays each song with its own quality shown, and a swipe brings up an XY scope in the cover&rsquo;s colour.</p>
+        <figure class="d-fig demo">
+          <div class="demo-frame duo" aria-hidden="true" data-window="15600-23500" data-hold="1400" data-still="19500"></div>
+          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+        </figure>
+      </div>
+    </section>
+    <section class="d-sec">
+      <span class="d-num">03</span>
+      <h2>Results</h2>
+      <p>Every album gets a clear verdict, Hi-res, Lossless or Lossy, with the spectrogram that backs it up, tags checked against MusicBrainz and a cover in place.</p>
+      <p>In the quality check above, all nine tracks of a FLAC copy of Blue Lines stop near 16 kHz, a lossy encoder&rsquo;s cutoff: the files say FLAC, but the sound came from an MP3 or AAC. Kind of Blue passes as lossless and goes to the phone as ALAC.</p>
+    </section>
+    <a class="d-back d-end" href="#flacmn">&larr; Back to projects</a>
+  </div>
+</article>
+
+<!-- ===== about me ===== -->
+<article class="detail hue-charcoal" id="more-about" data-page="about" aria-labelledby="about-name" inert>
+  <header class="d-head">
+    <div class="d-wrap">
+      <a class="d-back" href="#">&larr; Back to spcmn</a>
+      <h1 class="d-title" id="about-name">About me</h1>
+      <p class="tagline ph-on">Placeholder: your name, and what you do, in one line.</p>
+    </div>
+  </header>
+  <div class="d-wrap d-body">
+    <div class="d-photo">Photo coming</div>
+    <p class="d-lede ph">Placeholder: a short introduction: who you are, where you work, and what you like to build.</p>
+    <p class="d-links"><a href="https://github.com/spcmn-studio" target="_blank" rel="noopener">GitHub &nearr;</a></p>
+    <a class="d-back d-end" href="#">&larr; Back to spcmn</a>
+  </div>
+</article>
+
+<nav class="deck-dots off" aria-label="Projects">
+  <button type="button" aria-label="spcmn"></button><button type="button" aria-label="flacmn"></button><button type="button" aria-label="flowmn"></button><button type="button" aria-label="Shop"></button><button type="button" aria-label="Contact"></button>
+</nav>
+
+<div class="editbar" id="editbar" hidden>
+  <div class="inner"><span class="status" id="status">Tap Edit to write</span><button type="button" id="edit">Edit</button></div>
+</div>
+
+<script>
+(() => {
+  const STASH = "spcmn-unsaved";
+  const slots = [...document.querySelectorAll("[data-slot]")];
+  const bar = document.getElementById("editbar"), statusEl = document.getElementById("status"), editBtn = document.getElementById("edit");
+  let content = null, art = null, editing = false, dirty = false, saving = false, readOnly = false, timer = null, retried = false;
+
+  const get = (path) => path.split(".").reduce((o, k) => (o == null ? undefined : o[k]), content);
+  function put(path, value) {
+    const keys = path.split(".");
+    let o = content;
+    for (const k of keys.slice(0, -1)) o = o[k] = o[k] && typeof o[k] === "object" ? o[k] : {};
+    o[keys[keys.length - 1]] = value;
+  }
+  const say = (t, state) => {
+    statusEl.textContent = t;
+    bar.dataset.state = state || (/^Saved/.test(t) ? "saved" : /Saving|Unsaved|restored|trying/.test(t) ? "unsaved" : /can't|Couldn't|failed/.test(t) ? "error" : "");
+  };
+
+  // ---- show the text: what you wrote, or (while editing) a hint where nothing is written yet
+  function render() {
+    if (!content) return;
+    for (const el of slots) {
+      if (editing && el === document.activeElement) continue;
+      const v = get(el.dataset.slot);
+      if (typeof v === "string") el.textContent = v;
+      const empty = !el.textContent.trim();
+      el.classList.toggle("empty", empty);
+      el.hidden = empty && !editing;
+    }
+  }
+
+  // ---- editing
+  function setEditing(on) {
+    editing = on;
+    document.documentElement.classList.toggle("editing", on);
+    for (const el of slots) {
+      if (on) {
+        try { el.contentEditable = "plaintext-only"; } catch (e) { el.contentEditable = "true"; }
+        if (el.contentEditable !== "plaintext-only") el.contentEditable = "true";
+        el.spellcheck = true;
+      } else el.removeAttribute("contenteditable");
+    }
+    editBtn.textContent = on ? "Done" : "Edit";
+    if (!on) { if (dirty) save(); else say(readOnly ? "This view can't save" : "Saved"); }
+    else say(dirty ? "Unsaved changes" : "Tap any outlined text to write");
+    render();
+  }
+  editBtn.addEventListener("click", () => setEditing(!editing));
+  // leaving the page with unsaved text: save it now
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden" && dirty) save(); });
+
+  for (const el of slots) {
+    el.addEventListener("input", () => {
+      if (!editing) return;
+      put(el.dataset.slot, el.innerText.replace(/\n$/, ""));
+      el.classList.toggle("empty", !el.innerText.trim());
+      dirty = true;
+      say(readOnly ? "This view can't save; your text stays here until you leave" : "Unsaved changes");
+      schedule();
+    });
+    el.addEventListener("paste", (e) => {            // plain text only, for browsers without plaintext-only editing
+      if (el.contentEditable !== "true") return;
+      e.preventDefault();
+      const t = (e.clipboardData || window.clipboardData).getData("text/plain");
+      document.execCommand("insertText", false, t);
+    });
+    el.addEventListener("blur", () => { if (dirty) schedule(600); });
+  }
+
+  function schedule(ms = 2500) {
+    if (readOnly || !art) return;
+    clearTimeout(timer);
+    timer = setTimeout(() => { timer = null; save(); }, ms);
+  }
+
+  async function save() {
+    if (!dirty || saving || readOnly || !art) return;
+    saving = true;
+    say("Saving…");
+    const sent = JSON.stringify(content, null, 2);
+    try { sessionStorage.setItem(STASH, sent); } catch (e) {}
+    try {
+      await art.publish({ "content.json": { content: sent, contentType: "application/json" } });
+      if (JSON.stringify(content, null, 2) === sent) dirty = false;
+      try { sessionStorage.removeItem(STASH); } catch (e) {}
+      retried = false;
+      say(dirty ? "Unsaved changes" : "Saved");
+    } catch (err) {
+      const code = err && err.code;
+      if (["not_writer", "not_granted", "capability_disabled", "capability_removed", "not_declared", "consent_required", "read_only_path"].includes(code)) {
+        readOnly = true;
+        say("This view can't save; your text stays here until you leave");
+      } else if (code === "conflict") {
+        say("A newer version was saved elsewhere; reloading it");
+      } else if (code === "rate_limited") {
+        say("Saving a lot; trying again shortly"); saving = false; schedule(10000); return;
+      } else if (code === "upstream_error" && !retried) {
+        retried = true; say("Save failed; trying once more"); saving = false; schedule(1500 + Math.random() * 2000); return;
+      } else {
+        say("Couldn't save (" + (code || "error") + "); your text is still here");
+      }
+    } finally {
+      saving = false;
+      if (dirty && !readOnly && !timer && !editing) schedule();
+    }
+  }
+
+  // ---- load your text, then light up editing where this view may save
+  const fallback = { version: 1, site: {}, projects: { flacmn: { steps: {} } } };
+  fetch("content.json", { cache: "no-store" })
+    .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+    .catch(() => fallback)
+    .then((c) => {
+      content = c;
+      try {                                            // text typed before a save was interrupted
+        const stash = sessionStorage.getItem(STASH);
+        if (stash) { content = JSON.parse(stash); dirty = true; }
+      } catch (e) {}
+      render();
+      if (dirty) { say("Unsaved text restored"); schedule(); }
+    });
+
+  if (window.claude && window.claude.use) {
+    window.claude.use("artifact").then((a) => {
+      art = a;
+      if (!a) return;
+      bar.hidden = false;
+      if (dirty) schedule();
+    });
+  }
+
+  // ---- the deck. One slide shows at a time; going to another slides the whole slide up (or down) and the next one in
+  // after it. Each slide carries its own wordmark, which rides with it: on the title, spcmn's dot matrix as ferrofluid;
+  // on each project, its name in Heros Cn Bold and the mn in still dots, as in its mark, centred.
+  (function deck() {
+    const deckEl = document.querySelector(".deck");
+    const slides = [...deckEl.querySelectorAll(".slide")];
+    const holds = slides.map((s) => s.querySelector(".logo-hold"));
+    const dotsNav = document.querySelector(".deck-dots"), navBtns = [...dotsNav.querySelectorAll("button")];
+    const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const NS = "http://www.w3.org/2000/svg";
+    const clamp01 = (v) => Math.max(0, Math.min(1, v));
+    const ease = (u) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const sign = () => (Math.random() < 0.5 ? -1 : 1);
+    const svgEl = (tag, attrs = {}) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+
+    // spcmn's dot letters, one # per dot on a grid of 1 (the dots are 0.9 across): s p c, then m n
+    const dotsOf = (list) => list.flatMap(([x0, rows]) => rows.split("|").flatMap((row, y) =>
+      [...row].flatMap((ch, x) => (ch === "#" ? [{ x: x0 + x + 0.5, y: y + 0.5, r: 0.45 }] : []))));
+    const SPC = dotsOf([[0, ".####|#####|###..|..###|#####|####."], [6, "####.|#####|##.##|##.##|#####|####.|##...|##..."],
+                        [12, ".####|#####|##...|##...|#####|.####"]]);
+    const MN = dotsOf([[18, "#.#####.|########|##.##.##|##.##.##|##.##.##|##.##.##"], [27, "#.##.|#####|##.##|##.##|##.##|##.##"]]);
+    const MN_LEFT = 18.05, MN_W = 13.9;                                  // the mn's left edge and width
+    // the projects' letters are set as in their marks (where the mn's dots are 0.7662 apart): Heros Cn Bold at 8.55,
+    // its baseline 0.093 above the mn's foot, and the mn 1.03 after the letters. Here, in the wordmark's units:
+    const FONT = "'Heros Cn', 'Helvetica Neue', 'Arial Narrow', sans-serif";
+    const FS = 8.55 / 0.7662, BASE = 5.95 - 0.093 / 0.7662, GAP = 1.03 / 0.7662;
+    const VB = [-1.2, -3.2, 34.4, 12.4];                                 // the frame leaves room above for f, l, k, t and below for p, g
+
+    // a project's mark: its name, then the mn 1.03 (mark units) after it, centred together in the frame (a long name
+    // shrinks, mn and all, to fit the 32 units spcmn spans)
+    const measure = document.createElement("canvas").getContext("2d");
+    function layout(word, plain) {                                     // plain: a word on its own (Shop, Contact), no mn
+      if (!word) return null;
+      measure.font = `700 100px ${FONT}`;
+      const m = measure.measureText(word), adv = (m.width / 100) * FS, inkL = ((m.actualBoundingBoxLeft || 0) / 100) * FS;
+      const width = inkL + adv + (plain ? 0 : GAP + MN_W), s = Math.min(1, 32 / width);
+      const x0 = 16 - (s * width) / 2 + s * inkL, mnLeft = x0 + s * (adv + GAP);
+      const y = 3 + s * (BASE - 3), k = (FS * s) / 100;
+      // the letters' ink, top to bottom (the mn's foot is at 5.95 before scaling), for a frame cropped close around them
+      const top = y - m.actualBoundingBoxAscent * k - 0.2, bottom = Math.max(y + m.actualBoundingBoxDescent * k, 3 + s * 2.95) + 0.2;
+      return { text: { word, x: x0, y, fs: FS * s }, top, bottom,
+               mn: plain ? [] : MN.map((d) => ({ x: mnLeft + s * (d.x - MN_LEFT), y: 3 + s * (d.y - 3), r: 0.45 * s })) };
+    }
+
+    // each droplet's rim is the sum of slow ripples (2 to 6 lobes), each swelling and fading on its own beat, and its
+    // centre wanders around its spot. Every 9.5 s the fluid dips towards the still grid and straight back out.
+    const newDrop = (dot) => ({
+      waves: [[2, 0.17], [3, 0.11], [4, 0.07], [5, 0.045], [6, 0.028]].map(([lobes, amp]) => ({
+        lobes, amp: amp * rand(0.6, 1.3), speed: rand(2.6, 6.2) * sign(), phase: rand(0, 2 * Math.PI), surge: rand(0.4, 1.6), surgePhase: rand(0, 2 * Math.PI),
+      })),
+      drift: [rand(1, 2.4), rand(1, 2.4), rand(0, 2 * Math.PI), rand(0, 2 * Math.PI)],
+      x: dot.x, y: dot.y, r: dot.r,
+    });
+    const CYCLE = 9.5, NEAR = 0.6, TURN = 8, HALF = 1.5;
+    function fluidity(t) {
+      const x = Math.abs((t % CYCLE) - TURN) / HALF;
+      return 1 - (1 - NEAR) * (x < 1 ? (1 - x) * (1 - x) : 0);
+    }
+    const K = 12, f = (v) => v.toFixed(3);
+    function shape(d, t, e) {
+      const p = d.r / 0.45, R = d.r * (1 - 0.067 * e);                  // p: the droplet's size against spcmn's own dots
+      const cx = d.x + e * 0.14 * p * Math.sin(d.drift[0] * t + d.drift[2]);
+      const cy = d.y + e * 0.14 * p * Math.sin(d.drift[1] * t + d.drift[3]);
+      const pts = [], reach = 0.8 * p;                                   // never further than this from its spot: holes stay open
+      for (let k = 0; k < K; k++) {
+        const ang = (k / K) * 2 * Math.PI;
+        let m = 1;
+        for (const w of d.waves) m += e * w.amp * (0.5 + 0.5 * Math.abs(Math.sin(w.surge * t + w.surgePhase))) * Math.sin(w.lobes * ang + w.speed * t + w.phase);
+        let px = cx + R * m * Math.cos(ang) - d.x, py = cy + R * m * Math.sin(ang) - d.y;
+        const r = Math.hypot(px, py);
+        if (r > reach) { px *= reach / r; py *= reach / r; }
+        pts.push([d.x + px, d.y + py]);
+      }
+      let out = `M${f(pts[0][0])},${f(pts[0][1])}`;                     // a closed Catmull-Rom spline, as cubic Beziers
+      for (let i = 0; i < K; i++) {
+        const p0 = pts[(i - 1 + K) % K], p1 = pts[i], p2 = pts[(i + 1) % K], p3 = pts[(i + 2) % K];
+        out += `C${f(p1[0] + (p2[0] - p0[0]) / 6)},${f(p1[1] + (p2[1] - p0[1]) / 6)} ${f(p2[0] - (p3[0] - p1[0]) / 6)},${f(p2[1] - (p3[1] - p1[1]) / 6)} ${f(p2[0])},${f(p2[1])}`;
+      }
+      return out + "Z";
+    }
+
+    // ---- the slides
+    const ids = slides.map((s) => s.dataset.id);
+    let index = 0, slideAnim = null, drops = [], paths = null, title = null, openId = "";   // openId: the project page open, if any
+    const SLIDE_MS = still ? 0 : 850;
+    const place = (i, y) => { slides[i].style.transform = `translateY(${y}px)`; };
+    function show(list) {
+      slides.forEach((s, i) => {
+        const on = list.includes(i);
+        s.classList.toggle("shown", on);
+        s.inert = i !== index;
+        if (!on) s.style.transform = "";
+      });
+    }
+    function mark() {
+      navBtns.forEach((b, i) => (i === index ? b.setAttribute("aria-current", "true") : b.removeAttribute("aria-current")));
+      dotsNav.style.color = getComputedStyle(slides[index]).color;
+      dotsNav.classList.toggle("off", index === 0);
+      const h = openId === "about" ? "#about" : ids[index] ? "#" + ids[index] + (openId ? "/more" : "") : location.pathname + location.search;
+      try { history.replaceState(null, "", h); } catch (e) {}
+    }
+    function go(n) {
+      n = Math.max(0, Math.min(slides.length - 1, n));
+      if (n === index || slideAnim) return;
+      const from = index;
+      index = n;
+      mark();
+      if (still) { show([n]); place(n, 0); draw(performance.now()); return; }
+      slideAnim = { t0: performance.now(), from, to: n, dir: n > from ? 1 : -1 };
+      show([from, n]);
+      draw(slideAnim.t0);
+      kick();
+    }
+    function stepSlides(now) {
+      if (!slideAnim) return;
+      const H = deckEl.clientHeight, u = clamp01((now - slideAnim.t0) / SLIDE_MS), w = ease(u), { from, to, dir } = slideAnim;
+      place(from, -dir * H * w);
+      place(to, dir * H * (1 - w));
+      if (u >= 1) { slideAnim = null; show([to]); place(to, 0); }
+    }
+
+    // ---- drawing
+    const blur = svgEl("feGaussianBlur", { in: "SourceGraphic", stdDeviation: "0.17" });
+    function build() {
+      holds.forEach((hold, i) => {
+        const svg = svgEl("svg", { class: "logo", viewBox: VB.join(" "), overflow: "visible", "aria-hidden": "true" });
+        const L = layout(slides[i].dataset.word, "plain" in slides[i].dataset);
+        if (L) {                                                         // a project: its name and a still dot mn
+          svg.setAttribute("viewBox", `${VB[0]} ${f(L.top)} ${VB[2]} ${f(L.bottom - L.top)}`);   // as wide as spcmn's frame, as tall as its letters
+          const t = svgEl("text", { "font-family": FONT, "font-weight": 700, x: f(L.text.x), y: f(L.text.y), "font-size": f(L.text.fs) });
+          t.textContent = L.text.word;
+          svg.append(t, ...L.mn.map((d) => svgEl("circle", { cx: f(d.x), cy: f(d.y), r: f(d.r) })));
+        } else {                                                         // the title: spcmn as ferrofluid
+          // blur the droplets together, then cut back to a hard edge; an invisible rect over the whole frame keeps
+          // Safari from clipping droplets to the group's first box
+          const fl = svgEl("filter", { id: "goo-spcmn", filterUnits: "userSpaceOnUse", x: VB[0] - 0.8, y: VB[1] - 1, width: VB[2] + 1.6, height: VB[3] + 2, "color-interpolation-filters": "sRGB" });
+          fl.append(blur, svgEl("feColorMatrix", { type: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" }));
+          const g = svgEl("g", { filter: "url(#goo-spcmn)" });
+          g.append(svgEl("rect", { x: VB[0], y: VB[1], width: VB[2], height: VB[3], fill: "#000", "fill-opacity": 0 }));
+          drops = [...SPC, ...MN].map(newDrop);
+          paths = drops.map(() => g.appendChild(svgEl("path")));
+          svg.append(svgEl("defs"), g);
+          svg.firstChild.append(fl);
+          title = slides[i];
+        }
+        hold.replaceChildren(svg);
+        // the menu's block for this project carries the same mark, cropped close around its letters
+        const item = L && document.querySelector(`.menu-panel .m-proj[href="#${ids[i]}"]`);
+        if (item && L.mn.length) {
+          const t = L.text, right = Math.max(...L.mn.map((d) => d.x + d.r)), top = t.y - 0.76 * t.fs, bottom = t.y + 0.24 * t.fs;
+          const m = svg.cloneNode(true);
+          m.setAttribute("class", "m-mark");
+          m.setAttribute("viewBox", `${f(t.x - 0.2)} ${f(top)} ${f(right - t.x + 0.4)} ${f(bottom - top)}`);
+          const name = document.createElement("span");
+          name.className = "sr-only"; name.textContent = ids[i];
+          item.replaceChildren(name, m);
+          for (const art of document.querySelectorAll(`.shop-art[data-for="${ids[i]}"]`)) {   // and the shop's picture of it
+            const a = m.cloneNode(true);
+            a.removeAttribute("class");
+            art.replaceChildren(a);
+          }
+        }
+      });
+    }
+    function draw(now) {
+      stepSlides(now);
+      if (!paths || !title.classList.contains("shown")) return;          // the fluid moves only while the title shows
+      const t = now / 1000, e = still ? 0 : fluidity(t);
+      blur.setAttribute("stdDeviation", (0.17 * (still ? 1 : e)).toFixed(3));
+      drops.forEach((d, i) => paths[i].setAttribute("d", shape(d, t, e)));
+    }
+    let running = false, last = 0;
+    function frame(now) {
+      // smooth while the slides move; about 30 frames a second is plenty for the fluid at rest
+      if (!document.hidden && (slideAnim || now - last > 33)) { last = now; draw(now); }
+      if (still && !slideAnim) { running = false; return; }
+      requestAnimationFrame(frame);
+    }
+    function kick() { if (!running) { running = true; requestAnimationFrame(frame); } }
+
+    // ---- start on the slide the address names (old links to a project page, or a category, land on its slide)
+    const old = { software: "flacmn", pivmn: "flowmn" };              // PIVmn was renamed flowmn
+    const [want, wantMore] = location.hash.replace("#", "").split("/");
+    index = Math.max(0, ids.indexOf(old[want] || want));
+    show([index]); place(index, 0); mark();
+
+    // ---- a project's own page ("More info"): an article that slides up over the deck, at #<project>/more. Its Back
+    // link (or the browser's Back, or Esc) closes it onto the project's slide.
+    const details = Object.fromEntries([...document.querySelectorAll(".detail")].map((d) => [d.dataset.page, d]));
+    function openDetail(id) {
+      const d = details[id];
+      if (!d) return;
+      if (openId && openId !== id) closeDetail();
+      openId = id;
+      d.inert = false; d.scrollTop = 0; d.classList.add("open");
+      deckEl.inert = true; dotsNav.inert = true;
+      d.querySelector(".d-back").focus({ preventScroll: true });
+    }
+    function closeDetail() {
+      if (!openId) return;
+      const d = details[openId];
+      openId = "";
+      d.classList.remove("open"); d.inert = true;
+      deckEl.inert = false; dotsNav.inert = false;
+    }
+    if (wantMore === "more" && details[ids[index]]) { openDetail(ids[index]); mark(); }
+    else if (want === "about") { openDetail("about"); mark(); }
+    const fontReady = document.fonts && document.fonts.load
+      ? Promise.race([document.fonts.load(`700 20px "Heros Cn"`), new Promise((r) => setTimeout(r, 2500))]).catch(() => {})
+      : Promise.resolve();
+    fontReady.then(() => {
+      build();
+      for (const m of document.querySelectorAll(".d-mark")) {         // each page's header carries its project's mark
+        const svg = slides[ids.indexOf(m.dataset.for)].querySelector(".logo");
+        if (svg) m.replaceChildren(svg.cloneNode(true));
+      }
+      draw(performance.now());
+      kick();
+    });
+
+    // ---- getting around: swipe, wheel or trackpad, keys, the dots, the cue
+    const inText = (el) => editing && el && el.closest && el.closest("[data-slot]");
+    navBtns.forEach((b, i) => b.addEventListener("click", () => go(i)));
+    document.querySelector(".next-cue").addEventListener("click", () => go(1));
+    let sy = 0, sx = 0, t0 = 0, axis = "";
+    deckEl.addEventListener("touchstart", (e) => {
+      if (e.touches.length !== 1 || inText(e.target)) { axis = "skip"; return; }
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY; t0 = performance.now(); axis = "";
+    }, { passive: true });
+    deckEl.addEventListener("touchmove", (e) => {
+      if (axis === "skip") return;
+      const dx = e.touches[0].clientX - sx, dy = e.touches[0].clientY - sy;
+      if (!axis && Math.hypot(dx, dy) > 8) axis = Math.abs(dy) > Math.abs(dx) ? "y" : "x";
+      if (axis === "y" && e.cancelable) e.preventDefault();
+    }, { passive: false });
+    deckEl.addEventListener("touchend", (e) => {
+      const was = axis; axis = "";
+      if (was !== "y") return;
+      const dy = e.changedTouches[0].clientY - sy, dt = Math.max(1, performance.now() - t0);
+      if (Math.abs(dy) < 30 && Math.abs(dy) / dt < 0.3) return;            // too small: stay
+      go(index + (dy < 0 ? 1 : -1));
+    }, { passive: true });
+    // a wheel turn or trackpad swipe moves one slide; the rest of that gesture (and its coasting) is ignored
+    let wheelSum = 0, wheelLast = 0, wheelSpent = false;
+    window.addEventListener("wheel", (e) => {
+      if (openId || inText(e.target)) return;
+      const now = performance.now();
+      if (now - wheelLast > 240) { wheelSum = 0; wheelSpent = false; }       // a pause: a new gesture
+      wheelLast = now;
+      if (wheelSpent || slideAnim) return;
+      wheelSum += e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1);
+      if (Math.abs(wheelSum) > 40) { wheelSpent = true; go(index + Math.sign(wheelSum)); }
+    }, { passive: true });
+    document.addEventListener("keydown", (e) => {
+      if (openId) { if (e.key === "Escape" && !inText(e.target)) location.hash = openId === "about" ? "#" : "#" + openId; return; }
+      if (inText(e.target) || e.altKey || e.ctrlKey || e.metaKey) return;
+      const k = e.key, onButton = e.target.closest && e.target.closest("button, a");
+      let n = null;
+      if (k === "ArrowDown" || k === "PageDown" || (k === " " && !onButton && !e.shiftKey)) n = index + 1;
+      else if (k === "ArrowUp" || k === "PageUp" || (k === " " && !onButton && e.shiftKey)) n = index - 1;
+      else if (k === "Home") n = 0;
+      else if (k === "End") n = slides.length - 1;
+      if (n === null) return;
+      e.preventDefault();
+      go(n);
+    });
+    window.addEventListener("hashchange", () => {
+      const [h, sub] = location.hash.replace("#", "").split("/"), id = old[h] || h, n = ids.indexOf(id);
+      if (h === "about") { closeMenu(); openDetail("about"); return; }   // About me: over whichever slide shows
+      if (sub === "more" && details[id]) {                               // a project's page: open it over its slide
+        openDetail(id);
+        if (n !== index && !slideAnim) { index = n; show([n]); place(n, 0); mark(); }
+        return;
+      }
+      closeDetail();
+      closeMenu();
+      if (n >= 0) go(n);
+    });
+
+    // ---- the menu on the title: its links are ordinary addresses (#flowmn, #about, GitHub), handled above
+    const menu = document.querySelector(".menu"), menuBtn = menu.querySelector(".menu-btn");
+    function closeMenu() { menu.classList.remove("open"); menuBtn.setAttribute("aria-expanded", "false"); }
+    menuBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const open = !menu.classList.contains("open");
+      menu.classList.toggle("open", open);
+      menuBtn.setAttribute("aria-expanded", String(open));
+      if (open) menu.querySelector(".menu-panel a").focus({ preventScroll: true });
+    });
+    menu.querySelectorAll(".menu-panel a").forEach((a) => a.addEventListener("click", closeMenu));
+    document.addEventListener("click", (e) => { if (!menu.contains(e.target)) closeMenu(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && menu.classList.contains("open")) { closeMenu(); menuBtn.focus(); } });
+    window.addEventListener("resize", () => { if (!slideAnim) place(index, 0); });
+
+    // ---- a project's sample run shrinks if the slide is too short for it
+    function fitDemos() {
+      for (const s of slides) {
+        const body = s.querySelector(".slide-body"), demo = body.querySelector(".demo");
+        if (!demo) continue;
+        demo.style.width = ""; demo.style.justifySelf = "";
+        const cs = getComputedStyle(body), room = body.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+        const full = demo.offsetWidth;
+        for (let pass = 0; pass < 3; pass++) {                           // a narrower run can wrap its caption: check again
+          const kids = [...body.children].filter((c) => c.offsetHeight);
+          const top = Math.min(...kids.map((c) => c.offsetTop)), bottom = Math.max(...kids.map((c) => c.offsetTop + c.offsetHeight));
+          const over = bottom - top - room;
+          if (over <= 0) break;
+          const frame = demo.querySelector(".demo-frame, .demo-pending"), h = frame.offsetHeight, w = demo.offsetWidth;
+          demo.style.width = Math.max(0.25 * full, (w * (h - over)) / h) + "px";
+          demo.style.justifySelf = "center";
+        }
+      }
+    }
+    fitDemos();
+    window.addEventListener("resize", fitDemos);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitDemos);
+    if ("ResizeObserver" in window) { const ro = new ResizeObserver(() => requestAnimationFrame(fitDemos)); document.querySelectorAll(".p-text").forEach((t) => ro.observe(t)); }
+  })();
+
+  // ---- video runs (tankmn): play only while on screen and not paused; under reduced motion, the still poster
+  (function videoRuns() {
+    const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    for (const v of document.querySelectorAll(".demo-frame video")) {
+      const btn = v.closest(".demo").querySelector(".demo-toggle");
+      if (still) { if (btn) btn.hidden = true; continue; }
+      let paused = false, visible = false;
+      const sync = () => { if (visible && !paused) v.play().catch(() => {}); else v.pause(); };
+      if ("IntersectionObserver" in window) new IntersectionObserver((es) => { visible = es[es.length - 1].isIntersecting; sync(); }).observe(v);
+      else { visible = true; sync(); }
+      if (btn) btn.addEventListener("click", () => {
+        paused = !paused;
+        btn.textContent = paused ? "Play" : "Pause";
+        btn.setAttribute("aria-pressed", String(paused));
+        sync();
+      });
+    }
+  })();
+
+  // ---- the sample runs. flacmn's mock in <template id="nf-tpl"> (the desktop app beside the phone app), or flowmn's in
+  // "pv-tpl" for a host with data-run="flowmn", is cloned into every .demo-frame[data-window]; it plays its window a-b, holds data-hold ms, fades and starts again. One clock drives
+  // everything: data-t="cls:a-b" puts class cls on while a <= t < b (several spans of one class add up), data-type types
+  // its text from a, data-fill grows a bar, data-clock counts m:ss from a, data-count="a-b-from-to" counts over a-b, the quality check's canvas draws its
+  // spectrogram column by column and the phone's XY scope traces from data-scope on. A run only moves while it is on
+  // screen and not paused; with reduced motion each one shows the still frame data-still.
+  (function sampleRuns() {
+    const TPL = { flacmn: "nf-tpl", flowmn: "pv-tpl" };
+    const hosts = [...document.querySelectorAll(".demo-frame[data-window]")];
+    if (!hosts.length) return;
+    const W = 730, PER_CHAR = 70, SLICES = 96, FADE = 350, SPEED = 0.6;   // SPEED: the runs play at 0.6x their timeline
+    // what the run is doing, under it: [from ms, words]
+    const STEPS = [[0, "Tag search: one box for artist, album, song and genre"],
+      [1900, "Each album marked Lossless, Hi-res or Lossy from its files"],
+      [3300, "Check quality: every track's spectrum, measured"],
+      [5900, "Caught: a FLAC made from a lossy file, cut off at 16 kHz"],
+      [7400, "Send to app: the phone finds the computer on Wi-Fi"],
+      [9300, "Paired with a six-digit code"],
+      [10000, "Choose albums and a format; the sizes show before sending"],
+      [11600, "Converted to ALAC, then sent to the phone"],
+      [15600, "On the phone: new albums first, under Recently added"],
+      [17200, "Now playing, with the song's own quality"],
+      [19000, "Swipe for the XY scope, in the cover's colour"]];
+    const PV_STEPS = [[0, "Project: a DaVis project, a folder of them, or image pairs"],
+      [2400, "Cameras, frame separation and samples, read from the project"],
+      [3000, "Planar or stereo"],
+      [4000, "On the CPU, or an NVIDIA GPU with CUDA"],
+      [5200, "Calibration: read straight from the project's Calibration.xml"],
+      [6800, "Stereo viewing angles, worked out at every point"],
+      [8200, "Units and output formats"],
+      [9800, "Preview: one pair, processed as the batch will be"],
+      [11200, "The window schedule: 64 px, then two passes at 32 px"],
+      [13000, "Filters replace spurious vectors and fill the gaps"],
+      [14600, "Shown over the vorticity"],
+      [16000, "Processing: the batch runs in the background"],
+      [18000, "Each sample's valid fraction, live"],
+      [21600, "Results: step or play through the samples"],
+      [23400, "Export to CSV, Tecplot, NPZ, HDF5 or PNG"]];
+    const STEPS_OF = { flacmn: STEPS, flowmn: PV_STEPS };
+    const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const span = (s) => { const [a, b] = s.split("-"); return [+a, b ? +b : Infinity]; };
+    const clamp01 = (v) => Math.max(0, Math.min(1, v));
+    const mmss = (s) => Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0");
+    const snap = (p, t) => { p.fm.classList.add("snap"); p.render(t); void p.fm.offsetWidth; p.fm.classList.remove("snap"); };
+
+    const SCALE = [[0, [249, 248, 244]], [0.2, [228, 225, 240]], [0.42, [185, 180, 218]], [0.62, [127, 119, 188]],
+      [0.8, [92, 83, 162]], [1, [52, 46, 104]]];                    // the app's spectrogram colours
+    const colour = (v) => {
+      for (let i = 1; i < SCALE.length; i++) if (v <= SCALE[i][0]) {
+        const [a, ca] = SCALE[i - 1], [b, cb] = SCALE[i], f = (v - a) / (b - a || 1);
+        return ca.map((x, j) => Math.round(x + (cb[j] - x) * f));
+      }
+      return SCALE[SCALE.length - 1][1];
+    };
+    // flowmn's canvases (canvas[data-piv]). The data is made up: particles scattered at random, and a flow of two
+    // vortices and a weaker third that drift from sample to sample. "frame" is a camera's particle image; "angles" the
+    // calibration's viewing angle across camera 1, swept in over data-sweep; "preview" the vector field, coarse from
+    // data-vec, refined from data-fine, its spurious vectors replaced from data-valid, over the vorticity from
+    // data-vort; "latest" and "results" step through the samples over data-play.
+    const PV_INK = "#2E2E33", PV_BAD = "#BC3843", PV_FIX = "#F4B73E";
+    const TURBO = [[48, 18, 59], [70, 134, 251], [26, 228, 182], [162, 252, 60], [250, 186, 57], [228, 70, 10], [122, 4, 3]];
+    const ramp = (stops, v) => {
+      const x = clamp01(v) * (stops.length - 1), i = Math.min(stops.length - 2, Math.floor(x)), f = x - i;
+      return stops[i].map((c, j) => Math.round(c + (stops[i + 1][j] - c) * f));
+    };
+    const DIVERGE = [[47, 95, 160], [150, 178, 214], [246, 244, 238], [222, 150, 150], [188, 56, 67]];
+    const seeded = (seed) => () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    // the flow at (x, y), both in widths of the field, for sample s: Lamb-Oseen vortices
+    function vortices(s) {
+      return [{ x: 0.34 + 0.05 * Math.sin(s * 0.09), y: 0.30 + 0.03 * Math.cos(s * 0.07), g: 1, r: 0.085 },
+        { x: 0.66 + 0.04 * Math.cos(s * 0.08), y: 0.32 + 0.04 * Math.sin(s * 0.06), g: -1, r: 0.09 },
+        { x: 0.50 + 0.12 * Math.sin(s * 0.05), y: 0.13 + 0.03 * Math.sin(s * 0.11), g: 0.55, r: 0.06 }];
+    }
+    function flow(vs, x, y) {
+      let u = 0.04, v = 0, w = 0;
+      for (const k of vs) {
+        const dx = x - k.x, dy = y - k.y, r2 = dx * dx + dy * dy + 1e-6, e = Math.exp(-r2 / (k.r * k.r));
+        const ut = (k.g / (2 * Math.PI * r2)) * (1 - e) * 0.05;
+        u -= ut * dy; v += ut * dx; w += (k.g / (Math.PI * k.r * k.r)) * e * 0.05;
+      }
+      return [u, v, w];
+    }
+    function particles(ctx, W, H, seed, alpha) {
+      const rnd = seeded(seed);
+      ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, W, H);
+      for (let i = 0, n = Math.round(W * H / 80); i < n; i++) {
+        const x = rnd() * W, y = rnd() * H, r = 0.6 + rnd() * 1.0, a = (0.35 + rnd() * 0.65) * alpha;
+        ctx.fillStyle = `rgba(46, 46, 51, ${a.toFixed(3)})`;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
+      }
+    }
+    function vorticity(ctx, W, H, vs) {
+      const img = ctx.createImageData(W / 4, H / 4), d = img.data;
+      for (let j = 0; j < H / 4; j++) for (let i = 0; i < W / 4; i++) {
+        const w = flow(vs, (i * 4) / W, (j * 4) / W)[2];
+        const [r, g, b] = ramp(DIVERGE, 0.5 + w / 4.4), k = 4 * (j * (W / 4) + i);
+        d[k] = r; d[k + 1] = g; d[k + 2] = b; d[k + 3] = 255;
+      }
+      const tmp = document.createElement("canvas"); tmp.width = W / 4; tmp.height = H / 4;
+      tmp.getContext("2d").putImageData(img, 0, 0);
+      ctx.imageSmoothingEnabled = true; ctx.drawImage(tmp, 0, 0, W, H);
+    }
+    function arrow(ctx, x, y, dx, dy, colour, lw) {
+      const len = Math.hypot(dx, dy);
+      if (len < 0.5) return;
+      const ux = dx / len, uy = dy / len, hd = Math.min(len * 0.45, lw * 3.2);
+      ctx.strokeStyle = ctx.fillStyle = colour; ctx.lineWidth = lw;
+      ctx.beginPath(); ctx.moveTo(x - dx / 2, y - dy / 2); ctx.lineTo(x + dx / 2 - ux * hd * 0.6, y + dy / 2 - uy * hd * 0.6); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x + dx / 2, y + dy / 2);
+      ctx.lineTo(x + dx / 2 - ux * hd - uy * hd * 0.5, y + dy / 2 - uy * hd + ux * hd * 0.5);
+      ctx.lineTo(x + dx / 2 - ux * hd + uy * hd * 0.5, y + dy / 2 - uy * hd - ux * hd * 0.5); ctx.fill();
+    }
+    // the vectors on a grid of `cells` across; `bad` marks the spurious ones, drawn red, or amber once replaced
+    function vectors(ctx, W, H, vs, cells, bad) {
+      const g = W / cells, lw = Math.max(1, W / 420);
+      for (let j = 0; (j + 0.5) * g < H; j++) for (let i = 0; i < cells; i++) {
+        const x = (i + 0.5) * g, y = (j + 0.5) * g, [u, v] = flow(vs, x / W, y / W);
+        const spur = bad && (i * 7 + j * 13 + cells) % 29 === 0;
+        if (spur && bad === "red") { const a = (i * 2.3 + j * 1.7) % 6.28; arrow(ctx, x, y, Math.cos(a) * g * 1.1, Math.sin(a) * g * 1.1, PV_BAD, lw); }
+        else arrow(ctx, x, y, u * g * 8, v * g * 8, spur ? PV_FIX : PV_INK, spur ? lw * 1.3 : lw);
+      }
+    }
+    function pivDraw(s, t) {
+      const { c, ctx, kind } = s, W = c.width, H = c.height, ds = c.dataset;
+      let key;
+      if (kind === "frame") key = "f";
+      else if (kind === "angles") { const [a, b] = span(ds.sweep); key = Math.round(clamp01((t - a) / (b - a)) * 70); }
+      else if (kind === "preview") key = [+ds.vec, +ds.fine, +ds.valid, +ds.vort].map((x) => (t >= x ? 1 : 0)).join("");
+      else { const [a, b] = span(ds.play); key = Math.floor(clamp01((t - a) / (b - a)) * (kind === "latest" ? 40 : 120)); }
+      if (key === s.key) return;
+      s.key = key;
+      if (kind === "frame") { particles(ctx, W, H, +ds.seed, 1); return; }
+      if (kind === "angles") {                                       // the calibration plate's dots, then the angle map over them
+        ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = PV_INK;
+        for (let j = 0; j < 9; j++) for (let i = 0; i < 21; i++) {
+          const x = W * (0.04 + i * 0.046) + j * 2, y = H * (0.08 + j * 0.105) + i * 0.6;
+          ctx.beginPath(); ctx.arc(x, y, H / 75, 0, 6.2832); ctx.fill();
+        }
+        const cols = key, cw = W / 70;
+        for (let i = 0; i < cols; i++) for (let j = 0; j < 30; j++) {
+          const x = i / 69, y = j / 29, v = 0.5 + 0.42 * (x - 0.5) * 2 + 0.06 * (y - 0.5) * (y - 0.5) * 4 - 0.03;
+          const [r, g, b] = ramp(TURBO, v);
+          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.82)`; ctx.fillRect(i * cw, (j * H) / 30, cw + 0.5, H / 30 + 0.5);
+        }
+        return;
+      }
+      if (kind === "preview") {
+        const [vec, fine, valid, vort] = key.split("").map(Number), vs = vortices(0);
+        if (vort) vorticity(ctx, W, H, vs); else particles(ctx, W, H, 5, 0.5);
+        if (vec) vectors(ctx, W, H, vs, fine ? 30 : 15, valid ? "amber" : "red");
+        return;
+      }
+      const vs = vortices(key * (kind === "latest" ? 10 : 3.3));
+      vorticity(ctx, W, H, vs);
+      vectors(ctx, W, H, vs, kind === "latest" ? 20 : 30, null);
+    }
+    const players = hosts.map((host) => {
+      const run = host.dataset.run || "flacmn", steps = STEPS_OF[run];
+      host.appendChild(document.getElementById(TPL[run]).content.cloneNode(true));
+      const fm = host.querySelector(".nf");
+      const fit = () => fm.style.setProperty("--s", host.clientWidth / W);
+      if ("ResizeObserver" in window) new ResizeObserver(fit).observe(host); else window.addEventListener("resize", fit);
+      fit();
+      const rules = [...fm.querySelectorAll("[data-t]")].map((el) => {
+        const want = {};
+        for (const q of el.dataset.t.trim().split(/\s+/)) { const [cls, s] = q.split(":"); (want[cls] = want[cls] || []).push(span(s)); }
+        return { el, want: Object.entries(want) };
+      });
+      const typers = [...fm.querySelectorAll("[data-type]")].map((el) => ({ el, at: +el.dataset.type, text: el.dataset.text }));
+      const fills = [...fm.querySelectorAll("[data-fill]")].map((el) => ({ el, ab: span(el.dataset.fill) }));
+      const clocks = [...fm.querySelectorAll("[data-clock]")].map((el) => ({ el, at: +el.dataset.clock }));
+      const counts = [...fm.querySelectorAll("[data-count]")].map((el) => { const [x, y, from, to] = el.dataset.count.split("-").map(Number); return { el, x, y, from, to }; });
+      const specs = [...fm.querySelectorAll("canvas[data-draw]")].map((c) => {
+        const slices = spectra(SLICES, 150, c.dataset.cut ? +c.dataset.cut : 22050);
+        return { c, ctx: c.getContext("2d"), ab: span(c.dataset.draw), slices, drawn: -1 };
+      });
+      const scopes = [...fm.querySelectorAll("canvas[data-scope]")].map((c) => ({ c, ctx: c.getContext("2d"), at: +c.dataset.scope, colour: c.dataset.colour }));
+      const pivs = [...fm.querySelectorAll("canvas[data-piv]")].map((c) => ({ c, ctx: c.getContext("2d"), kind: c.dataset.piv, key: null }));
+      const [a, b] = span(host.dataset.window), hold = host.dataset.hold ? +host.dataset.hold : 1400;
+      const cap = host.closest(".demo").querySelector(".demo-step");
+      let step = -1;
+      const p = { fm, a, span: b - a, len: b - a + hold, fades: hold > 0, t: 0, visible: false, paused: false };
+      p.render = (t) => {
+        for (const { el, want } of rules) for (const [cls, spans] of want) el.classList.toggle(cls, spans.some(([x, y]) => t >= x && t < y));
+        for (const { el, at, text } of typers) {
+          const n = Math.max(0, Math.min(text.length, Math.floor((t - at) / PER_CHAR)));
+          if (el.textContent.length !== n) el.textContent = text.slice(0, n);
+          el.classList.toggle("typing", t >= at - 250 && t < at + text.length * PER_CHAR + 250);
+        }
+        for (const { el, ab: [x, y] } of fills) el.style.width = clamp01((t - x) / (y - x)) * 100 + "%";
+        for (const { el, x, y, from, to } of counts) { const n = String(Math.floor(from + clamp01((t - x) / (y - x)) * (to - from))); if (el.textContent !== n) el.textContent = n; }
+        for (const { el, at } of clocks) { const s = mmss(Math.max(0, t - at) / 1000); if (el.textContent !== s) el.textContent = s; }
+        if (cap) {
+          let k = 0;
+          while (k + 1 < steps.length && steps[k + 1][0] <= t) k++;
+          if (k !== step) { step = k; cap.textContent = steps[k][1]; cap.classList.remove("swap"); void cap.offsetWidth; cap.classList.add("swap"); }
+        }
+        for (const s of specs) {
+          const n = Math.round(clamp01((t - s.ab[0]) / (s.ab[1] - s.ab[0])) * SLICES);
+          if (n !== s.drawn) { spectrogram(s, n); s.drawn = n; }
+        }
+        for (const s of scopes) scope(s, t >= s.at ? t - s.at : -1);
+        for (const s of pivs) pivDraw(s, t);
+      };
+      const btn = host.closest(".demo").querySelector(".demo-toggle");
+      if (still) { fm.classList.add("snap"); p.render(+host.dataset.still); if (btn) btn.hidden = true; return p; }
+      if (btn) btn.addEventListener("click", () => {
+        p.paused = !p.paused;
+        fm.classList.toggle("paused", p.paused);
+        btn.textContent = p.paused ? "Play" : "Pause";
+        btn.setAttribute("aria-pressed", String(p.paused));
+      });
+      snap(p, a);
+      return p;
+    });
+    if (still) return;
+
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((es) => { for (const e of es) e.target.__run.visible = e.isIntersecting; });
+      players.forEach((p, i) => { hosts[i].__run = p; io.observe(hosts[i]); });
+    } else players.forEach((p) => { p.visible = true; });
+
+    let last = null;
+    function tick(now) {
+      const dt = last === null ? 0 : Math.min(now - last, 100);
+      last = now;
+      if (!document.hidden) for (const p of players) {
+        if (!p.visible || p.paused) continue;
+        p.t += dt * SPEED;
+        if (p.t >= p.len) { p.t = 0; snap(p, p.a); }             // start over, behind the fade
+        else p.render(p.a + Math.min(p.t, p.span));                // the hold stays on the window's last frame
+        if (p.fades) p.fm.classList.toggle("out", p.t > p.len - FADE);
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    // the quality check's spectrogram, as in the app: flat, time across, 0 to 22 kHz up the side, quiet in the page's
+    // colour and loud in dark purple. The music is made up (notes with their harmonics, drums over a soft floor); above
+    // `cut` the sound stops dead, as a lossy encoder leaves it, and the dashed line marks where.
+    function spectra(count, bins, cut) {
+      let seed = 11;
+      const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+      const notes = [98, 110, 131, 147, 165, 196, 220];
+      let f0 = 110, age = 0, len = 5;
+      const out = [];
+      for (let k = 0; k < count; k++) {
+        if (age++ > len) { f0 = notes[Math.floor(rnd() * notes.length)] * (rnd() < 0.3 ? 2 : 1); age = 0; len = 3 + rnd() * 5; }
+        const env = Math.exp(-age / (len * 0.8)) * 0.75 + 0.25;
+        const hit = k % 4 === 0 ? 1.6 : k % 2 === 0 ? 1.1 : 0.7;     // a beat
+        const row = new Float32Array(bins);
+        for (let b = 0; b < bins; b++) {
+          const f = (b / (bins - 1)) * 22050;
+          let v = 0.45 * Math.exp(-f / 4200) + 0.17 * hit * Math.exp(-f / 9000) + 0.08 * rnd();
+          for (let h = 1; h <= 26; h++) {
+            const d = Math.abs(f - h * f0) / 140;
+            if (d < 1) v += 0.65 * env * Math.pow(h, -0.55) * (1 - d) * (0.7 + 0.3 * rnd());
+          }
+          if (f > cut) v = 0.012 * rnd();
+          row[b] = 1 - Math.exp(-1.7 * v);
+        }
+        out.push(row);
+      }
+      return out;
+    }
+    function spectrogram({ c, ctx, slices }, n) {
+      const Wc = c.width, H = c.height, cw = Wc / SLICES, TOP = 20900;   // the axis reads 0 to 20 kHz, with headroom
+      ctx.fillStyle = "#F9F8F4"; ctx.fillRect(0, 0, Wc, H);
+      for (let i = 0; i < n; i++) {
+        const row = slices[i], bins = row.length;
+        for (let b = 0; b < bins; b++) {
+          const f0 = (b / bins) * 22050, f1 = ((b + 1) / bins) * 22050;
+          if (f0 > TOP) break;
+          const y1 = H - (f0 / TOP) * H, y0 = H - (Math.min(f1, TOP) / TOP) * H;
+          const [r, g, bl] = colour(Math.pow(row[b], 1.2));
+          ctx.fillStyle = `rgb(${r},${g},${bl})`;
+          ctx.fillRect(Math.floor(i * cw), Math.floor(y0), Math.ceil(cw) + 1, Math.ceil(y1 - y0) + 1);
+        }
+      }
+      ctx.fillStyle = "rgba(46,46,51,0.12)";
+      for (let k = 1; k <= 4; k++) ctx.fillRect(0, Math.round(H - (k * 5000 / TOP) * H), Wc, 1);   // the kHz rules
+      if (n && n < SLICES) { ctx.fillStyle = "#2E2E33"; ctx.fillRect(Math.floor(n * cw), 0, 2, H); }   // the playhead
+    }
+
+    // the phone's XY scope, as in the app: left against right turned 45 degrees so mono stands upright, a thick line
+    // in six parts with the older ones fainter (phosphor), in the cover's colour. The sound is made up: a trumpet-like
+    // tone and a bass over a little stereo spread, swelling and changing note.
+    function scope({ c, ctx, colour: col }, ms) {
+      const S = c.width;
+      ctx.clearRect(0, 0, S, S);
+      if (ms < 0) return;
+      const t0 = ms / 1000, N = 720, PARTS = 6, sr = 44100;
+      const note = [233, 262, 196, 175][Math.floor(t0 / 1.1) % 4], bass = [58, 65, 49, 44][Math.floor(t0 / 1.1) % 4];
+      const swell = 0.8 + 0.2 * Math.sin(t0 * 2.3) * Math.sin(t0 * 0.7 + 1);
+      const pts = [];
+      for (let i = 0; i < N; i++) {
+        const t = t0 + i / sr;
+        const mid = swell * (0.5 * Math.sin(2 * Math.PI * note * t) + 0.22 * Math.sin(2 * Math.PI * note * 2 * t + 0.6) + 0.12 * Math.sin(2 * Math.PI * note * 3 * t + 1.9))
+          + 0.32 * Math.sin(2 * Math.PI * bass * t);
+        const side = 0.26 * Math.sin(2 * Math.PI * note * 1.004 * t + 2.1 + t0 * 0.9) + 0.06 * Math.sin(2 * Math.PI * 1830 * t + t0 * 3);
+        pts.push([S / 2 + side * S * 0.8, S / 2 - mid * S * 0.44]);
+      }
+      ctx.lineWidth = S * 0.013; ctx.lineJoin = ctx.lineCap = "round"; ctx.strokeStyle = col;
+      const per = Math.ceil(N / PARTS);
+      for (let k = 0; k < PARTS; k++) {
+        ctx.globalAlpha = 0.18 + 0.82 * ((k + 1) / PARTS);
+        ctx.beginPath();
+        for (let i = k * per; i <= Math.min(N - 1, (k + 1) * per); i++) i === k * per ? ctx.moveTo(...pts[i]) : ctx.lineTo(...pts[i]);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+  })();
+})();
+</script>
