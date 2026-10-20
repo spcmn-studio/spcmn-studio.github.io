@@ -379,70 +379,6 @@ body { overflow: hidden; overscroll-behavior: none; }
 .nf-pbar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #B9B6C9; }
 .nf-pbar i + i { background: #20A76B; }
 
-/* flowmn's sample run: a 730 x 400 mock of its desktop app, in its own chrome (a charcoal bar with pill tabs, white cards
-   on the off-white ground), on the same timeline scheme as flacmn's */
-.pv-win { width: 722px; }
-.pv-bar { height: 26px; display: flex; align-items: center; gap: 3px; padding: 0 9px; background: #2E2E33; color: #E4E2DB; }
-.pv-mark { font: 700 12px/1 "Heros Cn", var(--body); color: #F6F4EE; margin-right: 10px; letter-spacing: -0.01em; }
-.pv-mark span { font-weight: 400; opacity: 0.85; }
-.pv-tab { font-size: 6.8px; font-weight: 700; padding: 3.5px 7px; border-radius: 99px; transition: background 0.3s, color 0.3s; }
-.pv-tab.on { background: #F6F4EE; color: #2E2E33; }
-.pv-proj { margin-left: auto; font-size: 6.4px; }
-.pv-pill { margin-left: 8px; font: 500 5.6px/1 var(--mono); border: 0.6px solid #5F5E63; border-radius: 99px; padding: 2.5px 6px; }
-.pv-body { position: absolute; left: 0; right: 0; top: 41px; bottom: 0; }
-.pv-card { background: #FFFFFF; border: 0.6px solid #E6E3DA; border-radius: 6px; padding: 9px; display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: none; }
-.pv-grow { flex: 1; min-width: 0; }
-.pv-col { display: flex; flex-direction: column; gap: 8px; }
-.pv h5 { font-size: 8.5px; margin: 0; }
-.pv-sub { font-size: 6px; color: #5F5E63; margin-top: -4px; }
-.pv-lab { font: 500 5.2px/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: #5F5E63; }
-.pv-rowf { display: flex; gap: 5px; align-items: center; }
-.pv-field { height: 17px; border: 0.6px solid #D3D0C8; border-radius: 4px; display: flex; align-items: center; padding: 0 6px; font-size: 6.6px; background: #FFFFFF;
-            flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; position: relative; transition: border-color 0.3s, box-shadow 0.3s; }
-.pv-field.focus { border-color: #2E2E33; box-shadow: 0 0 0 1.5px rgba(46, 46, 51, 0.15); }
-.pv-field .ph { position: absolute; left: 6px; color: #86848A; }
-.pv-badge { font-size: 6px; font-weight: 700; border-radius: 99px; padding: 2.5px 7px; background: #ECEAE4; color: #2E2E33; white-space: nowrap; justify-self: start; }
-.pv-frames { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.pv-frames > div { display: grid; gap: 3px; }
-.pv-cv { display: block; width: 100%; height: auto; border-radius: 4px; background: #FFFFFF; }
-.pv-tabs { display: flex; gap: 10px; font-size: 6.4px; font-weight: 700; color: #86848A; border-bottom: 0.6px solid #ECE9E2; padding-bottom: 5px; }
-.pv-tabs .on { color: #2E2E33; box-shadow: 0 5.6px 0 -4.4px #2E2E33; }
-.pv-form { display: grid; grid-template-columns: 50px 1fr; gap: 7px 8px; align-items: center; font-size: 6.6px; }
-.pv-form > span:nth-child(odd) { color: #5F5E63; }
-.pv-seg { display: inline-flex; align-self: flex-start; background: #ECEAE4; border-radius: 5px; padding: 1.5px; gap: 1.5px; }
-.pv-seg span { font-size: 6.2px; font-weight: 700; padding: 3px 8px; border-radius: 4px; color: #45454B; transition: background 0.3s, color 0.3s; }
-.pv-seg span.on { background: #2E2E33; color: #F6F4EE; }
-.pv-note { font-size: 6px; font-weight: 700; color: #2E2E33; }
-.pv-more { margin-top: auto; font-size: 6.2px; color: #5F5E63; text-decoration: underline; text-decoration-thickness: 0.5px; }
-.pv-cams { display: grid; gap: 3px; }
-.pv-cams > div { display: flex; gap: 6px; align-items: center; font-size: 6.4px; padding: 4px 6px; border-radius: 4px; background: #F3F1EB; }
-.pv-cams span { color: #5F5E63; flex: 1; }
-.pv-ok { font-style: normal; font-size: 5.6px; font-weight: 700; color: #0F6E56; }
-.pv-scale { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
-.pv-ramp { flex: 1; height: 4px; border-radius: 99px; background: linear-gradient(90deg, #30123B, #4686FB, #1AE4B6, #A2FC3C, #FABA39, #E4460A, #7A0403); }
-.pv-chips { display: flex; flex-wrap: wrap; gap: 3px; }
-.pv-chip { font-size: 6px; font-weight: 700; padding: 2.5px 6px; border-radius: 99px; border: 0.6px solid #D3D0C8; color: #45454B; transition: background 0.3s, color 0.3s, border-color 0.3s; }
-.pv-chip.on { background: #2E2E33; border-color: #2E2E33; color: #F6F4EE; }
-.pv-head { display: flex; justify-content: space-between; align-items: baseline; }
-.pv-status { font: 500 5.6px/1 var(--mono); color: #5F5E63; text-align: right; }
-.pv-status > span { justify-self: end; }
-.pv-key { display: flex; gap: 9px; font-size: 5.8px; color: #5F5E63; }
-.pv-key i { display: inline-block; width: 7px; height: 1.6px; margin-right: 3px; vertical-align: 1.5px; }
-.pv-auto { font-size: 5.8px; color: #5F5E63; }
-.pv-pass { display: flex; gap: 6px; align-items: center; font-size: 6.2px; padding: 4px 6px; border-radius: 4px; background: #F3F1EB; }
-.pv-pass b { font: 500 5.6px/1 var(--mono); color: #5F5E63; }
-.pv-tg { display: flex; justify-content: space-between; align-items: center; font-size: 6.4px; }
-.pv-sw { width: 14px; height: 8px; border-radius: 99px; background: #D3D0C8; position: relative; transition: background 0.3s; }
-.pv-sw::after { content: ""; position: absolute; left: 1px; top: 1px; width: 6px; height: 6px; border-radius: 50%; background: #FFFFFF; transition: transform 0.3s; }
-.pv-sw.on { background: #2E2E33; } .pv-sw.on::after { transform: translateX(6px); }
-.pv-job { display: grid; gap: 5px; padding: 7px; border-radius: 5px; background: #F3F1EB; font-size: 6.6px; }
-.pv-job .mu { font-size: 6px; }
-.pv-dim { opacity: 0.6; }
-.pv-right { margin-left: auto; }
-.pv-foot { margin-top: auto; }
-.pv-prog { height: 4px; border-radius: 99px; background: #E6E3DA; overflow: hidden; }
-.pv-prog i { display: block; height: 100%; width: 0; background: #2E2E33; }
-.pv-play { font-size: 7px; }
 
 /* the phone */
 .nf-phone { position: absolute; left: 556px; top: 16px; width: 170px; height: 368px; border-radius: 27px; background: #1E1E22; padding: 6px;
@@ -716,122 +652,6 @@ body { overflow: hidden; overscroll-behavior: none; }
     </div>
   </div></div>
 </div></template>
-<!-- flowmn's sample run: a mock of the desktop app (Project, Calibration, Preview, Processing, Results) on the same
-     timeline scheme as flacmn's. The canvases draw made-up data: particle images, the calibration's viewing angles
-     and a vector field over two drifting vortices, refined pass by pass (pv-draw in the script). -->
-<template id="pv-tpl"><div class="nf pv">
-  <div class="nf-win pv-win">
-    <div class="nf-title"><i></i><i></i><i></i><span>flowmn</span></div>
-    <div class="pv-bar"><b class="pv-mark">flow<span>mn</span></b><span class="pv-tab" data-t="on:0-5200">Project</span><span class="pv-tab" data-t="on:5200-9800">Calibration</span><span class="pv-tab" data-t="on:9800-16000">Preview</span><span class="pv-tab" data-t="on:16000-21600">Processing</span><span class="pv-tab" data-t="on:21600">Results</span>
-      <span class="pv-proj">jet-array.pivproj</span><span class="pv-pill nf-stack"><span class="fx" data-t="on:0-16000 on:21000">&#9679; Queue &middot; idle</span><span class="fx" data-t="on:16000-21000">&#9679; Queue &middot; 1 running</span></span></div>
-    <div class="pv-body">
-      <!-- Project: the input, then planar or stereo, CPU or GPU -->
-      <div class="nf-scene fx" data-t="on:0-5200">
-        <div class="pv-card" style="width: 380px">
-          <h5>Input</h5><span class="pv-sub">A DaVis project, a folder of projects, or a folder of image pairs</span>
-          <span class="pv-lab">Input file</span>
-          <div class="pv-rowf"><span class="pv-field" data-t="focus:300-2300"><span class="ty" data-type="700" data-text="D:/PIV/jet-array/Recording.set"></span><span class="ph fx" data-t="on:0-650">Choose a .set project or a folder</span></span><span class="nf-btn" data-t="press:350-550">Browse</span></div>
-          <div class="nf-stack"><span class="pv-badge fx" data-t="on:0-2400">No input selected</span><span class="pv-badge fx" data-t="on:2400">DaVis project &middot; 2 cameras &middot; 400 samples &middot; &Delta;t 1000 &micro;s</span></div>
-          <div class="pv-frames fx rise" data-t="on:2400">
-            <div><canvas class="pv-cv" width="340" height="230" data-piv="frame" data-seed="3"></canvas><span class="pv-lab">Camera 1 &middot; frame A</span></div>
-            <div><canvas class="pv-cv" width="340" height="230" data-piv="frame" data-seed="7"></canvas><span class="pv-lab">Camera 2 &middot; frame A</span></div>
-          </div>
-        </div>
-        <div class="pv-card pv-grow">
-          <div class="pv-tabs"><span class="on">Project</span><span>Passes</span><span>Validation</span><span>Output</span></div>
-          <div class="pv-form">
-            <span>Name</span><span class="pv-field">jet-array</span>
-            <span>Mode</span><span><span class="pv-seg"><span data-t="on:0-3200">Planar</span><span data-t="on:3200">Stereo</span></span></span>
-            <span>Backend</span><span><span class="pv-seg"><span data-t="on:0-4200">CPU</span><span data-t="on:4200">GPU</span></span></span>
-            <span></span><span class="pv-note fx" data-t="on:4200">NVIDIA GPU found &middot; CUDA 12</span>
-          </div>
-          <span class="pv-more">Show advanced settings</span>
-        </div>
-      </div>
-      <!-- Calibration: read from the project, viewing angles, units and output -->
-      <div class="nf-scene fx" data-t="on:5200-9800">
-        <div class="pv-card" style="width: 380px">
-          <h5>Calibration</h5><span class="pv-sub">Read from the project, or loaded from a file</span>
-          <div class="pv-rowf"><span class="nf-btn dark" data-t="press:5600-5800">Load from DaVis project</span></div>
-          <div class="pv-cams fx rise" data-t="on:6000">
-            <div><b>Camera 1</b><span>Calibration.xml</span><i class="pv-ok">&#10003; loaded</i></div>
-            <div><b>Camera 2</b><span>Calibration.xml</span><i class="pv-ok">&#10003; loaded</i></div>
-          </div>
-          <div class="fx" data-t="on:6800">
-            <canvas class="pv-cv" width="700" height="300" data-piv="angles" data-sweep="6900-8000"></canvas>
-            <div class="pv-scale"><span class="pv-lab">Viewing angle, camera 1</span><span class="pv-ramp"></span><span class="pv-lab">28&deg; &ndash; 31&deg;</span></div>
-          </div>
-        </div>
-        <div class="pv-col pv-grow">
-          <div class="pv-card">
-            <h5>Scale and timing</h5>
-            <div class="pv-form">
-              <span>Separation</span><span class="pv-field">1000 &micro;s &middot; from project</span>
-              <span>Units</span><span class="pv-field">mm &middot; m/s</span>
-              <span>Origin</span><span class="pv-field">Calibration origin</span>
-            </div>
-          </div>
-          <div class="pv-card">
-            <h5>Output</h5>
-            <div class="pv-chips"><span class="pv-chip on">HDF5</span><span class="pv-chip" data-t="on:8600">Tecplot</span><span class="pv-chip">CSV</span><span class="pv-chip">NPZ</span><span class="pv-chip">PNG</span></div>
-            <div class="pv-form"><span>Folder</span><span class="pv-field">results/</span></div>
-          </div>
-        </div>
-      </div>
-      <!-- Preview: one pair, refined pass by pass, then filtered, then shown over vorticity -->
-      <div class="nf-scene fx" data-t="on:9800-16000">
-        <div class="pv-card pv-grow">
-          <div class="pv-head"><h5>Vector field</h5><span class="nf-stack pv-status"><span class="fx" data-t="on:9800-10200">Press Preview to process a sample</span><span class="fx" data-t="on:10200-10600 on:11500-11800">processing sample 0&hellip;</span><span class="fx" data-t="on:10600-11500 on:11800">1 of 400 &middot; 0001</span></span></div>
-          <canvas class="pv-cv" width="760" height="370" data-piv="preview" data-vec="10600" data-fine="11800" data-valid="13000" data-vort="14600"></canvas>
-          <div class="pv-key"><span><i style="background: #2E2E33"></i>measured</span><span class="fx" data-t="on:10600-13000"><i style="background: #BC3843"></i>rejected</span><span class="fx" data-t="on:13000"><i style="background: #F4B73E"></i>replaced</span></div>
-        </div>
-        <div class="pv-card" style="width: 196px">
-          <div class="pv-rowf"><span class="nf-btn dark" data-t="press:10000-10200">&#9654; Preview</span><span class="pv-auto">Auto-refresh</span></div>
-          <span class="pv-lab">Passes</span>
-          <div class="pv-pass"><b>1</b>64 px &middot; 50% overlap</div>
-          <div class="pv-pass fx rise" data-t="on:11200"><b>2</b>32 px &middot; 75% overlap</div>
-          <div class="pv-pass fx rise" data-t="on:11400"><b>3</b>32 px &middot; 75% overlap</div>
-          <span class="pv-lab">Validation</span>
-          <div class="pv-tg">Peak ratio<i class="pv-sw" data-t="on:13000"></i></div>
-          <div class="pv-tg">Median test<i class="pv-sw" data-t="on:13200"></i></div>
-          <div class="pv-tg">Fill and smooth<i class="pv-sw" data-t="on:13400"></i></div>
-          <span class="pv-lab">Display</span>
-          <span class="pv-seg"><span data-t="on:0-14600">Image</span><span data-t="on:14600">Vorticity</span></span>
-        </div>
-      </div>
-      <!-- Processing: the batch, live -->
-      <div class="nf-scene fx" data-t="on:16000-21600">
-        <div class="pv-card pv-grow">
-          <h5>Queue</h5><span class="pv-sub">Projects run one after another, in the background</span>
-          <div class="pv-job">
-            <div class="pv-rowf"><b>jet-array</b><span class="mu">Recording.set &middot; stereo &middot; GPU</span><span class="nf-stack pv-right"><i class="nf-q wait fx" data-t="on:16000-21000">Running</i><i class="nf-q good fx" data-t="on:21000">Done</i></span></div>
-            <div class="pv-prog"><i data-fill="16600-21000"></i></div>
-            <span class="mu"><span data-count="16600-21000-0-400">0</span> of 400 samples &middot; valid 98.7%</span>
-          </div>
-          <div class="pv-job pv-dim"><div class="pv-rowf"><b>jet-array-2</b><span class="mu">Recording-2.set &middot; waiting</span></div></div>
-          <div class="pv-rowf pv-foot"><span class="nf-btn" data-t="press:21200-21400">Open results</span></div>
-        </div>
-        <div class="pv-card" style="width: 250px">
-          <h5>Latest result</h5><span class="pv-sub">Sample <span data-count="16600-21000-0-400">0</span></span>
-          <canvas class="pv-cv" width="480" height="300" data-piv="latest" data-play="16600-21000"></canvas>
-        </div>
-      </div>
-      <!-- Results: play through the samples, then export -->
-      <div class="nf-scene fx" data-t="on:21600">
-        <div class="pv-card pv-grow">
-          <div class="pv-head"><h5>Results</h5><span class="pv-status">results.h5 &middot; 400 samples</span></div>
-          <canvas class="pv-cv" width="760" height="360" data-piv="results" data-play="21600-25000"></canvas>
-          <div class="pv-rowf"><span class="pv-play">&#9654;</span><div class="pv-prog pv-grow"><i data-fill="21600-25000"></i></div><span class="mu">Sample <span data-count="21600-25000-1-120">1</span> of 400</span></div>
-        </div>
-        <div class="pv-card" style="width: 150px">
-          <span class="pv-lab">Export</span>
-          <span class="nf-btn">CSV</span><span class="nf-btn" data-t="press:23400-23600">Tecplot</span><span class="nf-btn">NPZ</span><span class="nf-btn">HDF5</span><span class="nf-btn">PNG figures</span>
-          <span class="pv-note fx" data-t="on:23800">Saved to results/tecplot/</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div></template>
 
 <!-- ===== the deck: the title, then one slide per project ===== -->
 <main class="deck">
@@ -885,8 +705,8 @@ body { overflow: hidden; overscroll-behavior: none; }
         <div class="p-actions"><a class="more" href="#flowmn/more">More info<span class="sr-only"> about flowmn</span> &rarr;</a></div>
       </div>
       <figure class="demo">
-        <div class="demo-frame duo" aria-hidden="true" data-run="flowmn" data-window="0-25000" data-hold="1400" data-still="15200"></div>
-        <figcaption><span class="demo-step">Sample run: input, calibration, preview, batch</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+        <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-run.mp4" poster="media/flowmn-run.jpg" muted loop playsinline preload="metadata"></video></div>
+        <figcaption><span>Real data: a planar recording, from input to results</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
       </figure>
     </div>
   </section>
@@ -970,32 +790,32 @@ body { overflow: hidden; overscroll-behavior: none; }
         <h3>Choose the input and mode</h3>
         <p>A DaVis .set project, a folder of .set files to run as a batch, or a folder of image pairs in .im7, TIFF or PNG. Then planar or stereo, on the CPU, which works on any computer, or on an NVIDIA GPU with CUDA.</p>
         <figure class="d-fig demo">
-          <div class="demo-frame duo" aria-hidden="true" data-run="flowmn" data-window="0-5199" data-hold="1600" data-still="4600"></div>
-          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-1-project.mp4" poster="media/flowmn-1-project.jpg" muted loop playsinline preload="metadata"></video></div>
+          <figcaption><span>Real data: a DaVis project, 1000 samples from one camera</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
         </figure>
       </div>
       <div class="d-sub">
         <h3>Set units, output and calibration</h3>
         <p>Calibration is read straight from the project&rsquo;s own Calibration.xml, and stereo viewing angles are worked out at every correlation point.</p>
         <figure class="d-fig demo">
-          <div class="demo-frame duo" aria-hidden="true" data-run="flowmn" data-window="5200-9799" data-hold="1600" data-still="9000"></div>
-          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-2-calibration.mp4" poster="media/flowmn-2-calibration.jpg" muted loop playsinline preload="metadata"></video></div>
+          <figcaption><span>Frame separation read from the DaVis project; Tecplot output on</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
         </figure>
       </div>
       <div class="d-sub">
         <h3>Tune the passes and filters</h3>
         <p>Set the multi-pass window schedule, then the filters that reject spurious vectors and fill and smooth the field.</p>
         <figure class="d-fig demo">
-          <div class="demo-frame duo" aria-hidden="true" data-run="flowmn" data-window="9800-15999" data-hold="1600" data-still="15200"></div>
-          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-3-preview.mp4" poster="media/flowmn-3-preview.jpg" muted loop playsinline preload="metadata"></video></div>
+          <figcaption><span>One pass, then three; filters on; shown over the vorticity</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
         </figure>
       </div>
       <div class="d-sub">
         <h3>Preview, then run the batch</h3>
         <p>Check the result on one pair before committing to the whole batch, which then runs in the background; the results can be plotted as vector fields. The same steps also run from the command line.</p>
         <figure class="d-fig demo">
-          <div class="demo-frame duo" aria-hidden="true" data-run="flowmn" data-window="16000-25000" data-hold="1400" data-still="22800"></div>
-          <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-4-batch.mp4" poster="media/flowmn-4-batch.jpg" muted loop playsinline preload="metadata"></video></div>
+          <figcaption><span>A 20-sample batch, then its results played and exported</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
         </figure>
       </div>
     </section>
@@ -1559,7 +1379,7 @@ body { overflow: hidden; overscroll-behavior: none; }
     if ("ResizeObserver" in window) { const ro = new ResizeObserver(() => requestAnimationFrame(fitDemos)); document.querySelectorAll(".p-text").forEach((t) => ro.observe(t)); }
   })();
 
-  // ---- video runs (tankmn): play only while on screen and not paused; under reduced motion, the still poster
+  // ---- video runs (flowmn): play only while on screen and not paused; under reduced motion, the still poster
   (function videoRuns() {
     const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
     for (const v of document.querySelectorAll(".demo-frame video")) {
@@ -1578,14 +1398,14 @@ body { overflow: hidden; overscroll-behavior: none; }
     }
   })();
 
-  // ---- the sample runs. flacmn's mock in <template id="nf-tpl"> (the desktop app beside the phone app), or flowmn's in
-  // "pv-tpl" for a host with data-run="flowmn", is cloned into every .demo-frame[data-window]; it plays its window a-b, holds data-hold ms, fades and starts again. One clock drives
+  // ---- the sample runs. flacmn's mock in <template id="nf-tpl"> (the desktop app beside the phone app) is cloned
+  // into every .demo-frame[data-window]; it plays its window a-b, holds data-hold ms, fades and starts again. One clock drives
   // everything: data-t="cls:a-b" puts class cls on while a <= t < b (several spans of one class add up), data-type types
   // its text from a, data-fill grows a bar, data-clock counts m:ss from a, data-count="a-b-from-to" counts over a-b, the quality check's canvas draws its
   // spectrogram column by column and the phone's XY scope traces from data-scope on. A run only moves while it is on
   // screen and not paused; with reduced motion each one shows the still frame data-still.
   (function sampleRuns() {
-    const TPL = { flacmn: "nf-tpl", flowmn: "pv-tpl" };
+    const TPL = { flacmn: "nf-tpl" };
     const hosts = [...document.querySelectorAll(".demo-frame[data-window]")];
     if (!hosts.length) return;
     const W = 730, PER_CHAR = 70, SLICES = 96, FADE = 350, SPEED = 0.6;   // SPEED: the runs play at 0.6x their timeline
@@ -1601,22 +1421,7 @@ body { overflow: hidden; overscroll-behavior: none; }
       [15600, "On the phone: new albums first, under Recently added"],
       [17200, "Now playing, with the song's own quality"],
       [19000, "Swipe for the XY scope, in the cover's colour"]];
-    const PV_STEPS = [[0, "Project: a DaVis project, a folder of them, or image pairs"],
-      [2400, "Cameras, frame separation and samples, read from the project"],
-      [3000, "Planar or stereo"],
-      [4000, "On the CPU, or an NVIDIA GPU with CUDA"],
-      [5200, "Calibration: read straight from the project's Calibration.xml"],
-      [6800, "Stereo viewing angles, worked out at every point"],
-      [8200, "Units and output formats"],
-      [9800, "Preview: one pair, processed as the batch will be"],
-      [11200, "The window schedule: 64 px, then two passes at 32 px"],
-      [13000, "Filters replace spurious vectors and fill the gaps"],
-      [14600, "Shown over the vorticity"],
-      [16000, "Processing: the batch runs in the background"],
-      [18000, "Each sample's valid fraction, live"],
-      [21600, "Results: step or play through the samples"],
-      [23400, "Export to CSV, Tecplot, NPZ, HDF5 or PNG"]];
-    const STEPS_OF = { flacmn: STEPS, flowmn: PV_STEPS };
+    const STEPS_OF = { flacmn: STEPS };
     const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
     const span = (s) => { const [a, b] = s.split("-"); return [+a, b ? +b : Infinity]; };
     const clamp01 = (v) => Math.max(0, Math.min(1, v));
@@ -1632,109 +1437,6 @@ body { overflow: hidden; overscroll-behavior: none; }
       }
       return SCALE[SCALE.length - 1][1];
     };
-    // flowmn's canvases (canvas[data-piv]). The data is made up: particles scattered at random, and a flow of two
-    // vortices and a weaker third that drift from sample to sample. "frame" is a camera's particle image; "angles" the
-    // calibration's viewing angle across camera 1, swept in over data-sweep; "preview" the vector field, coarse from
-    // data-vec, refined from data-fine, its spurious vectors replaced from data-valid, over the vorticity from
-    // data-vort; "latest" and "results" step through the samples over data-play.
-    const PV_INK = "#2E2E33", PV_BAD = "#BC3843", PV_FIX = "#F4B73E";
-    const TURBO = [[48, 18, 59], [70, 134, 251], [26, 228, 182], [162, 252, 60], [250, 186, 57], [228, 70, 10], [122, 4, 3]];
-    const ramp = (stops, v) => {
-      const x = clamp01(v) * (stops.length - 1), i = Math.min(stops.length - 2, Math.floor(x)), f = x - i;
-      return stops[i].map((c, j) => Math.round(c + (stops[i + 1][j] - c) * f));
-    };
-    const DIVERGE = [[47, 95, 160], [150, 178, 214], [246, 244, 238], [222, 150, 150], [188, 56, 67]];
-    const seeded = (seed) => () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
-    // the flow at (x, y), both in widths of the field, for sample s: Lamb-Oseen vortices
-    function vortices(s) {
-      return [{ x: 0.34 + 0.05 * Math.sin(s * 0.09), y: 0.30 + 0.03 * Math.cos(s * 0.07), g: 1, r: 0.085 },
-        { x: 0.66 + 0.04 * Math.cos(s * 0.08), y: 0.32 + 0.04 * Math.sin(s * 0.06), g: -1, r: 0.09 },
-        { x: 0.50 + 0.12 * Math.sin(s * 0.05), y: 0.13 + 0.03 * Math.sin(s * 0.11), g: 0.55, r: 0.06 }];
-    }
-    function flow(vs, x, y) {
-      let u = 0.04, v = 0, w = 0;
-      for (const k of vs) {
-        const dx = x - k.x, dy = y - k.y, r2 = dx * dx + dy * dy + 1e-6, e = Math.exp(-r2 / (k.r * k.r));
-        const ut = (k.g / (2 * Math.PI * r2)) * (1 - e) * 0.05;
-        u -= ut * dy; v += ut * dx; w += (k.g / (Math.PI * k.r * k.r)) * e * 0.05;
-      }
-      return [u, v, w];
-    }
-    function particles(ctx, W, H, seed, alpha) {
-      const rnd = seeded(seed);
-      ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, W, H);
-      for (let i = 0, n = Math.round(W * H / 80); i < n; i++) {
-        const x = rnd() * W, y = rnd() * H, r = 0.6 + rnd() * 1.0, a = (0.35 + rnd() * 0.65) * alpha;
-        ctx.fillStyle = `rgba(46, 46, 51, ${a.toFixed(3)})`;
-        ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
-      }
-    }
-    function vorticity(ctx, W, H, vs) {
-      const img = ctx.createImageData(W / 4, H / 4), d = img.data;
-      for (let j = 0; j < H / 4; j++) for (let i = 0; i < W / 4; i++) {
-        const w = flow(vs, (i * 4) / W, (j * 4) / W)[2];
-        const [r, g, b] = ramp(DIVERGE, 0.5 + w / 4.4), k = 4 * (j * (W / 4) + i);
-        d[k] = r; d[k + 1] = g; d[k + 2] = b; d[k + 3] = 255;
-      }
-      const tmp = document.createElement("canvas"); tmp.width = W / 4; tmp.height = H / 4;
-      tmp.getContext("2d").putImageData(img, 0, 0);
-      ctx.imageSmoothingEnabled = true; ctx.drawImage(tmp, 0, 0, W, H);
-    }
-    function arrow(ctx, x, y, dx, dy, colour, lw) {
-      const len = Math.hypot(dx, dy);
-      if (len < 0.5) return;
-      const ux = dx / len, uy = dy / len, hd = Math.min(len * 0.45, lw * 3.2);
-      ctx.strokeStyle = ctx.fillStyle = colour; ctx.lineWidth = lw;
-      ctx.beginPath(); ctx.moveTo(x - dx / 2, y - dy / 2); ctx.lineTo(x + dx / 2 - ux * hd * 0.6, y + dy / 2 - uy * hd * 0.6); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(x + dx / 2, y + dy / 2);
-      ctx.lineTo(x + dx / 2 - ux * hd - uy * hd * 0.5, y + dy / 2 - uy * hd + ux * hd * 0.5);
-      ctx.lineTo(x + dx / 2 - ux * hd + uy * hd * 0.5, y + dy / 2 - uy * hd - ux * hd * 0.5); ctx.fill();
-    }
-    // the vectors on a grid of `cells` across; `bad` marks the spurious ones, drawn red, or amber once replaced
-    function vectors(ctx, W, H, vs, cells, bad) {
-      const g = W / cells, lw = Math.max(1, W / 420);
-      for (let j = 0; (j + 0.5) * g < H; j++) for (let i = 0; i < cells; i++) {
-        const x = (i + 0.5) * g, y = (j + 0.5) * g, [u, v] = flow(vs, x / W, y / W);
-        const spur = bad && (i * 7 + j * 13 + cells) % 29 === 0;
-        if (spur && bad === "red") { const a = (i * 2.3 + j * 1.7) % 6.28; arrow(ctx, x, y, Math.cos(a) * g * 1.1, Math.sin(a) * g * 1.1, PV_BAD, lw); }
-        else arrow(ctx, x, y, u * g * 8, v * g * 8, spur ? PV_FIX : PV_INK, spur ? lw * 1.3 : lw);
-      }
-    }
-    function pivDraw(s, t) {
-      const { c, ctx, kind } = s, W = c.width, H = c.height, ds = c.dataset;
-      let key;
-      if (kind === "frame") key = "f";
-      else if (kind === "angles") { const [a, b] = span(ds.sweep); key = Math.round(clamp01((t - a) / (b - a)) * 70); }
-      else if (kind === "preview") key = [+ds.vec, +ds.fine, +ds.valid, +ds.vort].map((x) => (t >= x ? 1 : 0)).join("");
-      else { const [a, b] = span(ds.play); key = Math.floor(clamp01((t - a) / (b - a)) * (kind === "latest" ? 40 : 120)); }
-      if (key === s.key) return;
-      s.key = key;
-      if (kind === "frame") { particles(ctx, W, H, +ds.seed, 1); return; }
-      if (kind === "angles") {                                       // the calibration plate's dots, then the angle map over them
-        ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, W, H);
-        ctx.fillStyle = PV_INK;
-        for (let j = 0; j < 9; j++) for (let i = 0; i < 21; i++) {
-          const x = W * (0.04 + i * 0.046) + j * 2, y = H * (0.08 + j * 0.105) + i * 0.6;
-          ctx.beginPath(); ctx.arc(x, y, H / 75, 0, 6.2832); ctx.fill();
-        }
-        const cols = key, cw = W / 70;
-        for (let i = 0; i < cols; i++) for (let j = 0; j < 30; j++) {
-          const x = i / 69, y = j / 29, v = 0.5 + 0.42 * (x - 0.5) * 2 + 0.06 * (y - 0.5) * (y - 0.5) * 4 - 0.03;
-          const [r, g, b] = ramp(TURBO, v);
-          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.82)`; ctx.fillRect(i * cw, (j * H) / 30, cw + 0.5, H / 30 + 0.5);
-        }
-        return;
-      }
-      if (kind === "preview") {
-        const [vec, fine, valid, vort] = key.split("").map(Number), vs = vortices(0);
-        if (vort) vorticity(ctx, W, H, vs); else particles(ctx, W, H, 5, 0.5);
-        if (vec) vectors(ctx, W, H, vs, fine ? 30 : 15, valid ? "amber" : "red");
-        return;
-      }
-      const vs = vortices(key * (kind === "latest" ? 10 : 3.3));
-      vorticity(ctx, W, H, vs);
-      vectors(ctx, W, H, vs, kind === "latest" ? 20 : 30, null);
-    }
     const players = hosts.map((host) => {
       const run = host.dataset.run || "flacmn", steps = STEPS_OF[run];
       host.appendChild(document.getElementById(TPL[run]).content.cloneNode(true));
@@ -1756,7 +1458,6 @@ body { overflow: hidden; overscroll-behavior: none; }
         return { c, ctx: c.getContext("2d"), ab: span(c.dataset.draw), slices, drawn: -1 };
       });
       const scopes = [...fm.querySelectorAll("canvas[data-scope]")].map((c) => ({ c, ctx: c.getContext("2d"), at: +c.dataset.scope, colour: c.dataset.colour }));
-      const pivs = [...fm.querySelectorAll("canvas[data-piv]")].map((c) => ({ c, ctx: c.getContext("2d"), kind: c.dataset.piv, key: null }));
       const [a, b] = span(host.dataset.window), hold = host.dataset.hold ? +host.dataset.hold : 1400;
       const cap = host.closest(".demo").querySelector(".demo-step");
       let step = -1;
@@ -1781,7 +1482,6 @@ body { overflow: hidden; overscroll-behavior: none; }
           if (n !== s.drawn) { spectrogram(s, n); s.drawn = n; }
         }
         for (const s of scopes) scope(s, t >= s.at ? t - s.at : -1);
-        for (const s of pivs) pivDraw(s, t);
       };
       const btn = host.closest(".demo").querySelector(".demo-toggle");
       if (still) { fm.classList.add("snap"); p.render(+host.dataset.still); if (btn) btn.hidden = true; return p; }
