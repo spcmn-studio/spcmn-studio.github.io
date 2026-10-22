@@ -1564,13 +1564,12 @@ body { overflow: hidden; overscroll-behavior: none; }
     }
 
     // the phone's XY scope, as in the app: left against right turned 45 degrees so mono stands upright, a thick line
-    // in six parts with the older ones fainter (phosphor), in the cover's colour. The sound is made up: a trumpet-like
-    // tone and a bass over a little stereo spread, swelling and changing note.
-    function scope({ c, ctx, colour: col }, ms) {
-      const S = c.width;
-      ctx.clearRect(0, 0, S, S);
-      if (ms < 0) return;
-      const t0 = ms / 1000, N = 720, PARTS = 6, sr = 44100;
+    // in six parts with the older ones fainter (phosphor), in the cover's colour. As in the apps, the radius is on a log
+    // curve (log 6, same angle), which opens up the quiet middle, and the last 100 ms of frames fade behind the newest.
+    // The sound is made up: a trumpet-like tone and a bass over a little stereo spread, swelling and changing note.
+    const LOG_K = 6, GLOW_MS = 100;
+    function figure(S, ms) {
+      const t0 = ms / 1000, N = 720, sr = 44100, norm = Math.asinh(LOG_K);
       const note = [233, 262, 196, 175][Math.floor(t0 / 1.1) % 4], bass = [58, 65, 49, 44][Math.floor(t0 / 1.1) % 4];
       const swell = 0.8 + 0.2 * Math.sin(t0 * 2.3) * Math.sin(t0 * 0.7 + 1);
       const pts = [];
@@ -1579,15 +1578,27 @@ body { overflow: hidden; overscroll-behavior: none; }
         const mid = swell * (0.5 * Math.sin(2 * Math.PI * note * t) + 0.22 * Math.sin(2 * Math.PI * note * 2 * t + 0.6) + 0.12 * Math.sin(2 * Math.PI * note * 3 * t + 1.9))
           + 0.32 * Math.sin(2 * Math.PI * bass * t);
         const side = 0.26 * Math.sin(2 * Math.PI * note * 1.004 * t + 2.1 + t0 * 0.9) + 0.06 * Math.sin(2 * Math.PI * 1830 * t + t0 * 3);
-        pts.push([S / 2 + side * S * 0.8, S / 2 - mid * S * 0.44]);
+        const u = side * 0.8, v = mid * 0.44, rad = Math.hypot(u, v) / 0.52;      // rad within about 1 at the loudest
+        const k = rad > 0 ? (Math.asinh(LOG_K * rad) / norm) * 0.47 / (rad * 0.52) : 1;   // log radius, same angle
+        pts.push([S / 2 + u * k * S, S / 2 - v * k * S]);
       }
+      return pts;
+    }
+    function scope({ c, ctx, colour: col }, ms) {
+      const S = c.width, PARTS = 6;
+      ctx.clearRect(0, 0, S, S);
+      if (ms < 0) return;
       ctx.lineWidth = S * 0.013; ctx.lineJoin = ctx.lineCap = "round"; ctx.strokeStyle = col;
-      const per = Math.ceil(N / PARTS);
-      for (let k = 0; k < PARTS; k++) {
-        ctx.globalAlpha = 0.18 + 0.82 * ((k + 1) / PARTS);
-        ctx.beginPath();
-        for (let i = k * per; i <= Math.min(N - 1, (k + 1) * per); i++) i === k * per ? ctx.moveTo(...pts[i]) : ctx.lineTo(...pts[i]);
-        ctx.stroke();
+      for (const back of [66, 33, 0]) {                                           // afterglow: frames at 30 a second
+        if (ms - back < 0) continue;
+        const pts = figure(S, ms - back), per = Math.ceil(pts.length / PARTS);
+        const mul = back ? 0.45 * Math.exp(-back / (GLOW_MS / 2.5)) : 1;
+        for (let k = 0; k < PARTS; k++) {
+          ctx.globalAlpha = mul * (0.18 + 0.82 * ((k + 1) / PARTS));
+          ctx.beginPath();
+          for (let i = k * per; i <= Math.min(pts.length - 1, (k + 1) * per); i++) i === k * per ? ctx.moveTo(...pts[i]) : ctx.lineTo(...pts[i]);
+          ctx.stroke();
+        }
       }
       ctx.globalAlpha = 1;
     }
