@@ -37,7 +37,7 @@
       }
     },
     "pivmn": {
-      "summary": "A desktop app or CLI tool for particle image velocimetry: turns DaVis projects or image pairs into velocity fields, planar or stereo, on your CPU or GPU.",
+      "summary": "Particle image velocimetry built for AI agents: the agent measures your images, plans the analysis and runs it, while you answer the questions only you can and watch every step in the web app.",
       "intro": "",
       "steps": {
         "source": {

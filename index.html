@@ -700,13 +700,13 @@ body { overflow: hidden; overscroll-behavior: none; }
     <div class="wrap slide-body p-body">
       <div class="p-text">
         <h2 class="sr-only" id="name-flowmn">flowmn</h2>
-        <span class="label">Desktop app + CLI</span>
+        <span class="label">AI agent + web app + CLI</span>
         <p class="tagline" data-slot="projects.pivmn.summary" data-hint="One line on what flowmn does"></p>
         <div class="p-actions"><a class="more" href="#flowmn/more">More info<span class="sr-only"> about flowmn</span> &rarr;</a></div>
       </div>
       <figure class="demo">
-        <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-run.mp4" poster="media/flowmn-run.jpg" muted loop playsinline preload="metadata"></video></div>
-        <figcaption><span>Real data: a planar recording, from input to results</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+        <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-agent-run.mp4" poster="media/flowmn-agent-run.jpg" muted loop playsinline preload="metadata"></video></div>
+        <figcaption><span>Demo run: an agent and you, from a request to results</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
       </figure>
     </div>
   </section>
@@ -773,7 +773,7 @@ body { overflow: hidden; overscroll-behavior: none; }
       <a class="d-back" href="#flowmn">&larr; Back to projects</a>
       <div class="d-mark" data-for="flowmn"></div>
       <h1 class="sr-only" id="more-name-flowmn">flowmn</h1>
-      <span class="label">Desktop app + CLI</span>
+      <span class="label">AI agent + web app + CLI</span>
       <p class="tagline" data-slot="projects.pivmn.summary" data-hint="One line on what flowmn does"></p>
     </div>
   </header>
@@ -781,48 +781,58 @@ body { overflow: hidden; overscroll-behavior: none; }
     <section class="d-sec">
       <span class="d-num">01</span>
       <h2>Overview</h2>
-      <p>flowmn processes particle image velocimetry (PIV) recordings. It reads LaVision DaVis projects or plain image pairs and turns them into velocity fields, planar (two components from one camera) or stereo (three components from two). It runs as a desktop app or from the command line, on a CPU or an NVIDIA GPU, with its own correlation engine written from scratch.</p>
+      <p>flowmn turns particle image velocimetry (PIV) recordings into velocity fields and analyses them. It is built to be driven by an AI agent, such as Claude Code or Codex, through its MCP server or its command line. The agent does the technical work; anything that is your call, a trade-off or a number only you know, comes to you as a question, and everything it does goes into an activity log you can watch live in the web app.</p>
+      <p>The correlation engine is written from the published literature, with a fast mode after RapidPIV, and runs on a multi-core CPU, on NVIDIA GPUs, or on Apple Silicon and AMD GPUs through PyTorch. It reads image pairs and LaVision DaVis projects, planar or stereo. It works straight after install, with no internet connection, and runs without an agent too, from the terminal or the web app.</p>
     </section>
     <section class="d-sec">
       <span class="d-num">02</span>
       <h2>How it works</h2>
+      <p>The clips follow one session on flowmn&rsquo;s demo data, a synthetic cylinder wake. The agent&rsquo;s chat on the left is scripted; the web app on the right, the operations the agent calls and every number shown are real.</p>
       <div class="d-sub">
-        <h3>Choose the input and mode</h3>
-        <p>A DaVis .set project, a folder of .set files to run as a batch, or a folder of image pairs in .im7, TIFF or PNG. Then planar or stereo, on the CPU, which works on any computer, or on an NVIDIA GPU with CUDA.</p>
+        <h3>Ask in plain words</h3>
+        <p>Point the agent at your images and say what you want to learn. It measures the seeding density, the particle-image size and the range of displacements, chooses the interrogation windows from them, and writes the change and its reason to the activity log, which the web app shows as it happens.</p>
         <figure class="d-fig demo">
-          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-1-project.mp4" poster="media/flowmn-1-project.jpg" muted loop playsinline preload="metadata"></video></div>
-          <figcaption><span>Real data: a DaVis project, 1000 samples from one camera</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-agent-1-ask.mp4" poster="media/flowmn-agent-1-ask.jpg" muted loop playsinline preload="metadata"></video></div>
+          <figcaption><span>The agent measures the images and sets the passes; the change and its reason appear in Activity</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
         </figure>
       </div>
       <div class="d-sub">
-        <h3>Set units, output and calibration</h3>
-        <p>Calibration is read straight from the project&rsquo;s own Calibration.xml, and stereo viewing angles are worked out at every correlation point.</p>
+        <h3>You make the calls</h3>
+        <p>The agent drafts an analysis plan (here from the bluff-body wake template) and turns everything it can&rsquo;t measure into a question for you: the sample rate, the cylinder diameter, the free-stream speed, and whether to favour accuracy or speed. You answer and approve in the web app, the terminal or the chat. The plan&rsquo;s steps run only once you&rsquo;ve approved them.</p>
         <figure class="d-fig demo">
-          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-2-calibration.mp4" poster="media/flowmn-2-calibration.jpg" muted loop playsinline preload="metadata"></video></div>
-          <figcaption><span>Frame separation read from the DaVis project; Tecplot output on</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-agent-2-decide.mp4" poster="media/flowmn-agent-2-decide.jpg" muted loop playsinline preload="metadata"></video></div>
+          <figcaption><span>Four answers and one approval, in the web app&rsquo;s Plan</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
         </figure>
       </div>
       <div class="d-sub">
-        <h3>Tune the passes and filters</h3>
-        <p>Set the multi-pass window schedule, then the filters that reject spurious vectors and fill and smooth the field.</p>
+        <h3>Check one pair, then process them all</h3>
+        <p>One pair is previewed before the whole recording runs. Fast mode follows the RapidPIV approach: a dense optical-flow estimate stands in for the coarse passes, then one correlation pass corrects it. Processing runs in the background on the CPU&rsquo;s cores or a GPU, with its progress in the web app.</p>
         <figure class="d-fig demo">
-          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-3-preview.mp4" poster="media/flowmn-3-preview.jpg" muted loop playsinline preload="metadata"></video></div>
-          <figcaption><span>One pass, then three; filters on; shown over the vorticity</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-agent-3-process.mp4" poster="media/flowmn-agent-3-process.jpg" muted loop playsinline preload="metadata"></video></div>
+          <figcaption><span>48 pairs in Fast mode, then the vector field</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
         </figure>
       </div>
       <div class="d-sub">
-        <h3>Preview, then run the batch</h3>
-        <p>Check the result on one pair before committing to the whole batch, which then runs in the background; the results can be plotted as vector fields. The same steps also run from the command line.</p>
+        <h3>Analyse with premade tools</h3>
+        <p>The approved steps run tools from the built-in suite: turbulence statistics, vorticity and vortex detection, POD and DMD, spectra, phase averaging, boundary layers and wakes, profiles and probes. Each result comes back as numbers and figures, which the agent reads and explains, with units.</p>
         <figure class="d-fig demo">
-          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-4-batch.mp4" poster="media/flowmn-4-batch.jpg" muted loop playsinline preload="metadata"></video></div>
-          <figcaption><span>A 20-sample batch, then its results played and exported</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-agent-4-analyse.mp4" poster="media/flowmn-agent-4-analyse.jpg" muted loop playsinline preload="metadata"></video></div>
+          <figcaption><span>DMD finds the shedding at 6.13 Hz, the frequency the demo was made with; then the phase-averaged cycle</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
+        </figure>
+      </div>
+      <div class="d-sub">
+        <h3>Or build your own</h3>
+        <p>When no premade tool fits, the agent writes one into the project&rsquo;s tools folder, checks it, runs it and tells you where it is, so you can read the method. You can write tools yourself too, starting from a template.</p>
+        <figure class="d-fig demo">
+          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-agent-5-custom.mp4" poster="media/flowmn-agent-5-custom.jpg" muted loop playsinline preload="metadata"></video></div>
+          <figcaption><span>A new tool tracks the wake centreline: it swings once per shedding period</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
         </figure>
       </div>
     </section>
     <section class="d-sec">
       <span class="d-num">03</span>
       <h2>Results</h2>
-      <p>A run writes every sample&rsquo;s velocity field to one HDF5 file along with the settings that made it, a summary table, and any of CSV, Tecplot, NPZ or PNG figures. Saved results open again to step or play through, mask and export.</p>
+      <p>A project is a plain folder you can read without flowmn: the settings, the plan with every question, answer and approval, the activity log, the vector fields in one HDF5 file with the settings that made them, and each analysis run&rsquo;s numbers, arrays, figures and tables. On a 4-core CPU a 2048 &times; 2048 pair takes about 1.4 s, or 1.2 s in Fast mode.</p>
     </section>
     <a class="d-back d-end" href="#flowmn">&larr; Back to projects</a>
   </div>
