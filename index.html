@@ -5,10 +5,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: a deck of full-screen slides, light in every theme: the spcmn title on off-white (--paper), then one slide per project in its
-   own hue of the palette (flowmn green, flacmn purple, tankmn amber, rigmn red). */
+   own hue of the palette (flacmn blue #4357AD: the design language's trial colour since 2026-11-02, after purple). */
 :root {
   /* the palette */
-  --stone: #E6E2D8; --paper: #F6F4EE;     /* the site's off-white: page, and light text and marks on the covers */ --purple: #5C53A2; --green: #20A76B; --amber: #F4B73E; --red: #BC3843;
+  --stone: #E6E2D8; --paper: #F6F4EE;     /* the site's off-white: page, and light text and marks on the covers */ --blue: #4357AD; --green: #20A76B; --amber: #F4B73E; --red: #BC3843;
   --charcoal: #2E2E33;  /* the title slide: wordmark, words and controls, with no purple cast */
 
   --bg: var(--paper);
@@ -17,9 +17,9 @@
   --text-2: #2C284E;
   --muted: #5E5A6B;
   --line: #CFC9DA;
-  --project: var(--purple);          /* fills: tiles, buttons, numbers */
-  --project-text: #4A4284;           /* the project's hue as text */
-  --project-tint: #F0F0F7;
+  --project: var(--blue);          /* fills: tiles, buttons, numbers */
+  --project-text: #4357AD;           /* the project's hue as text (flacmn's blue is 5.96:1 on paper, so it is its own text colour) */
+  --project-tint: #E8E7E9;
   --on-project: #FFFFFF;
   --good-tint: #E2F4EC; --good-text: #1A634E;
   --warn-tint: #FDF1D8; --warn-text: #6D5332;
@@ -48,7 +48,7 @@ html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 a { color: var(--project-text); }
 a:focus-visible, button:focus-visible, [contenteditable]:focus-visible {
-  outline: 2px solid var(--purple); outline-offset: 3px; border-radius: 4px;
+  outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 4px;
 }
 h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; line-height: 1.05; text-wrap: balance; margin: 0; }
 .label { font: 500 0.72rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
@@ -495,24 +495,23 @@ body { overflow: hidden; overscroll-behavior: none; }
 .gh .repo { font: 500 0.78rem/1 var(--mono); opacity: 0.8; }
 
 /* each project wears its own hue */
-.hue-purple { --project: var(--purple); --project-text: #4A4284; --project-tint: #F0F0F7; --on-cover: var(--paper); --cover-btn: var(--paper); --cover-btn-text: #4A4284; }
+.hue-blue   { --project: var(--blue);   --project-text: #4357AD; --project-tint: #E8E7E9; --on-cover: var(--paper); --cover-btn: var(--paper); --cover-btn-text: #4357AD; }
 .hue-green  { --project: var(--green);  --project-text: #1A634E; --project-tint: #E2F4EC; --on-cover: #0F0D1A; --cover-btn: #0F0D1A; --cover-btn-text: var(--paper); }
 .hue-amber  { --project: var(--amber);  --project-text: #6D5332; --project-tint: #FDF1D8; --on-project: #0F0D1A; --on-cover: #0F0D1A; --cover-btn: #0F0D1A; --cover-btn-text: var(--paper); }
 .hue-red    { --project: var(--red);    --project-text: #922E3D; --project-tint: #F8EBEC; --on-cover: var(--paper); --cover-btn: var(--paper); --cover-btn-text: #922E3D; }
 
 /* a watercolour wash, as the flacmn phone app paints its pages (2026-11-02): the colour (--w) laid evenly with a few
    very faint soft blooms, and the grain of cold-pressed paper over it (media/paper.jpg: the app's own photo, recentred
-   on mid grey so it only adds its shadows and highs). Backgrounds only: words and buttons stay plain colour. The host
-   must be positioned. --paper-strength is the knob (0 for none), --grain the grain's size. */
+   on mid grey so it only adds its shadows and highs). Only inside the phone mock, to show the app as it is: the site's
+   own covers stay flat, as the design language asks (no gradients, no texture on backgrounds; owner, 2026-11-02). The
+   host must be positioned. --paper-strength is the knob (0 for none), --grain the grain's size. */
 .wash { isolation: isolate; background-color: var(--w);
         background-image: radial-gradient(ellipse 34% 22% at 24% 46%, rgb(255 255 255 / 0.07), transparent 70%),
           radial-gradient(ellipse 40% 26% at 72% 60%, rgb(0 0 0 / 0.06), transparent 70%),
           radial-gradient(ellipse 28% 18% at 52% 34%, rgb(255 255 255 / 0.05), transparent 70%),
           radial-gradient(ellipse 30% 20% at 18% 76%, rgb(0 0 0 / 0.05), transparent 70%); }
 .wash::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-               background: url("media/paper.jpg") 0 0 / var(--grain, 820px); mix-blend-mode: overlay; opacity: var(--paper-strength, 0.22); }
-.slide.wash, .d-head.wash { --w: var(--project); }
-.d-head.wash { position: relative; }
+               background: url("media/paper.jpg") 0 0 / var(--grain, 330px); mix-blend-mode: overlay; opacity: var(--paper-strength, 0.22); }
 
 /* ---- your text */
 [data-slot] { white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -531,7 +530,7 @@ body { overflow: hidden; overscroll-behavior: none; }
 .editbar[data-state="saved"] .status::before { background: var(--green); }
 .editbar[data-state="error"] .status::before { background: var(--red); }
 .editbar button { border: 0; border-radius: 999px; padding: 0.6rem 1rem; font: 700 0.9rem/1 var(--body); cursor: pointer;
-                  background: var(--purple); color: #FFFFFF; white-space: nowrap; }
+                  background: var(--blue); color: #FFFFFF; white-space: nowrap; }
 </style>
 
 <!-- the flacmn mock that the sample run clones (desktop app and phone app), its icons and its made-up album covers -->
@@ -706,8 +705,7 @@ body { overflow: hidden; overscroll-behavior: none; }
       <button type="button" class="menu-btn" aria-expanded="false" aria-controls="menu-panel" aria-label="Menu"><span></span><span></span><span></span></button>
       <nav class="menu-panel" id="menu-panel" aria-label="Site">
         <ul>
-          <li><a class="m-proj" href="#flacmn" style="--c: var(--purple)">flacmn</a></li>
-          <li><a class="m-proj" href="#flowmn" style="--c: var(--green)">flowmn</a></li>
+          <li><a class="m-proj" href="#flacmn" style="--c: var(--blue)">flacmn</a></li>
           <li class="menu-sep"><a href="#shop">Shop</a></li>
           <li><a href="#contact">Contact</a></li>
           <li><a href="#about">About me</a></li>
@@ -724,7 +722,7 @@ body { overflow: hidden; overscroll-behavior: none; }
   </section>
 
   <!-- ===== flacmn ===== -->
-  <section class="slide hue-purple wash" data-id="flacmn" data-word="flac" aria-labelledby="name-flacmn">
+  <section class="slide hue-blue" data-id="flacmn" data-word="flac" aria-labelledby="name-flacmn">
     <div class="logo-band"><div class="logo-hold"></div></div>
     <div class="wrap slide-body p-body">
       <div class="p-text">
@@ -736,23 +734,6 @@ body { overflow: hidden; overscroll-behavior: none; }
       <figure class="demo">
         <div class="demo-frame duo" aria-hidden="true" data-window="0-23500" data-hold="1400" data-still="14000"></div>
         <figcaption><span class="demo-step">Sample run: check, send to the phone, play</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <!-- ===== flowmn ===== -->
-  <section class="slide hue-green" data-id="flowmn" data-word="flow" aria-labelledby="name-flowmn">
-    <div class="logo-band"><div class="logo-hold"></div></div>
-    <div class="wrap slide-body p-body">
-      <div class="p-text">
-        <h2 class="sr-only" id="name-flowmn">flowmn</h2>
-        <span class="label">AI agent + web app + CLI</span>
-        <p class="tagline" data-slot="projects.pivmn.summary" data-hint="One line on what flowmn does"></p>
-        <div class="p-actions"><a class="more" href="#flowmn/more">More info<span class="sr-only"> about flowmn</span> &rarr;</a></div>
-      </div>
-      <figure class="demo">
-        <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-agent-run.mp4" poster="media/flowmn-agent-run.jpg" muted loop playsinline preload="metadata"></video></div>
-        <figcaption><span>Demo run: an agent and you, from a request to results</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
       </figure>
     </div>
   </section>
@@ -771,19 +752,11 @@ body { overflow: hidden; overscroll-behavior: none; }
            flacmn sells the built installer; its source stays free to build from GitHub. -->
       <div class="shop-grid">
         <article class="shop-card">
-          <div class="shop-art" data-for="flacmn" style="--c: var(--purple)"></div>
+          <div class="shop-art" data-for="flacmn" style="--c: var(--blue)"></div>
           <div class="shop-info">
             <h3>flacmn</h3>
             <p class="shop-desc">The ready-to-run app for macOS and Windows.</p>
             <div class="shop-buy"><span class="shop-price">$00</span><a class="shop-btn" href="#shop">Buy<span class="shop-btn-more"> installer</span></a></div>
-          </div>
-        </article>
-        <article class="shop-card">
-          <div class="shop-art" data-for="flowmn" style="--c: var(--green)"></div>
-          <div class="shop-info">
-            <h3>flowmn</h3>
-            <p class="shop-desc ph">Placeholder: what you get, in a line.</p>
-            <div class="shop-buy"><span class="shop-price">$00</span><a class="shop-btn" href="#shop">Buy<span class="shop-btn-more"> on Gumroad</span></a></div>
           </div>
         </article>
         <article class="shop-card">
@@ -812,80 +785,9 @@ body { overflow: hidden; overscroll-behavior: none; }
   </section>
 </main>
 
-<!-- ===== flowmn: its own page ("More info") ===== -->
-<article class="detail hue-green" id="more-flowmn" data-page="flowmn" aria-labelledby="more-name-flowmn" inert>
-  <header class="d-head">
-    <div class="d-wrap">
-      <a class="d-back" href="#flowmn">&larr; Back to projects</a>
-      <div class="d-mark" data-for="flowmn"></div>
-      <h1 class="sr-only" id="more-name-flowmn">flowmn</h1>
-      <span class="label">AI agent + web app + CLI</span>
-      <p class="tagline" data-slot="projects.pivmn.summary" data-hint="One line on what flowmn does"></p>
-    </div>
-  </header>
-  <div class="d-wrap d-body">
-    <section class="d-sec">
-      <span class="d-num">01</span>
-      <h2>Overview</h2>
-      <p>flowmn turns particle image velocimetry (PIV) recordings into velocity fields and analyses them. It is built to be driven by an AI agent, such as Claude Code or Codex, through its MCP server or its command line. The agent does the technical work; anything that is your call, a trade-off or a number only you know, comes to you as a question, and everything it does goes into an activity log you can watch live in the web app.</p>
-      <p>The correlation engine is written from the published literature, with a fast mode after RapidPIV, and runs on a multi-core CPU, on NVIDIA GPUs, or on Apple Silicon and AMD GPUs through PyTorch. It reads image pairs and LaVision DaVis projects, planar or stereo. It works straight after install, with no internet connection, and runs without an agent too, from the terminal or the web app.</p>
-    </section>
-    <section class="d-sec">
-      <span class="d-num">02</span>
-      <h2>How it works</h2>
-      <p>The clips follow one session on flowmn&rsquo;s demo data, a synthetic cylinder wake. The agent&rsquo;s chat on the left is scripted; the web app on the right, the operations the agent calls and every number shown are real.</p>
-      <div class="d-sub">
-        <h3>Ask in plain words</h3>
-        <p>Point the agent at your images and say what you want to learn. It measures the seeding density, the particle-image size and the range of displacements, chooses the interrogation windows from them, and writes the change and its reason to the activity log, which the web app shows as it happens.</p>
-        <figure class="d-fig demo">
-          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-agent-1-ask.mp4" poster="media/flowmn-agent-1-ask.jpg" muted loop playsinline preload="metadata"></video></div>
-          <figcaption><span>The agent measures the images and sets the passes; the change and its reason appear in Activity</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
-        </figure>
-      </div>
-      <div class="d-sub">
-        <h3>You make the calls</h3>
-        <p>The agent drafts an analysis plan (here from the bluff-body wake template) and turns everything it can&rsquo;t measure into a question for you: the sample rate, the cylinder diameter, the free-stream speed, and whether to favour accuracy or speed. You answer and approve in the web app, the terminal or the chat. The plan&rsquo;s steps run only once you&rsquo;ve approved them.</p>
-        <figure class="d-fig demo">
-          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-agent-2-decide.mp4" poster="media/flowmn-agent-2-decide.jpg" muted loop playsinline preload="metadata"></video></div>
-          <figcaption><span>Four answers and one approval, in the web app&rsquo;s Plan</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
-        </figure>
-      </div>
-      <div class="d-sub">
-        <h3>Check one pair, then process them all</h3>
-        <p>One pair is previewed before the whole recording runs. Fast mode follows the RapidPIV approach: a dense optical-flow estimate stands in for the coarse passes, then one correlation pass corrects it. Processing runs in the background on the CPU&rsquo;s cores or a GPU, with its progress in the web app.</p>
-        <figure class="d-fig demo">
-          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-agent-3-process.mp4" poster="media/flowmn-agent-3-process.jpg" muted loop playsinline preload="metadata"></video></div>
-          <figcaption><span>48 pairs in Fast mode, then the vector field</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
-        </figure>
-      </div>
-      <div class="d-sub">
-        <h3>Analyse with premade tools</h3>
-        <p>The approved steps run tools from the built-in suite: turbulence statistics, vorticity and vortex detection, POD and DMD, spectra, phase averaging, boundary layers and wakes, profiles and probes. Each result comes back as numbers and figures, which the agent reads and explains, with units.</p>
-        <figure class="d-fig demo">
-          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-agent-4-analyse.mp4" poster="media/flowmn-agent-4-analyse.jpg" muted loop playsinline preload="metadata"></video></div>
-          <figcaption><span>DMD finds the shedding at 6.13 Hz, the frequency the demo was made with; then the phase-averaged cycle</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
-        </figure>
-      </div>
-      <div class="d-sub">
-        <h3>Or build your own</h3>
-        <p>When no premade tool fits, the agent writes one into the project&rsquo;s tools folder, checks it, runs it and tells you where it is, so you can read the method. You can write tools yourself too, starting from a template.</p>
-        <figure class="d-fig demo">
-          <div class="demo-frame video" aria-hidden="true" style="aspect-ratio: 730 / 400"><video src="media/flowmn-agent-5-custom.mp4" poster="media/flowmn-agent-5-custom.jpg" muted loop playsinline preload="metadata"></video></div>
-          <figcaption><span>A new tool tracks the wake centreline: it swings once per shedding period</span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
-        </figure>
-      </div>
-    </section>
-    <section class="d-sec">
-      <span class="d-num">03</span>
-      <h2>Results</h2>
-      <p>A project is a plain folder you can read without flowmn: the settings, the plan with every question, answer and approval, the activity log, the vector fields in one HDF5 file with the settings that made them, and each analysis run&rsquo;s numbers, arrays, figures and tables. On a 4-core CPU a 2048 &times; 2048 pair takes about 1.4 s, or 1.2 s in Fast mode.</p>
-    </section>
-    <a class="d-back d-end" href="#flowmn">&larr; Back to projects</a>
-  </div>
-</article>
 <!-- ===== flacmn: its own page ("More info") ===== -->
-<article class="detail hue-purple" id="more-flacmn" data-page="flacmn" aria-labelledby="more-name-flacmn" inert>
-  <header class="d-head wash">
+<article class="detail hue-blue" id="more-flacmn" data-page="flacmn" aria-labelledby="more-name-flacmn" inert>
+  <header class="d-head">
     <div class="d-wrap">
       <a class="d-back" href="#flacmn">&larr; Back to projects</a>
       <div class="d-mark" data-for="flacmn"></div>
@@ -976,7 +878,7 @@ body { overflow: hidden; overscroll-behavior: none; }
 </article>
 
 <nav class="deck-dots off" aria-label="Projects">
-  <button type="button" aria-label="spcmn"></button><button type="button" aria-label="flacmn"></button><button type="button" aria-label="flowmn"></button><button type="button" aria-label="Shop"></button><button type="button" aria-label="Contact"></button>
+  <button type="button" aria-label="spcmn"></button><button type="button" aria-label="flacmn"></button><button type="button" aria-label="Shop"></button><button type="button" aria-label="Contact"></button>
 </nav>
 
 <div class="editbar" id="editbar" hidden>
@@ -1297,7 +1199,7 @@ body { overflow: hidden; overscroll-behavior: none; }
     function kick() { if (!running) { running = true; requestAnimationFrame(frame); } }
 
     // ---- start on the slide the address names (old links to a project page, or a category, land on its slide)
-    const old = { software: "flacmn", pivmn: "flowmn" };              // PIVmn was renamed flowmn
+    const old = { software: "flacmn" };                               // (flowmn, once PIVmn, is off the site since 2026-11-02: its links land on the title)
     const [want, wantMore] = location.hash.replace("#", "").split("/");
     index = Math.max(0, ids.indexOf(old[want] || want));
     show([index]); place(index, 0); mark();
@@ -1395,7 +1297,7 @@ body { overflow: hidden; overscroll-behavior: none; }
       if (n >= 0) go(n);
     });
 
-    // ---- the menu on the title: its links are ordinary addresses (#flowmn, #about, GitHub), handled above
+    // ---- the menu on the title: its links are ordinary addresses (#flacmn, #about, GitHub), handled above
     const menu = document.querySelector(".menu"), menuBtn = menu.querySelector(".menu-btn");
     function closeMenu() { menu.classList.remove("open"); menuBtn.setAttribute("aria-expanded", "false"); }
     menuBtn.addEventListener("click", (e) => {
@@ -1435,7 +1337,7 @@ body { overflow: hidden; overscroll-behavior: none; }
     if ("ResizeObserver" in window) { const ro = new ResizeObserver(() => requestAnimationFrame(fitDemos)); document.querySelectorAll(".p-text").forEach((t) => ro.observe(t)); }
   })();
 
-  // ---- video runs (flowmn): play only while on screen and not paused; under reduced motion, the still poster
+  // ---- video runs (none since flowmn left the site on 2026-11-02; kept for the next): play only while on screen and not paused; under reduced motion, the still poster
   (function videoRuns() {
     const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
     for (const v of document.querySelectorAll(".demo-frame video")) {
