@@ -3,7 +3,6 @@
   "site": {
     "tagline": "",
     "intro": "design engineering studio",
-    "lede": "We design and engineer things carefully, keep them simple, and publish how each one works.",
     "contact": "Have a project? Get in touch."
   },
   "projects": {
@@ -60,12 +59,6 @@
       }
     }
   },
-  "principles": {
-    "intro": "Three rules for everything specmn makes, for ourselves or for a client.",
-    "engineered": "Every part is chosen for a reason, and every claim is measured, not guessed.",
-    "documented": "Each product comes with its guide: how it works, how to build it, how to repair it.",
-    "simple": "Standard parts inside, few controls outside, and nothing that isn't needed."
-  },
   "upcoming": {
     "intro": "Products being designed now. Each will be published with its guide.",
     "radiomn": "A radio with one numbered dial: internet radio and FM.",
@@ -73,10 +66,7 @@
     "lampmn": "A desk lamp with one knob, powered over USB-C.",
     "cammn": "A camera on a Raspberry Pi, set with two knobs."
   },
-  "studio": {
-    "intro": "specmn also takes on client work, done the same way and documented as carefully.",
-    "product": "Taking a product from idea to working prototype: mechanics, electronics and software.",
-    "documentation": "Clear write-ups of how a design works and why, with drawings and animations.",
-    "measurement": "Tools that measure how a product really performs, so decisions rest on numbers."
+  "clients": {
+    "intro": "Design and engineering for other companies, made and documented the same way as our own work."
   }
 }

@@ -4,8 +4,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a deck of full-screen slides: the specmn title on paper, Principles, then one cover per project in its own
-   hue (flacmn blue), In progress, Studio, then Contact on charcoal. */
+/* Layout: a portfolio as a deck of full-screen slides: the specmn title on paper; the specmn section (one cover per
+   product in its own hue, flacmn blue, then In progress); the client work section; then Contact on charcoal. */
 :root {
   /* the palette: the values of brand/tokens.css, copied because the site is published on its own
      (tools/build_pages.py checks that they still match) */
@@ -84,7 +84,7 @@ body { overflow: hidden; overscroll-behavior: none; }
 .slide:not(.s-title) .logo-band { height: auto; padding-top: 0; }
 .slide:not(.s-title) .logo { height: auto; }
 .slide:not(.s-title) .slide-body { flex: 1 1 auto; align-content: center; padding-block: clamp(2rem, 7vh, 4.5rem) clamp(1.5rem, 6vh, 4rem); }   /* centred in the room under the mark, never close to it (the run shrinks to keep this room) */
-.slide[data-id="contact"] .p-text { justify-items: center; text-align: center; }    /* nothing beside it: centred across too */
+.slide[data-id="contact"] .p-text, .slide[data-id="clients"] .p-text { justify-items: center; text-align: center; }    /* nothing beside it: centred across too */
 .slide:not(.s-title) .logo { color: var(--on-cover); }             /* each mark in its cover's lettering colour */
 .slide.hue-paper .logo { color: var(--charcoal); }                       /* the shop's word: charcoal on off-white */
 .shop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(0.5rem, 2vw, 1rem); width: 100%; }
@@ -164,7 +164,7 @@ body { overflow: hidden; overscroll-behavior: none; }
 .demo-pending { width: 100%; box-sizing: border-box; }
 @media (min-width: 60rem) {
   .p-body { grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr); gap: 3rem; align-items: center; }
-  .slide[data-id="contact"] .p-body { grid-template-columns: minmax(0, 1fr); }
+  .slide[data-id="contact"] .p-body, .slide[data-id="clients"] .p-body { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 40rem) { .p-text { gap: 0.6rem; } .slide .gh, .slide .more { padding: 0.7rem 0.95rem; } .slide .gh .repo { display: none; } }
 @media (max-width: 22rem) { .slide .gh-view { display: none; } }
@@ -472,7 +472,7 @@ body { overflow: hidden; overscroll-behavior: none; }
 /* the cover rule (DESIGN.md section 3.5): lettering in paper where the hue reaches 4.5:1 against paper, charcoal where it doesn't */
 .hue-flacmn { --project: var(--flacmn); --project-text: var(--flacmn-text); --project-tint: var(--flacmn-tint); --on-cover: var(--paper); --cover-btn: var(--paper); --cover-btn-text: var(--flacmn-text); }
 
-/* the studio slides (Principles, In progress, Studio): a line on the left, a short list beside it (under it on phones) */
+/* In progress: a line on the left, a short list beside it (under it on phones) */
 .s-list { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(0.7rem, 2.2vh, 1.3rem); min-width: 0; }
 .s-list li { display: grid; gap: 0.2rem; padding-top: clamp(0.5rem, 1.6vh, 0.8rem); border-top: 1px solid color-mix(in srgb, var(--on-cover) 25%, transparent); min-width: 0; }
 .s-list h3 { margin: 0; display: flex; align-items: center; gap: 0.55rem; color: var(--on-cover); font: 700 clamp(1rem, 1.9vw, 1.2rem)/1.3 var(--body); }
@@ -481,8 +481,7 @@ body { overflow: hidden; overscroll-behavior: none; }
 .s-list .dot { flex: none; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--c); }
 @media (max-height: 600px) { .s-list p { font-size: 0.86rem; line-height: 1.3; } }
 @media (max-width: 40rem) and (max-height: 720px) { .s-list p { font-size: 0.84rem; line-height: 1.32; } .s-list { gap: 0.5rem; } }
-.s-title .lede { margin: 0; max-width: 40ch; color: var(--charcoal); font: 400 clamp(0.95rem, 1.9vw, 1.1rem)/1.5 var(--body); }
-.slide[data-id="contact"] .tagline { text-align: center; }
+.slide[data-id="contact"] .tagline, .slide[data-id="clients"] .tagline { text-align: center; }
 
 /* ---- your text */
 [data-slot] { white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -668,9 +667,8 @@ body { overflow: hidden; overscroll-behavior: none; }
       <button type="button" class="menu-btn" aria-expanded="false" aria-controls="menu-panel" aria-label="Menu"><span></span><span></span><span></span></button>
       <nav class="menu-panel" id="menu-panel" aria-label="Site">
         <ul>
-          <li><a href="#flacmn">Work</a></li>
-          <li><a href="#principles">Principles</a></li>
-          <li><a href="#studio">Studio</a></li>
+          <li><a href="#flacmn">specmn</a></li>
+          <li><a href="#clients">Client work</a></li>
           <li><a href="#contact">Contact</a></li>
           <li class="menu-sep"><a href="https://github.com/spcmn-studio" target="_blank" rel="noopener">GitHub</a></li>
         </ul>
@@ -680,26 +678,8 @@ body { overflow: hidden; overscroll-behavior: none; }
     <div class="wrap slide-body">
       <h1 class="sr-only" id="name-specmn">specmn</h1>
       <p class="intro" data-slot="site.intro" data-hint="What specmn does, in a few words"></p>
-      <p class="lede" data-slot="site.lede" data-hint="One plain line on how specmn works"></p>
     </div>
-    <button type="button" class="next-cue" aria-label="Go to the principles">Principles<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
-  </section>
-
-  <!-- ===== principles ===== -->
-  <section class="slide hue-paper" data-id="principles" data-word="principles" data-plain aria-labelledby="name-principles">
-    <div class="logo-band"><div class="logo-hold"></div></div>
-    <div class="wrap slide-body p-body">
-      <div class="p-text">
-        <h2 class="sr-only" id="name-principles">Principles</h2>
-        <span class="label">Principles</span>
-        <p class="tagline" data-slot="principles.intro" data-hint="One line on how specmn works"></p>
-      </div>
-      <ul class="s-list">
-          <li><h3>Well engineered</h3><p data-slot="principles.engineered" data-hint="What well engineered means here"></p></li>
-          <li><h3>Documented</h3><p data-slot="principles.documented" data-hint="What documented means here"></p></li>
-          <li><h3>Simple</h3><p data-slot="principles.simple" data-hint="What simple means here"></p></li>
-      </ul>
-    </div>
+    <button type="button" class="next-cue" aria-label="Go to the work">Work<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
   </section>
 
   <!-- ===== flacmn ===== -->
@@ -708,7 +688,7 @@ body { overflow: hidden; overscroll-behavior: none; }
     <div class="wrap slide-body p-body">
       <div class="p-text">
         <h2 class="sr-only" id="name-flacmn">flacmn</h2>
-        <span class="label">Desktop app + phone app</span>
+        <span class="label">specmn &middot; Desktop app + phone app</span>
         <p class="tagline" data-slot="projects.flacmn.summary" data-hint="One line on what flacmn does"></p>
         <div class="p-actions" hidden><a class="more" href="#flacmn/more">Documentation<span class="sr-only"> for flacmn</span> &rarr;</a></div>
       </div>
@@ -726,7 +706,7 @@ body { overflow: hidden; overscroll-behavior: none; }
     <div class="wrap slide-body p-body">
       <div class="p-text">
         <h2 class="sr-only" id="name-next">In progress</h2>
-        <span class="label">In progress</span>
+        <span class="label">specmn &middot; In progress</span>
         <p class="tagline" data-slot="upcoming.intro" data-hint="One line on what's being designed now"></p>
       </div>
       <ul class="s-list">
@@ -738,20 +718,15 @@ body { overflow: hidden; overscroll-behavior: none; }
     </div>
   </section>
 
-  <!-- ===== studio: client work ===== -->
-  <section class="slide hue-paper" data-id="studio" data-word="studio" data-plain aria-labelledby="name-studio">
+  <!-- ===== client work: its own section, one line until there are projects to show ===== -->
+  <section class="slide hue-paper" data-id="clients" data-word="client work" data-plain aria-labelledby="name-clients">
     <div class="logo-band"><div class="logo-hold"></div></div>
     <div class="wrap slide-body p-body">
       <div class="p-text">
-        <h2 class="sr-only" id="name-studio">Studio</h2>
-        <span class="label">Studio</span>
-        <p class="tagline" data-slot="studio.intro" data-hint="One line on the client work specmn takes on"></p>
+        <h2 class="sr-only" id="name-clients">Client work</h2>
+        <span class="label">Client work</span>
+        <p class="tagline" data-slot="clients.intro" data-hint="One line on the client work specmn takes on"></p>
       </div>
-      <ul class="s-list">
-          <li><h3>Product design and engineering</h3><p data-slot="studio.product" data-hint="What this offer covers"></p></li>
-          <li><h3>Design studies and documentation</h3><p data-slot="studio.documentation" data-hint="What this offer covers"></p></li>
-          <li><h3>Measurement and test tools</h3><p data-slot="studio.measurement" data-hint="What this offer covers"></p></li>
-      </ul>
     </div>
   </section>
 
@@ -894,7 +869,7 @@ body { overflow: hidden; overscroll-behavior: none; }
 </article>
 
 <nav class="deck-dots off" aria-label="Slides">
-  <button type="button" aria-label="specmn"></button><button type="button" aria-label="Principles"></button><button type="button" aria-label="flacmn"></button><button type="button" aria-label="In progress"></button><button type="button" aria-label="Studio"></button><button type="button" aria-label="Contact"></button>
+  <button type="button" aria-label="specmn"></button><button type="button" aria-label="flacmn"></button><button type="button" aria-label="In progress"></button><button type="button" aria-label="Client work"></button><button type="button" aria-label="Contact"></button>
 </nav>
 
 <div class="editbar" id="editbar" hidden>
@@ -1221,7 +1196,7 @@ body { overflow: hidden; overscroll-behavior: none; }
     function kick() { if (!running) { running = true; requestAnimationFrame(frame); } }
 
     // ---- start on the slide the address names (old links to a project page, or a category, land on its slide)
-    const old = { software: "flacmn", work: "flacmn" };   // flowmn (PIVmn) left the site on 2026-11-06: its links land on the title
+    const old = { software: "flacmn", work: "flacmn", studio: "clients" };   // flowmn (PIVmn) left the site on 2026-11-06: its links land on the title
     const [want, wantMore] = location.hash.replace("#", "").split("/");
     index = Math.max(0, ids.indexOf(old[want] || want));
     show([index]); place(index, 0); mark();
@@ -1322,7 +1297,7 @@ body { overflow: hidden; overscroll-behavior: none; }
       if (n >= 0) go(n);
     });
 
-    // ---- the menu on the title: its links are ordinary addresses (#principles, #studio, GitHub), handled above
+    // ---- the menu on the title: its links are ordinary addresses (#flacmn, #clients, GitHub), handled above
     const menu = document.querySelector(".menu"), menuBtn = menu.querySelector(".menu-btn");
     function closeMenu() { menu.classList.remove("open"); menuBtn.setAttribute("aria-expanded", "false"); }
     menuBtn.addEventListener("click", (e) => {
