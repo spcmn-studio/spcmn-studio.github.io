@@ -1,33 +1,31 @@
 <!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>spcmn</title>
+<title>specmn</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a deck of full-screen slides, light in every theme: the spcmn title on off-white (--paper), then one slide per project in its
-   own hue of the palette (flacmn blue #4357AD: the design language's trial colour since 2026-11-02, after purple). */
+/* Layout: a deck of full-screen slides: the specmn title on paper, Principles, then one cover per project in its own
+   hue (flacmn blue), In progress, Studio, then Contact on charcoal. */
 :root {
-  /* the palette */
-  --stone: #E6E2D8; --paper: #F6F4EE;     /* the site's off-white: page, and light text and marks on the covers */ --blue: #4357AD; --green: #20A76B; --amber: #F4B73E; --red: #BC3843;
-  --charcoal: #2E2E33;  /* the title slide: wordmark, words and controls, with no purple cast */
+  /* the palette: the values of brand/tokens.css, copied because the site is published on its own
+     (tools/build_pages.py checks that they still match) */
+  --paper: #F6F4EE; --charcoal: #2E2E33; --text: #0F0D1A; --stone: #E6E2D8;
+  --tint-6: #EAE8E3; --tint-25: #C4C2BF; --tint-70: #6A696B;
+  --flacmn: #4357AD; --flacmn-text: #4357AD; --flacmn-tint: #E8E7E9;
+  --radiomn: #916562; --airmn: #20A76B; --lampmn: #F4B73E; --cammn: #BC3843;   /* the products in progress: a dot each */
+  --good: #1A634E; --bad: #922E3D; --warn: #6D5332;
 
   --bg: var(--paper);
-  --surface: #F7F6F8;
-  --text: #0F0D1A;
-  --text-2: #2C284E;
-  --muted: #5E5A6B;
-  --line: #CFC9DA;
-  --project: var(--blue);          /* fills: tiles, buttons, numbers */
-  --project-text: #4357AD;           /* the project's hue as text (flacmn's blue is 5.96:1 on paper, so it is its own text colour) */
-  --project-tint: #E8E7E9;
-  --on-project: #FFFFFF;
-  --good-tint: #E2F4EC; --good-text: #1A634E;
-  --warn-tint: #FDF1D8; --warn-text: #6D5332;
-  --bad-tint: #F8EBEC;  --bad-text: #922E3D;
-  --edit: var(--amber);
-  --edit-tint: #FDF1D8;
-  --hint: #7B7782;
-  --bar: #0F0D1A; --on-bar: #FFFFFF;
+  --muted: var(--tint-70);           /* secondary text, on paper */
+  --line: var(--tint-25);            /* hairlines and rules */
+  --hint: var(--tint-70);
+  --project: var(--flacmn);          /* fills: tiles, buttons, numbers */
+  --project-text: var(--flacmn-text);   /* the project's hue as text */
+  --project-tint: var(--flacmn-tint);
+  --on-project: var(--paper);
+  --edit: #F4B73E;                   /* the owner's editing tool only, never on the public page */
+  --edit-tint: #F6EFE0;
+  --bar: var(--text); --on-bar: var(--paper);
 
   color-scheme: light;
   --display: "Heros", "Helvetica Neue", Helvetica, Arial, sans-serif;   /* headings: regular width (the condensed cut is kept for the project marks) */
@@ -48,7 +46,7 @@ html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 a { color: var(--project-text); }
 a:focus-visible, button:focus-visible, [contenteditable]:focus-visible {
-  outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 4px;
+  outline: 2px solid var(--charcoal); outline-offset: 3px; border-radius: 2px;
 }
 h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; line-height: 1.05; text-wrap: balance; margin: 0; }
 .label { font: 500 0.72rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
@@ -87,21 +85,21 @@ body { overflow: hidden; overscroll-behavior: none; }
 .slide:not(.s-title) .logo { height: auto; }
 .slide:not(.s-title) .slide-body { flex: 1 1 auto; align-content: center; padding-block: clamp(2rem, 7vh, 4.5rem) clamp(1.5rem, 6vh, 4rem); }   /* centred in the room under the mark, never close to it (the run shrinks to keep this room) */
 .slide[data-id="contact"] .p-text { justify-items: center; text-align: center; }    /* nothing beside it: centred across too */
-.slide:not(.s-title) .logo { color: var(--paper); }                /* every project's mark is off-white */
+.slide:not(.s-title) .logo { color: var(--on-cover); }             /* each mark in its cover's lettering colour */
 .slide.hue-paper .logo { color: var(--charcoal); }                       /* the shop's word: charcoal on off-white */
 .shop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(0.5rem, 2vw, 1rem); width: 100%; }
 /* a product: a picture (the project's mark on its hue), its name, a line, the price and a Buy link to its Gumroad page */
-.shop-card { display: grid; grid-template-rows: auto 1fr; min-width: 0; border-radius: 14px; overflow: hidden; background: #FFFFFF;
-             box-shadow: 0 10px 30px rgba(46, 46, 51, 0.12), 0 0 0 1px rgba(46, 46, 51, 0.08); }
+.shop-card { display: grid; grid-template-rows: auto 1fr; min-width: 0; border-radius: 2px; overflow: hidden; background: var(--paper);
+             border: 1px solid var(--tint-25); }
 .shop-art { aspect-ratio: 4 / 3; background: var(--c); display: grid; place-items: center; padding: 0 14%; }
 .shop-art svg { display: block; width: 100%; height: auto; fill: var(--paper); overflow: visible; }
-.shop-art-blank { background: #ECEAE4; color: var(--muted); font: 500 0.68rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.shop-art-blank { background: var(--tint-6); color: var(--muted); font: 500 0.68rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
 .shop-info { display: grid; gap: 0.35rem; align-content: start; padding: 0.75rem 0.85rem 0.85rem; }
 .shop-info h3 { font-size: 1rem; color: var(--charcoal); }
 .shop-desc { margin: 0; font-size: 0.82rem; line-height: 1.35; }
 .shop-buy { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.4rem; }
 .shop-price { font: 500 0.85rem/1 var(--mono); color: var(--charcoal); }
-.shop-btn { padding: 0.5rem 0.7rem; border-radius: 8px; background: var(--charcoal); color: var(--paper); text-decoration: none; font: 700 0.78rem/1 var(--body); white-space: nowrap; }
+.shop-btn { padding: 0.5rem 0.7rem; border-radius: 2px; background: var(--charcoal); color: var(--paper); text-decoration: none; font: 700 0.78rem/1 var(--body); white-space: nowrap; }
 .shop-btn:hover { filter: brightness(1.25); }
 /* flacmn: the installer is sold; the source stays free to build */
 .shop-free { justify-self: start; margin-top: 0.15rem; font: 500 0.72rem/1.3 var(--mono); color: var(--charcoal); text-underline-offset: 2px; }
@@ -135,27 +133,27 @@ body { overflow: hidden; overscroll-behavior: none; }
 @media (max-height: 560px) { .next-cue { display: none; } }
 /* the menu: a button in the title's top-right corner that drops a list of the projects (each a block in its hue), About me and GitHub */
 .menu { position: absolute; top: 0.6rem; right: 0.6rem; z-index: 2; }
-.menu-btn { display: grid; align-content: center; justify-items: center; gap: 5px; width: 2.75rem; height: 2.75rem; padding: 0; border: 0; border-radius: 999px;
+.menu-btn { display: grid; align-content: center; justify-items: center; gap: 5px; width: 2.75rem; height: 2.75rem; padding: 0; border: 0; border-radius: 2px;
             background: none; color: var(--charcoal); cursor: pointer; }
 .menu-btn:hover { background: rgba(46, 46, 51, 0.07); }
-.menu-btn span { display: block; width: 1.3rem; height: 2px; border-radius: 2px; background: currentColor; transition: transform 0.3s ease, opacity 0.2s ease; }
+.menu-btn span { display: block; width: 1.3rem; height: 2px; border-radius: 0; background: currentColor; transition: transform 0.3s ease, opacity 0.2s ease; }
 .menu-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .menu-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .menu-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-.menu-panel { position: absolute; top: calc(100% + 0.35rem); right: 0; min-width: 12.5rem; padding: 0.4rem; border-radius: 14px; background: var(--paper);
-              box-shadow: 0 14px 40px rgba(46, 46, 51, 0.18), 0 0 0 1px rgba(46, 46, 51, 0.08);
+.menu-panel { position: absolute; top: calc(100% + 0.35rem); right: 0; min-width: 12.5rem; padding: 0.4rem; border-radius: 2px; background: var(--paper);
+              border: 1px solid var(--tint-25);
               opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s; }
 .menu.open .menu-panel { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
 .menu-panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; }
-.menu-panel a { display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.85rem; border-radius: 9px; color: var(--charcoal); text-decoration: none;
+.menu-panel a { display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.85rem; border-radius: 2px; color: var(--charcoal); text-decoration: none;
                 font: 700 1rem/1.2 var(--body); }
 .menu-panel a:hover, .menu-panel a:focus-visible { background: rgba(46, 46, 51, 0.07); }
 /* each project is a block in its own hue, carrying its mark (name and dot mn, copied from its slide), off-white */
-.menu-panel .m-proj { background: var(--c); color: var(--paper); padding: 0.7rem 0.9rem 0.8rem; font: 700 1.6rem/1 "Heros Cn", "Helvetica Neue", "Arial Narrow", sans-serif; }
+.menu-panel .m-proj { background: var(--c); color: var(--on); padding: 0.7rem 0.9rem 0.8rem; font: 700 1.6rem/1 "Heros Cn", "Helvetica Neue", "Arial Narrow", sans-serif; }
 .menu-panel .m-proj:hover, .menu-panel .m-proj:focus-visible { background: var(--c); filter: brightness(1.1); }
 .menu-panel .m-proj:focus-visible { outline-color: var(--charcoal); }
 .menu-panel .m-mark { display: block; height: 1.75rem; width: auto; fill: currentColor; overflow: visible; }
-.menu-sep { margin-top: 0.35rem; padding-top: 0.35rem; border-top: 1px solid rgba(46, 46, 51, 0.12); }
+.menu-sep { margin-top: 0.35rem; padding-top: 0.35rem; border-top: 1px solid var(--tint-25); }
 @media (prefers-reduced-motion: reduce) { .menu-btn span, .menu-panel { transition: none; } }
 
 /* a project slide: what it is, then its sample run (side by side on wide screens) */
@@ -173,7 +171,7 @@ body { overflow: hidden; overscroll-behavior: none; }
 @media (max-height: 600px) { .slide .tagline { font-size: 0.95rem; line-height: 1.35; } .slide-body { gap: 0.75rem; } .slide .gh, .slide .more { padding-block: 0.55rem; } }
 
 .p-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
-.slide .more { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.85rem 1.1rem; border-radius: 10px; color: var(--on-cover); text-decoration: none;
+.slide .more { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.85rem 1.1rem; border-radius: 2px; color: var(--on-cover); text-decoration: none;
                font: 700 0.95rem/1 var(--body); box-shadow: inset 0 0 0 1.5px currentColor; }
 .slide .more:hover { background: color-mix(in srgb, var(--on-cover) 12%, transparent); }
 
@@ -188,7 +186,7 @@ body { overflow: hidden; overscroll-behavior: none; }
 .d-back { font: 500 0.8rem/1.2 var(--mono); color: inherit; text-decoration: none; opacity: 0.85; }
 .d-back:hover { opacity: 1; text-decoration: underline; }
 .d-mark { width: min(100%, 28rem); margin-top: 1.25rem; }
-.d-mark .logo { height: auto; color: var(--paper); }
+.d-mark .logo { height: auto; color: var(--on-cover); }
 .d-head .label { color: var(--on-cover); opacity: 0.8; }
 .d-head .tagline { margin: 0; max-width: 40ch; font: 400 clamp(1.1rem, 2.4vw, 1.4rem)/1.45 var(--body); }
 .d-head :focus-visible { outline-color: var(--on-cover); }
@@ -202,14 +200,14 @@ body { overflow: hidden; overscroll-behavior: none; }
 .d-fig { margin: 0.5rem 0 0; display: grid; gap: 0.5rem; }
 .d-sub { display: grid; gap: 0.6rem; margin-top: 1.5rem; }                /* one part of a walkthrough: its heading, words and run */
 .d-sub h3 { margin: 0; font-size: clamp(1.1rem, 3vw, 1.3rem); }
-.d-pending { aspect-ratio: 16 / 9; border-radius: 12px; border: 1.5px dashed var(--project); background: var(--project-tint); display: grid; place-items: center;
+.d-pending { aspect-ratio: 16 / 9; border-radius: 2px; border: 1.5px dashed var(--project); background: var(--project-tint); display: grid; place-items: center;
              color: var(--project-text); font: 500 0.75rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
 .d-fig figcaption { font: 500 0.72rem/1.4 var(--mono); color: var(--hint); }
-.hue-charcoal { --project: var(--charcoal); --project-text: var(--charcoal); --project-tint: #ECEAE4; --on-cover: var(--paper); --cover-btn: var(--paper); --cover-btn-text: var(--charcoal); }
-.hue-paper { --project: var(--paper); --project-text: var(--charcoal); --project-tint: #ECEAE4; --on-cover: var(--charcoal); --cover-btn: var(--charcoal); --cover-btn-text: var(--paper); }
+.hue-charcoal { --project: var(--charcoal); --project-text: var(--charcoal); --project-tint: var(--tint-6); --on-cover: var(--paper); --cover-btn: var(--paper); --cover-btn-text: var(--charcoal); }
+.hue-paper { --project: var(--paper); --project-text: var(--charcoal); --project-tint: var(--tint-6); --on-cover: var(--charcoal); --cover-btn: var(--charcoal); --cover-btn-text: var(--paper); }
 .d-title { margin-top: 1.5rem; font-size: clamp(2.4rem, 8vw, 4rem); }
 .ph-on { opacity: 0.75; }                                             /* placeholder text on a coloured band */
-.d-photo { width: min(100%, 15rem); aspect-ratio: 4 / 5; margin-bottom: 2rem; border-radius: 12px; border: 1.5px dashed var(--line); background: #ECEAE4;
+.d-photo { width: min(100%, 15rem); aspect-ratio: 4 / 5; margin-bottom: 2rem; border-radius: 2px; border: 1.5px dashed var(--line); background: var(--tint-6);
            display: grid; place-items: center; color: var(--muted); font: 500 0.75rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
 .d-links { margin: 2.5rem 0 0; padding-top: 2.5rem; border-top: 1px solid var(--line); font: 500 0.9rem/1.4 var(--mono); }
 .d-links a { color: var(--charcoal); }
@@ -234,12 +232,12 @@ body { overflow: hidden; overscroll-behavior: none; }
 .demo .demo-step { min-height: 2.6em; display: flex; align-items: center; }
 .demo .demo-step.swap { animation: demo-step 0.4s ease both; }
 @keyframes demo-step { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
-.demo .demo-toggle { flex: none; display: inline-block; width: auto; overflow: visible; font: inherit; color: inherit; background: none; border: 1px solid currentColor; border-radius: 999px; padding: 0.3rem 0.75rem; cursor: pointer; }
+.demo .demo-toggle { flex: none; display: inline-block; width: auto; overflow: visible; font: inherit; color: inherit; background: none; border: 1px solid currentColor; border-radius: 2px; padding: 0.3rem 0.75rem; cursor: pointer; }
 .d-fig.demo figcaption { color: var(--hint); }                     /* a run on a project's own page: on the page's paper, not a cover */
-/* a video run (tankmn): the portrait CAD render centred in the same full-width window as flacmn's run */
+/* a video run: a portrait render centred in the same full-width window as flacmn's run */
 .demo-frame.video { background: #FDFDFD; }
 .demo-frame video { display: block; width: 100%; height: 100%; object-fit: contain; }
-.demo-pending { aspect-ratio: 560 / 380; border-radius: 12px; border: 1.5px dashed var(--on-cover); display: grid; place-items: center; color: var(--on-cover);
+.demo-pending { aspect-ratio: 560 / 380; border-radius: 2px; border: 1.5px dashed var(--on-cover); display: grid; place-items: center; color: var(--on-cover);
                 background: color-mix(in srgb, var(--on-cover) 8%, transparent); font: 500 0.75rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
 
 /* flacmn's sample run: a 730 x 400 mock of the desktop app (flacmn library: Albums, quality check, Send to app) beside
@@ -380,59 +378,42 @@ body { overflow: hidden; overscroll-behavior: none; }
 .nf-pbar i + i { background: #20A76B; }
 
 
-/* the phone, as the app looks since its watercolour redesign (flacmn-mobile, 2026-11-02): Home and Settings on a wash
-   of the most played album, the albums as bands each in its own colour, an album and Now playing on a wash of its
-   colour, Receive on paper. Words in the wash's ink (off-white on these dark washes); Heros for words, Plex Mono for
-   labels, formats and times, each format with its units. Every screen carries its own status bar, so a wash runs up
-   under the clock. */
+/* the phone */
 .nf-phone { position: absolute; left: 556px; top: 16px; width: 170px; height: 368px; border-radius: 27px; background: #1E1E22; padding: 6px;
             box-shadow: 0 16px 40px rgba(15, 13, 26, 0.4), inset 0 0 0 1.2px #4F4E55; }
 .nf-ph { position: relative; width: 100%; height: 100%; border-radius: 21px; overflow: hidden; background: #F6F4EE; font-size: 6.4px; }
 .nf-island { position: absolute; left: 50%; top: 5px; width: 44px; height: 12px; margin-left: -22px; border-radius: 8px; background: #000000; z-index: 5; }
-.nf-scr { position: absolute; inset: 0; background: #F6F4EE; color: var(--ink); display: flex; flex-direction: column; overflow: hidden; --ink: #2E2E33; --grain: 330px; }
+.nf-sb { position: absolute; left: 0; right: 0; top: 0; height: 22px; display: flex; align-items: center; justify-content: space-between; padding: 2px 16px 0 19px; z-index: 4; font-size: 6.6px; }
+.nf-sb i { width: 11px; height: 5px; border-radius: 1.5px; border: 0.7px solid #2E2E33; position: relative; }
+.nf-sb i::after { content: ""; position: absolute; inset: 0.8px; right: 2.5px; background: #2E2E33; border-radius: 0.5px; }
+.nf-scr { position: absolute; left: 0; right: 0; top: 22px; bottom: 0; background: #F6F4EE; display: flex; flex-direction: column; }
 .nf-scr.fx:not(.on) { transform: translateX(14px); }
-.nf-scr.inked { --ink: #F6F4EE; }
-.nf-scr.inked small, .nf-scr.inked .nf-txt { color: rgb(246 244 238 / 0.8); }
-.nf-mono { font-family: var(--mono); font-weight: 500; }
-.nf-sb { height: 22px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 2px 16px 0 19px; font-size: 6.6px; }
-.nf-sb i { width: 11px; height: 5px; border-radius: 1.5px; border: 0.7px solid currentColor; position: relative; }
-.nf-sb i::after { content: ""; position: absolute; inset: 0.8px; right: 2.5px; background: currentColor; border-radius: 0.5px; }
-.nf-appbar { height: 20px; display: flex; align-items: center; gap: 4px; padding: 0 9px; flex: none; position: relative; }
+.nf-appbar { height: 20px; display: flex; align-items: center; gap: 4px; padding: 0 9px; flex: none; }
 .nf-appbar .bk { font-size: 12px; line-height: 1; margin-top: -1px; }
 .nf-appbar b { font-size: 8px; white-space: nowrap; }
-.nf-appbar .mo { position: absolute; right: 10px; font-size: 8px; letter-spacing: 0.5px; }
-.nf-appbar .col { width: 6px; height: 6px; border: 0.8px solid currentColor; border-radius: 0.5px; }
-.nf-menu > span.press, .nf-li.press, .nf-cell.press { background: rgb(46 46 51 / 0.1); }
-.inked .nf-menu > span.press, .inked .nf-cell.press { background: rgb(246 244 238 / 0.16); }
-/* Home */
-.nf-hlogo { width: 58%; margin: 18px 0 10px 12px; display: block; }
-.nf-menu { padding: 0 10px; }
-.nf-menu > span { display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; height: 19px; border-radius: 3px; padding: 0 2px;
+.nf-appbar.c { justify-content: center; position: relative; }
+.nf-appbar.c b { font-weight: 400; color: #4F4E55; font-size: 7px; }
+.nf-appbar.c .bk { position: absolute; left: 9px; } .nf-appbar.c .more { position: absolute; right: 10px; font-size: 8px; letter-spacing: 0.5px; }
+.nf-hlogo { width: 62%; margin: 20px auto 14px; display: block; }
+.nf-menu { padding: 0 12px; }
+.nf-menu > span { display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; height: 22px; border-radius: 4px; padding: 0 2px;
                   transition: background 0.2s; }
-.nf-menu > span::after { content: "\203A"; opacity: 0.6; font-size: 10px; }
-.nf-most { padding: 10px 12px 0; }
-.nf-most b { font-size: 6.6px; display: block; margin-bottom: 5px; }
-.nf-two { display: flex; gap: 6px; }
-.nf-cvbtn { flex: 1; min-width: 0; padding: 1px; }
-.nf-cvbtn .nf-cv { width: 100%; height: auto; aspect-ratio: 1; border-radius: 0; }
-.nf-cvbtn em { font-style: normal; display: block; font-size: 5.6px; font-weight: 700; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.nf-cvbtn small { display: block; font-size: 5.2px; }
-/* Settings: groups painted a shade off the page, cells in its ink */
-.nf-cap { font: 500 4.8px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 9px 13px 3px; opacity: 0.8; }
-.nf-grp { margin: 0 8px; border-radius: 5px; background: color-mix(in srgb, var(--w) 86%, #F6F4EE); overflow: hidden; }
-.nf-cell { display: flex; align-items: center; justify-content: space-between; gap: 4px; min-height: 19px; padding: 3px 7px; font-size: 6.6px; transition: background 0.2s; }
-.nf-cell + .nf-cell { border-top: 0.5px solid rgb(246 244 238 / 0.16); }
-.nf-cell > span { display: grid; gap: 1px; }
-.nf-cell small { font-size: 5.2px; }
-.nf-cell.go::after { content: "\203A"; opacity: 0.6; font-size: 9px; }
-/* Receive from computer: on paper */
+.nf-menu > span::after { content: "\203A"; color: #9A999E; font-size: 10px; }
+.nf-menu > span.press, .nf-li.press, .nf-cvbtn.press { background: #E7E4DC; }
+.nf-recent { padding: 12px 12px 0; }
+.nf-recent b { font-size: 7.2px; display: block; margin-bottom: 5px; }
+.nf-two { display: flex; gap: 7px; }
+.nf-cvbtn { flex: 1; min-width: 0; border-radius: 3px; padding: 1px; transition: background 0.2s; }
+.nf-cvbtn .nf-cv { width: 100%; height: auto; aspect-ratio: 1; }
+.nf-cvbtn em { font-style: normal; display: block; font-size: 6px; font-weight: 700; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nf-cvbtn small { display: block; font-size: 5.6px; }
 .nf-txt { padding: 2px 10px 6px; font-size: 5.8px; line-height: 1.45; color: #4F4E55; }
 .nf-li { display: grid; padding: 4px 10px; gap: 1px; font-size: 7px; transition: background 0.2s; }
-.nf-li small { font-size: 5.6px; color: #5E5A6B; }
+.nf-li small { font-size: 5.6px; color: #77767D; }
 .nf-li.row { display: flex; align-items: center; gap: 6px; }
 .nf-li.row > span { display: grid; flex: 1; min-width: 0; }
-.nf-head { font: 500 4.8px/1 var(--mono); letter-spacing: 0.08em; color: #5E5A6B; padding: 7px 10px 3px; }
-.nf-pill { margin: 4px 10px; padding: 4px 8px; border-radius: 4px; border: 0.7px solid #2E2E33; font-size: 6.4px; font-weight: 700; text-align: center;
+.nf-head { font-size: 5.2px; letter-spacing: 0.06em; color: #77767D; padding: 6px 10px 2px; }
+.nf-pill { margin: 4px 10px; padding: 4px 8px; border-radius: 99px; border: 0.7px solid #2E2E33; font-size: 6.4px; font-weight: 700; text-align: center;
            transition: transform 0.12s, background 0.2s; }
 .nf-pill.dark { background: #2E2E33; color: #F6F4EE; }
 .nf-pill.press { transform: scale(0.95); }
@@ -440,82 +421,72 @@ body { overflow: hidden; overscroll-behavior: none; }
 .nf-dlg { position: absolute; inset: 0; background: rgba(30, 30, 34, 0.32); display: grid; place-items: center; z-index: 3; }
 .nf-dlg > div { width: 126px; background: #F6F4EE; border-radius: 10px; padding: 9px 10px 6px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); display: grid; gap: 6px; }
 .nf-dlg b { font-size: 7.6px; font-weight: 400; }
-.nf-dlg .fld { border-bottom: 1px solid #5C53A2; height: 13px; font: 500 8px/1 var(--mono); letter-spacing: 0.08em; display: flex; align-items: center; }
+.nf-dlg .fld { border-bottom: 1px solid #5C53A2; height: 13px; font-size: 8px; letter-spacing: 0.08em; display: flex; align-items: center; }
 .nf-dlg .acts { display: flex; justify-content: flex-end; gap: 10px; font-size: 6.6px; font-weight: 700; color: #4A4284; }
 .nf-dlg .acts span { padding: 2px 3px; border-radius: 3px; transition: background 0.2s; }
 .nf-dlg .acts span.press { background: #E7E4DC; }
-/* a format: the quality's dot, then the format with its units */
-.nf-qf { display: flex; align-items: center; gap: 2.5px; font: 500 4.6px/1.2 var(--mono); font-style: normal; white-space: nowrap; }
-.nf-qf u { width: 2.6px; height: 2.6px; border-radius: 50%; background: #20A76B; flex: none; }
-/* Albums: one band per album in its colour, title and details on the left, the cover on the right, a hairline between */
-.nf-bands { background: #7A5A3C; }
-.nf-band { position: relative; display: flex; align-items: stretch; height: 46px; flex: none; transition: filter 0.2s; }
-.nf-band + .nf-band { box-shadow: inset 0 0.5px rgb(246 244 238 / 0.14); }
-.nf-band > span:first-child { flex: 1; min-width: 0; display: grid; align-content: center; gap: 1.5px; padding: 0 8px 0 10px; }
-.nf-band b { font-size: 9.5px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.nf-band small { font-size: 5.2px; }
-.nf-band .nf-cv { width: 46px; height: 46px; border-radius: 0; }
-.nf-band.press { filter: brightness(1.12); }
-/* an album: a wash of its colour, the cover centred, Play in the ink with the album's colour for its words */
-.nf-alb { display: grid; justify-items: center; text-align: center; gap: 2px; padding: 2px 12px 6px; }
-.nf-alb .nf-cv { width: 76px; height: 76px; border-radius: 0; margin-bottom: 5px; }
-.nf-alb h4 { font-size: 9px; }
-.nf-alb > u { font-size: 6.4px; text-underline-offset: 1px; text-decoration-thickness: 0.5px; }
-.nf-alb .nf-qf { margin-top: 2px; }
-.nf-play { margin: 2px 10px 6px; height: 15px; border-radius: 4px; background: var(--ink); color: var(--w); display: grid; place-items: center;
-           font-size: 6.4px; font-weight: 700; transition: transform 0.12s; }
-.nf-play.press { transform: scale(0.95); }
-.nf-song { display: flex; align-items: center; height: 14.5px; padding: 0 10px; font-size: 6.4px; box-shadow: inset 0 0.5px rgb(246 244 238 / 0.14); }
-.nf-song span { flex: 1; }
-.nf-song i { font: 500 5px/1 var(--mono); font-style: normal; opacity: 0.8; }
-/* Now playing: the cover, the song, its format, the song's waveform as the scrubber (played in the ink, the rest faint),
-   and play/pause in the ink with its mark in the album's colour */
-.nf-np { padding: 2px 9px 0; display: grid; gap: 1.5px; }
-.nf-np .nf-cv { width: 100%; height: auto; aspect-ratio: 1; border-radius: 0; margin-bottom: 9px; }
-.nf-np h4 { font-size: 9.5px; }
-.nf-np p { font-size: 6.2px; opacity: 0.8; }
-.nf-np .nf-qf { margin-top: 5px; }
-.nf-np .un { margin-left: auto; width: 7px; height: 5px; border-top: 0.8px solid currentColor; border-bottom: 0.8px solid currentColor; position: relative; }
-.nf-np .un::after { content: ""; position: absolute; left: 0; right: 2px; top: 1.3px; border-top: 0.8px solid currentColor; }
-.nf-wave { display: block; width: calc(100% - 18px); height: 14px; margin: 9px 9px 0; }
-.nf-times { display: flex; justify-content: space-between; padding: 3px 9px 0; font: 500 4.8px/1 var(--mono); opacity: 0.8; }
-.nf-ctl { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 7px 0 0; }
+.nf-alb { display: flex; gap: 8px; padding: 4px 10px 8px; }
+.nf-alb .nf-cv { width: 58px; height: 58px; }
+.nf-alb > span { display: grid; align-content: start; gap: 2px; min-width: 0; }
+.nf-alb h4 { font-size: 8.5px; }
+.nf-alb .q { display: flex; align-items: center; gap: 3px; font-size: 5.4px; color: #77767D; margin-top: 2px; }
+.nf-alb .nf-pill { margin: 4px 0 0; justify-self: start; padding: 3px 9px; }
+.nf-ptrk { display: flex; gap: 6px; padding: 0 10px; height: 15px; align-items: center; font-size: 6.4px; border-top: 0.6px solid #E7E4DC; }
+.nf-ptrk span:first-child { width: 6px; color: #77767D; font-size: 5.8px; }
+.nf-ptrk span:nth-child(2) { flex: 1; }
+.nf-ptrk span:last-child { color: #77767D; font-size: 5.8px; }
+.nf-pages { flex: 1; min-height: 0; overflow: hidden; position: relative; }
+.nf-track { position: absolute; left: 0; top: 0; bottom: 0; width: 200%; display: flex; transition: transform 0.55s cubic-bezier(.3, .7, .2, 1); }
+.nf-track.p2 { transform: translateX(-50%); }
+.nf-track > div { width: 50%; padding: 4px 12px 0; display: flex; flex-direction: column; justify-content: center; }
+.nf-np .nf-cv { width: 100%; height: auto; aspect-ratio: 1; border-radius: 3px; }
+.nf-np h4 { font-size: 9px; margin-top: 8px; }
+.nf-np p { font-size: 6.2px; color: #4F4E55; margin-top: 1px; }
+.nf-np .q { display: flex; align-items: center; gap: 3px; font-size: 5.4px; color: #77767D; margin-top: 4px; }
+.nf-scope { width: 100%; aspect-ratio: 1; display: block; }
+.nf-dots { display: flex; justify-content: center; gap: 3px; padding: 5px 0 3px; }
+.nf-dots i { width: 3px; height: 3px; border-radius: 50%; background: #DCD9D0; transition: background 0.3s; }
+.nf-dots i.on { background: #2E2E33; }
+.nf-slider { margin: 3px 12px 0; height: 1px; background: #DCD9D0; position: relative; }
+.nf-slider i { position: absolute; left: 0; top: 0; bottom: 0; background: #2E2E33; }
+.nf-slider i::after { content: ""; position: absolute; right: -2.5px; top: -2px; width: 5px; height: 5px; border-radius: 50%; background: #2E2E33; }
+.nf-times { display: flex; justify-content: space-between; padding: 3px 12px 0; font-size: 5.2px; color: #77767D; }
+.nf-ctl { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 4px 0 12px; position: relative; }
 .nf-ctl .sk { width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; position: relative; }
-.nf-ctl .sk.prev { border-right: 6px solid var(--ink); } .nf-ctl .sk.next { border-left: 6px solid var(--ink); }
-.nf-ctl .sk::before { content: ""; position: absolute; top: -4px; width: 1.4px; height: 8px; background: var(--ink); }
+.nf-ctl .sk.prev { border-right: 6px solid #2E2E33; } .nf-ctl .sk.next { border-left: 6px solid #2E2E33; }
+.nf-ctl .sk::before { content: ""; position: absolute; top: -4px; width: 1.4px; height: 8px; background: #2E2E33; }
 .nf-ctl .sk.prev::before { left: -7.4px; } .nf-ctl .sk.next::before { right: -7.4px; }
-.nf-ctl .pp { width: 24px; height: 24px; border-radius: 50%; background: var(--ink); position: relative; }
-.nf-ctl .pp::before, .nf-ctl .pp::after { content: ""; position: absolute; top: 8px; width: 2.2px; height: 8px; background: var(--w); border-radius: 0.5px; }
-.nf-ctl .pp::before { left: 9px; } .nf-ctl .pp::after { right: 9px; }
+.nf-ctl .pp { width: 22px; height: 22px; border-radius: 50%; background: #2E2E33; position: relative; }
+.nf-ctl .pp::before, .nf-ctl .pp::after { content: ""; position: absolute; top: 7px; width: 2.2px; height: 8px; background: #F6F4EE; border-radius: 0.5px; }
+.nf-ctl .pp::before { left: 8px; } .nf-ctl .pp::after { right: 8px; }
+.nf-ctl .un { position: absolute; right: 13px; width: 8px; height: 6px; border-top: 1px solid #2E2E33; border-bottom: 1px solid #2E2E33; }
+.nf-ctl .un::after { content: ""; position: absolute; left: 0; right: 2px; top: 1.5px; border-top: 1px solid #2E2E33; }
 
 .gh { display: inline-flex; align-items: center; gap: 0.55rem; justify-self: start; background: var(--project); color: var(--on-project); text-decoration: none;
-      font: 700 0.95rem/1 var(--body); padding: 0.85rem 1.1rem; border-radius: 10px; }
+      font: 700 0.95rem/1 var(--body); padding: 0.85rem 1.1rem; border-radius: 2px; }
 .gh:hover { filter: brightness(1.08); }
 .gh svg { width: 1.15rem; height: 1.15rem; fill: currentColor; }
 .gh .repo { font: 500 0.78rem/1 var(--mono); opacity: 0.8; }
 
 /* each project wears its own hue */
-.hue-blue   { --project: var(--blue);   --project-text: #4357AD; --project-tint: #E8E7E9; --on-cover: var(--paper); --cover-btn: var(--paper); --cover-btn-text: #4357AD; }
-.hue-green  { --project: var(--green);  --project-text: #1A634E; --project-tint: #E2F4EC; --on-cover: #0F0D1A; --cover-btn: #0F0D1A; --cover-btn-text: var(--paper); }
-.hue-amber  { --project: var(--amber);  --project-text: #6D5332; --project-tint: #FDF1D8; --on-project: #0F0D1A; --on-cover: #0F0D1A; --cover-btn: #0F0D1A; --cover-btn-text: var(--paper); }
-.hue-red    { --project: var(--red);    --project-text: #922E3D; --project-tint: #F8EBEC; --on-cover: var(--paper); --cover-btn: var(--paper); --cover-btn-text: #922E3D; }
+/* the cover rule (DESIGN.md section 3.5): lettering in paper where the hue reaches 4.5:1 against paper, charcoal where it doesn't */
+.hue-flacmn { --project: var(--flacmn); --project-text: var(--flacmn-text); --project-tint: var(--flacmn-tint); --on-cover: var(--paper); --cover-btn: var(--paper); --cover-btn-text: var(--flacmn-text); }
 
-/* a watercolour wash, as the flacmn phone app paints its pages (2026-11-02): the colour (--w) laid evenly with a few
-   very faint soft blooms, and the grain of cold-pressed paper over it (media/paper.jpg: the app's own photo, recentred
-   on mid grey so it only adds its shadows and highs). Only inside the phone mock, to show the app as it is: the site's
-   own covers stay flat, as the design language asks (no gradients, no texture on backgrounds; owner, 2026-11-02). The
-   host must be positioned. --paper-strength is the knob (0 for none), --grain the grain's size. */
-.wash { isolation: isolate; background-color: var(--w);
-        background-image: radial-gradient(ellipse 34% 22% at 24% 46%, rgb(255 255 255 / 0.07), transparent 70%),
-          radial-gradient(ellipse 40% 26% at 72% 60%, rgb(0 0 0 / 0.06), transparent 70%),
-          radial-gradient(ellipse 28% 18% at 52% 34%, rgb(255 255 255 / 0.05), transparent 70%),
-          radial-gradient(ellipse 30% 20% at 18% 76%, rgb(0 0 0 / 0.05), transparent 70%); }
-.wash::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-               background: url("media/paper.jpg") 0 0 / var(--grain, 330px); mix-blend-mode: overlay; opacity: var(--paper-strength, 0.22); }
+/* the studio slides (Principles, In progress, Studio): a line on the left, a short list beside it (under it on phones) */
+.s-list { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(0.7rem, 2.2vh, 1.3rem); min-width: 0; }
+.s-list li { display: grid; gap: 0.2rem; padding-top: clamp(0.5rem, 1.6vh, 0.8rem); border-top: 1px solid color-mix(in srgb, var(--on-cover) 25%, transparent); min-width: 0; }
+.s-list h3 { margin: 0; display: flex; align-items: center; gap: 0.55rem; color: var(--on-cover); font: 700 clamp(1rem, 1.9vw, 1.2rem)/1.3 var(--body); }
+.s-list p { margin: 0; max-width: 46ch; color: var(--on-cover); font: 400 clamp(0.9rem, 1.6vw, 1.02rem)/1.45 var(--body); }
+.s-list .name { font-family: "Heros Cn", "Helvetica Neue", "Arial Narrow", sans-serif; }
+.s-list .dot { flex: none; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--c); }
+@media (max-height: 600px) { .s-list p { font-size: 0.86rem; line-height: 1.3; } }
+@media (max-width: 40rem) and (max-height: 720px) { .s-list p { font-size: 0.84rem; line-height: 1.32; } .s-list { gap: 0.5rem; } }
+.s-title .lede { margin: 0; max-width: 40ch; color: var(--charcoal); font: 400 clamp(0.95rem, 1.9vw, 1.1rem)/1.5 var(--body); }
+.slide[data-id="contact"] .tagline { text-align: center; }
 
 /* ---- your text */
 [data-slot] { white-space: pre-wrap; overflow-wrap: anywhere; }
-.editing [data-slot] { outline: 1.5px dashed var(--edit); outline-offset: 4px; border-radius: 4px; cursor: text; }
+.editing [data-slot] { outline: 1.5px dashed var(--edit); outline-offset: 4px; border-radius: 2px; cursor: text; }
 .editing [data-slot]:focus { background: var(--edit-tint); outline-style: solid; }
 .editing [data-slot].empty::before { content: attr(data-hint); color: var(--hint); font-style: italic; pointer-events: none; }
 
@@ -523,14 +494,14 @@ body { overflow: hidden; overscroll-behavior: none; }
 .editbar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; pointer-events: none;
            padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px)); }
 .editbar .inner { pointer-events: auto; display: flex; align-items: center; gap: 0.75rem; background: var(--bar); color: var(--on-bar);
-                  border-radius: 999px; padding: 0.4rem 0.4rem 0.4rem 1rem; box-shadow: 0 8px 28px rgba(16, 14, 30, 0.28); max-width: 100%; }
+                  border-radius: 2px; padding: 0.4rem 0.4rem 0.4rem 1rem; max-width: 100%; }
 .editbar .status { font: 500 0.78rem/1.3 var(--mono); min-width: 0; display: flex; align-items: center; gap: 0.5rem; }
-.editbar .status::before { content: ""; flex: none; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--stone); }
-.editbar[data-state="unsaved"] .status::before, .editbar[data-state="saving"] .status::before { background: var(--amber); }
-.editbar[data-state="saved"] .status::before { background: var(--green); }
-.editbar[data-state="error"] .status::before { background: var(--red); }
-.editbar button { border: 0; border-radius: 999px; padding: 0.6rem 1rem; font: 700 0.9rem/1 var(--body); cursor: pointer;
-                  background: var(--blue); color: #FFFFFF; white-space: nowrap; }
+.editbar .status::before { content: ""; flex: none; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--tint-25); }
+.editbar[data-state="unsaved"] .status::before, .editbar[data-state="saving"] .status::before { background: var(--edit); }
+.editbar[data-state="saved"] .status::before { background: var(--good); }
+.editbar[data-state="error"] .status::before { background: var(--bad); }
+.editbar button { border: 0; border-radius: 2px; padding: 0.6rem 1rem; font: 700 0.9rem/1 var(--body); cursor: pointer;
+                  background: var(--paper); color: var(--text); white-space: nowrap; }
 </style>
 
 <!-- the flacmn mock that the sample run clones (desktop app and phone app), its icons and its made-up album covers -->
@@ -630,29 +601,29 @@ body { overflow: hidden; overscroll-behavior: none; }
   </div>
 
   <div class="nf-phone"><div class="nf-ph">
-    <span class="nf-island"></span>
-    <!-- Home: on a wash of the most played album (Moanin'), the logo and rows in its ink -->
-    <div class="nf-scr fx wash inked" style="--w:#7A5A3C" data-t="on:0-7700">
-      <span class="nf-sb"><b>9:41</b><i></i></span>
-      <img class="nf-hlogo" src="logo-paper.svg" alt="">
-      <div class="nf-menu"><span>Albums</span><span>Artists</span><span>Playlists</span><span>Search</span><span data-t="press:7450-7700">Settings</span></div>
-      <div class="nf-most"><b>Most played</b>
-        <div class="nf-two"><span class="nf-cvbtn"><span class="nf-cv"><svg><use href="#nf-moan"/></svg></span><em>Moanin&rsquo;</em><small>Art Blakey</small></span><span class="nf-cvbtn"><span class="nf-cv"><svg><use href="#nf-rain"/></svg></span><em>In Rainbows</em><small>Radiohead</small></span></div></div>
+    <span class="nf-island"></span><span class="nf-sb"><b>9:41</b><i></i></span>
+    <!-- Home -->
+    <div class="nf-scr fx" data-t="on:0-7700 on:15600-16200">
+      <img class="nf-hlogo" src="logo.svg" alt="">
+      <div class="nf-menu"><span>Artists</span><span>Albums</span><span>Playlists</span><span data-t="press:7450-7700">Music Folder</span></div>
+      <div class="nf-recent"><b>Recently added</b>
+        <div class="nf-stack" style="display:grid">
+          <div class="nf-two fx" data-t="on:0-15600"><span class="nf-cvbtn"><span class="nf-cv"><svg><use href="#nf-rain"/></svg></span><em>In Rainbows</em><small>Radiohead</small></span><span class="nf-cvbtn"><span class="nf-cv"><svg><use href="#nf-moan"/></svg></span><em>Moanin&rsquo;</em><small>Art Blakey</small></span></div>
+          <div class="nf-two fx" data-t="on:15600"><span class="nf-cvbtn" data-t="press:15950-16200"><span class="nf-cv"><svg><use href="#nf-kob"/></svg></span><em>Kind of Blue</em><small>Miles Davis</small></span><span class="nf-cvbtn"><span class="nf-cv"><svg><use href="#nf-rain"/></svg></span><em>In Rainbows</em><small>Radiohead</small></span></div>
+        </div></div>
     </div>
-    <!-- Settings: the same wash, its groups a shade off it -->
-    <div class="nf-scr fx wash inked" style="--w:#7A5A3C" data-t="on:7700-8400">
-      <span class="nf-sb"><b>9:41</b><i></i></span>
-      <div class="nf-appbar"><span class="bk">&lsaquo;</span><b>Settings</b></div>
-      <div class="nf-cap">Folders</div>
-      <div class="nf-grp"><span class="nf-cell"><span>+&nbsp; Add a folder</span></span><span class="nf-cell"><span>Read the library again<small>Looks for albums added or removed since</small></span></span></div>
-      <div class="nf-cap">Connections</div>
-      <div class="nf-grp"><span class="nf-cell go" data-t="press:8150-8400"><span>Receive from computer<small>Computers and flacmn decks</small></span></span><span class="nf-cell go"><span>Storage<small>Albums received on this iPhone</small></span></span></div>
+    <!-- Music Folder -->
+    <div class="nf-scr fx" data-t="on:7700-8400">
+      <div class="nf-appbar"><span class="bk">&lsaquo;</span><b>Music Folder</b></div>
+      <p class="nf-txt">flacmn plays music from the folders you choose here, read where they are.</p>
+      <div class="nf-li"><span>On My iPhone &rsaquo; flacmn</span></div>
+      <div class="nf-pill">+ Add a folder</div>
+      <div class="nf-li" data-t="press:8150-8400"><span>Receive from a computer</span><small>Albums sent from flacmn on the same Wi-Fi</small></div>
     </div>
-    <!-- Receive from computer: on paper -->
+    <!-- Receive from a computer -->
     <div class="nf-scr fx" data-t="on:8400-15600">
-      <span class="nf-sb"><b>9:41</b><i></i></span>
-      <div class="nf-appbar"><span class="bk">&lsaquo;</span><b>Receive from computer</b></div>
-      <p class="nf-txt">Albums you send from flacmn on your computer.</p>
+      <div class="nf-appbar"><span class="bk">&lsaquo;</span><b>Receive from a computer</b></div>
+      <p class="nf-txt">In flacmn on your computer, choose albums and Send to phone. Keep this screen open while they arrive.</p>
       <div class="nf-head">COMPUTERS ON THIS WI-FI</div>
       <div class="nf-stack" style="display:grid">
         <div class="nf-li fx" data-t="on:8400-8900"><small>Looking for flacmn&hellip;</small></div>
@@ -661,75 +632,85 @@ body { overflow: hidden; overscroll-behavior: none; }
       <div class="fx" data-t="on:10000">
         <div class="nf-head">FROM MACBOOK AIR</div>
         <div class="nf-stack" style="display:grid">
-          <p class="nf-txt fx" data-t="on:0-12900">Nothing to send yet: choose albums in flacmn on the computer, then pull down to look again.</p>
-          <div class="nf-li fx rise" data-t="on:12900"><b>Kind of Blue</b><small>Miles Davis &middot; <span class="nf-mono">361 MB</span></small><span class="nf-pbar"><i></i><i data-fill="13300-15000"></i></span></div>
+          <p class="nf-txt fx" data-t="on:0-12900">Nothing to send yet: choose albums in flacmn on the computer, then pull down or tap Look again.</p>
+          <div class="nf-li fx rise" data-t="on:12900"><b>Kind of Blue</b><small>Miles Davis &middot; 361 MB</small><span class="nf-pbar"><i></i><i data-fill="13300-15000"></i></span></div>
         </div>
         <div class="nf-pill dark fx" data-t="on:12900 press:13050-13300"><span class="nf-stack"><span class="fx" data-t="on:0-13300">Receive 361 MB</span><span class="fx" data-t="on:13300-15000">Stop</span><span class="fx" data-t="on:15000">All received</span></span></div>
       </div>
       <div class="nf-dlg fx" data-t="on:9300-10000"><div><b>Code shown on MacBook Air</b><span class="fld"><span class="ty" data-type="9400" data-text="632276"></span></span><span class="acts"><span>Cancel</span><span data-t="press:9820-10000">Save</span></span></div></div>
     </div>
-    <!-- Albums: a band per album in its own colour, the new one among them -->
-    <div class="nf-scr fx nf-bands inked" data-t="on:15600-16200">
-      <span class="nf-sb"><b>9:41</b><i></i></span>
-      <div class="nf-band wash" style="--w:#2D6475"><span><b>Blue Train</b><small>John Coltrane &middot; 1957</small><i class="nf-qf"><u></u>FLAC 24 bit 192 kHz</i></span><span class="nf-cv"><svg><use href="#nf-train"/></svg></span></div>
-      <div class="nf-band wash" style="--w:#8E2E3A"><span><b>Homogenic</b><small>Bj&ouml;rk &middot; 1997</small><i class="nf-qf"><u></u>FLAC 16 bit 44.1 kHz</i></span><span class="nf-cv"><svg><use href="#nf-homo"/></svg></span></div>
-      <div class="nf-band wash" style="--w:#A4502C"><span><b>In Rainbows</b><small>Radiohead &middot; 2007</small><i class="nf-qf"><u></u>FLAC 16 bit 44.1 kHz</i></span><span class="nf-cv"><svg><use href="#nf-rain"/></svg></span></div>
-      <div class="nf-band wash" style="--w:#355E8E" data-t="press:15950-16200"><span><b>Kind of Blue</b><small>Miles Davis &middot; 1959</small><i class="nf-qf"><u></u>ALAC 16 bit 44.1 kHz</i></span><span class="nf-cv"><svg><use href="#nf-kob"/></svg></span></div>
-      <div class="nf-band wash" style="--w:#7A5A3C"><span><b>Moanin&rsquo;</b><small>Art Blakey &middot; 1958</small><i class="nf-qf"><u></u>FLAC 16 bit 44.1 kHz</i></span><span class="nf-cv"><svg><use href="#nf-moan"/></svg></span></div>
+    <!-- the album -->
+    <div class="nf-scr fx" data-t="on:16200-17200">
+      <div class="nf-appbar"><span class="bk">&lsaquo;</span><b>Kind of Blue</b></div>
+      <div class="nf-alb"><span class="nf-cv"><svg><use href="#nf-kob"/></svg></span>
+        <span><h4>Kind of Blue</h4><small>Miles Davis</small><small>1959 &middot; 5 tracks &middot; 45:44</small><span class="q"><i class="nf-q good">Lossless</i>ALAC &middot; 44.1 kHz</span><span class="nf-pill dark" data-t="press:16850-17100">&#9654; Play</span></span></div>
+      <div class="nf-ptrk"><span>1</span><span>So What</span><span>9:25</span></div><div class="nf-ptrk"><span>2</span><span>Freddie Freeloader</span><span>9:49</span></div><div class="nf-ptrk"><span>3</span><span>Blue in Green</span><span>5:38</span></div><div class="nf-ptrk"><span>4</span><span>All Blues</span><span>11:36</span></div><div class="nf-ptrk"><span>5</span><span>Flamenco Sketches</span><span>9:26</span></div>
     </div>
-    <!-- the album, on a wash of its colour -->
-    <div class="nf-scr fx wash inked" style="--w:#355E8E" data-t="on:16200-17200">
-      <span class="nf-sb"><b>9:41</b><i></i></span>
-      <div class="nf-appbar"><span class="bk">&lsaquo;</span><span class="mo">&middot;&middot;&middot;</span></div>
-      <div class="nf-alb"><span class="nf-cv"><svg><use href="#nf-kob"/></svg></span><h4>Kind of Blue</h4><u>Miles Davis</u><i class="nf-qf">1959 &middot; 46 min &middot; <u></u>Lossless &middot; ALAC 16 bit 44.1 kHz</i></div>
-      <div class="nf-play" data-t="press:16850-17100">&#9654;&nbsp; Play</div>
-      <div class="nf-song"><span>So What</span><i>9:25</i></div><div class="nf-song"><span>Freddie Freeloader</span><i>9:49</i></div><div class="nf-song"><span>Blue in Green</span><i>5:38</i></div><div class="nf-song"><span>All Blues</span><i>11:36</i></div><div class="nf-song"><span>Flamenco Sketches</span><i>9:26</i></div>
-    </div>
-    <!-- Now playing, on the album's wash: the song's waveform is the scrubber -->
-    <div class="nf-scr fx wash inked" style="--w:#355E8E" data-t="on:17200">
-      <span class="nf-sb"><b>9:41</b><i></i></span>
-      <div class="nf-appbar"><span class="col"></span><span class="mo">&middot;&middot;&middot;</span></div>
-      <div class="nf-np"><span class="nf-cv"><svg><use href="#nf-kob"/></svg></span><h4>So What</h4><p>Miles Davis &middot; Kind of Blue</p><i class="nf-qf"><u></u>Lossless &middot; ALAC 16 bit 44.1 kHz<span class="un"></span></i></div>
-      <canvas class="nf-wave" width="300" height="28" data-wave="17200" data-len="565"></canvas>
-      <div class="nf-times"><span data-clock="17200">0:00</span><span data-left="17200-565">-9:25</span></div>
-      <div class="nf-ctl"><span class="sk prev"></span><span class="pp"></span><span class="sk next"></span></div>
+    <!-- Now playing: the cover, then a swipe to the XY scope -->
+    <div class="nf-scr fx" data-t="on:17200">
+      <div class="nf-appbar c"><span class="bk">&lsaquo;</span><b>Now playing</b><span class="more">&middot;&middot;&middot;</span></div>
+      <div class="nf-pages"><div class="nf-track" data-t="p2:19000">
+        <div class="nf-np"><span class="nf-cv"><svg><use href="#nf-kob"/></svg></span><h4>So What</h4><p>Miles Davis &middot; Kind of Blue</p><span class="q"><i class="nf-q good">Lossless</i>ALAC 16-bit &middot; 44.1 kHz</span></div>
+        <div><canvas class="nf-scope" width="300" height="300" data-scope="18700" data-colour="#3D6699"></canvas></div>
+      </div></div>
+      <div class="nf-dots"><i data-t="on:0-19000"></i><i data-t="on:19000"></i></div>
+      <div class="nf-slider"><i data-fill="17200-582200"></i></div>
+      <div class="nf-times"><span data-clock="17200">0:00</span><span>1 of 5</span><span>9:25</span></div>
+      <div class="nf-ctl"><span class="sk prev"></span><span class="pp"></span><span class="sk next"></span><span class="un"></span></div>
     </div>
   </div></div>
-</div>
 </div></template>
 
 <!-- ===== the deck: the title, then one slide per project ===== -->
 <main class="deck">
-  <section class="slide s-title" data-id="" data-word="" aria-labelledby="name-spcmn">
+  <section class="slide s-title" data-id="" data-word="" aria-labelledby="name-specmn">
     <div class="menu">
       <button type="button" class="menu-btn" aria-expanded="false" aria-controls="menu-panel" aria-label="Menu"><span></span><span></span><span></span></button>
       <nav class="menu-panel" id="menu-panel" aria-label="Site">
         <ul>
-          <li><a class="m-proj" href="#flacmn" style="--c: var(--blue)">flacmn</a></li>
-          <li class="menu-sep"><a href="#shop">Shop</a></li>
+          <li><a href="#flacmn">Work</a></li>
+          <li><a href="#principles">Principles</a></li>
+          <li><a href="#studio">Studio</a></li>
           <li><a href="#contact">Contact</a></li>
-          <li><a href="#about">About me</a></li>
-          <li><a href="https://github.com/spcmn-studio" target="_blank" rel="noopener">GitHub</a></li>
+          <li class="menu-sep"><a href="https://github.com/spcmn-studio" target="_blank" rel="noopener">GitHub</a></li>
         </ul>
       </nav>
     </div>
     <div class="logo-band"><div class="logo-hold"></div></div>
     <div class="wrap slide-body">
-      <h1 class="sr-only" id="name-spcmn">spcmn</h1>
-      <p class="intro" data-slot="site.intro" data-hint="What spcmn does, in a few words"></p>
+      <h1 class="sr-only" id="name-specmn">specmn</h1>
+      <p class="intro" data-slot="site.intro" data-hint="What specmn does, in a few words"></p>
+      <p class="lede" data-slot="site.lede" data-hint="One plain line on how specmn works"></p>
     </div>
-    <button type="button" class="next-cue" aria-label="Go to the projects">Projects<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    <button type="button" class="next-cue" aria-label="Go to the principles">Principles<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+  </section>
+
+  <!-- ===== principles ===== -->
+  <section class="slide hue-paper" data-id="principles" data-word="principles" data-plain aria-labelledby="name-principles">
+    <div class="logo-band"><div class="logo-hold"></div></div>
+    <div class="wrap slide-body p-body">
+      <div class="p-text">
+        <h2 class="sr-only" id="name-principles">Principles</h2>
+        <span class="label">Principles</span>
+        <p class="tagline" data-slot="principles.intro" data-hint="One line on how specmn works"></p>
+      </div>
+      <ul class="s-list">
+          <li><h3>Well engineered</h3><p data-slot="principles.engineered" data-hint="What well engineered means here"></p></li>
+          <li><h3>Documented</h3><p data-slot="principles.documented" data-hint="What documented means here"></p></li>
+          <li><h3>Simple</h3><p data-slot="principles.simple" data-hint="What simple means here"></p></li>
+      </ul>
+    </div>
   </section>
 
   <!-- ===== flacmn ===== -->
-  <section class="slide hue-blue" data-id="flacmn" data-word="flac" aria-labelledby="name-flacmn">
+  <section class="slide hue-flacmn" data-id="flacmn" data-word="flac" aria-labelledby="name-flacmn">
     <div class="logo-band"><div class="logo-hold"></div></div>
     <div class="wrap slide-body p-body">
       <div class="p-text">
         <h2 class="sr-only" id="name-flacmn">flacmn</h2>
         <span class="label">Desktop app + phone app</span>
         <p class="tagline" data-slot="projects.flacmn.summary" data-hint="One line on what flacmn does"></p>
-        <div class="p-actions"><a class="more" href="#flacmn/more">More info<span class="sr-only"> about flacmn</span> &rarr;</a></div>
+        <div class="p-actions" hidden><a class="more" href="#flacmn/more">Documentation<span class="sr-only"> for flacmn</span> &rarr;</a></div>
       </div>
       <figure class="demo">
         <div class="demo-frame duo" aria-hidden="true" data-window="0-23500" data-hold="1400" data-still="14000"></div>
@@ -739,8 +720,43 @@ body { overflow: hidden; overscroll-behavior: none; }
   </section>
 
 
+  <!-- ===== in progress: products being designed, a line each, no pictures until they exist ===== -->
+  <section class="slide hue-paper" data-id="next" data-word="in progress" data-plain aria-labelledby="name-next">
+    <div class="logo-band"><div class="logo-hold"></div></div>
+    <div class="wrap slide-body p-body">
+      <div class="p-text">
+        <h2 class="sr-only" id="name-next">In progress</h2>
+        <span class="label">In progress</span>
+        <p class="tagline" data-slot="upcoming.intro" data-hint="One line on what's being designed now"></p>
+      </div>
+      <ul class="s-list">
+          <li><h3><span class="dot" style="--c: var(--radiomn)" aria-hidden="true"></span><span class="name">radiomn</span></h3><p data-slot="upcoming.radiomn" data-hint="What radiomn is, in a line"></p></li>
+          <li><h3><span class="dot" style="--c: var(--airmn)" aria-hidden="true"></span><span class="name">airmn</span></h3><p data-slot="upcoming.airmn" data-hint="What airmn is, in a line"></p></li>
+          <li><h3><span class="dot" style="--c: var(--lampmn)" aria-hidden="true"></span><span class="name">lampmn</span></h3><p data-slot="upcoming.lampmn" data-hint="What lampmn is, in a line"></p></li>
+          <li><h3><span class="dot" style="--c: var(--cammn)" aria-hidden="true"></span><span class="name">cammn</span></h3><p data-slot="upcoming.cammn" data-hint="What cammn is, in a line"></p></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== studio: client work ===== -->
+  <section class="slide hue-paper" data-id="studio" data-word="studio" data-plain aria-labelledby="name-studio">
+    <div class="logo-band"><div class="logo-hold"></div></div>
+    <div class="wrap slide-body p-body">
+      <div class="p-text">
+        <h2 class="sr-only" id="name-studio">Studio</h2>
+        <span class="label">Studio</span>
+        <p class="tagline" data-slot="studio.intro" data-hint="One line on the client work specmn takes on"></p>
+      </div>
+      <ul class="s-list">
+          <li><h3>Product design and engineering</h3><p data-slot="studio.product" data-hint="What this offer covers"></p></li>
+          <li><h3>Design studies and documentation</h3><p data-slot="studio.documentation" data-hint="What this offer covers"></p></li>
+          <li><h3>Measurement and test tools</h3><p data-slot="studio.measurement" data-hint="What this offer covers"></p></li>
+      </ul>
+    </div>
+  </section>
+
   <!-- ===== shop ===== -->
-  <section class="slide hue-paper" data-id="shop" data-word="shop" data-plain aria-labelledby="name-shop">
+  <section class="slide hue-paper" hidden data-id="shop" data-word="shop" data-plain aria-labelledby="name-shop">
     <div class="logo-band"><div class="logo-hold"></div></div>
     <div class="wrap slide-body p-body">
       <div class="p-text">
@@ -752,7 +768,7 @@ body { overflow: hidden; overscroll-behavior: none; }
            flacmn sells the built installer; its source stays free to build from GitHub. -->
       <div class="shop-grid">
         <article class="shop-card">
-          <div class="shop-art" data-for="flacmn" style="--c: var(--blue)"></div>
+          <div class="shop-art" data-for="flacmn" style="--c: var(--flacmn)"></div>
           <div class="shop-info">
             <h3>flacmn</h3>
             <p class="shop-desc">The ready-to-run app for macOS and Windows.</p>
@@ -778,15 +794,15 @@ body { overflow: hidden; overscroll-behavior: none; }
       <div class="p-text">
         <h2 class="sr-only" id="name-contact">Contact</h2>
         <span class="label">Contact</span>
-        <p class="tagline ph-on">Placeholder: the best way to reach you, and what you're happy to hear about.</p>
-        <div class="p-actions"><a class="gh" href="https://github.com/spcmn-studio" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub <span class="repo">SPC3MN</span></a></div>
+        <p class="tagline" data-slot="site.contact" data-hint="One line asking people to get in touch"></p>
+        <div class="p-actions"><a class="gh" href="https://github.com/spcmn-studio" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a></div>
       </div>
     </div>
   </section>
 </main>
 
 <!-- ===== flacmn: its own page ("More info") ===== -->
-<article class="detail hue-blue" id="more-flacmn" data-page="flacmn" aria-labelledby="more-name-flacmn" inert>
+<article class="detail hue-flacmn" id="more-flacmn" data-page="flacmn" aria-labelledby="more-name-flacmn" inert>
   <header class="d-head">
     <div class="d-wrap">
       <a class="d-back" href="#flacmn">&larr; Back to projects</a>
@@ -843,7 +859,7 @@ body { overflow: hidden; overscroll-behavior: none; }
       </div>
       <div class="d-sub">
         <h3>Play it on the phone</h3>
-        <p>New albums join Albums, each a band in its own colour. The phone app plays each song with its quality shown, on a wash of the album&rsquo;s colour, with the song&rsquo;s waveform as the scrubber.</p>
+        <p>New albums show first under Recently added. The phone app plays each song with its own quality shown, and a swipe brings up an XY scope in the cover&rsquo;s colour.</p>
         <figure class="d-fig demo">
           <div class="demo-frame duo" aria-hidden="true" data-window="15600-23500" data-hold="1400" data-still="19500"></div>
           <figcaption><span class="demo-step"></span><button type="button" class="demo-toggle" aria-pressed="false">Pause</button></figcaption>
@@ -864,7 +880,7 @@ body { overflow: hidden; overscroll-behavior: none; }
 <article class="detail hue-charcoal" id="more-about" data-page="about" aria-labelledby="about-name" inert>
   <header class="d-head">
     <div class="d-wrap">
-      <a class="d-back" href="#">&larr; Back to spcmn</a>
+      <a class="d-back" href="#">&larr; Back to specmn</a>
       <h1 class="d-title" id="about-name">About me</h1>
       <p class="tagline ph-on">Placeholder: your name, and what you do, in one line.</p>
     </div>
@@ -873,12 +889,12 @@ body { overflow: hidden; overscroll-behavior: none; }
     <div class="d-photo">Photo coming</div>
     <p class="d-lede ph">Placeholder: a short introduction: who you are, where you work, and what you like to build.</p>
     <p class="d-links"><a href="https://github.com/spcmn-studio" target="_blank" rel="noopener">GitHub &nearr;</a></p>
-    <a class="d-back d-end" href="#">&larr; Back to spcmn</a>
+    <a class="d-back d-end" href="#">&larr; Back to specmn</a>
   </div>
 </article>
 
-<nav class="deck-dots off" aria-label="Projects">
-  <button type="button" aria-label="spcmn"></button><button type="button" aria-label="flacmn"></button><button type="button" aria-label="Shop"></button><button type="button" aria-label="Contact"></button>
+<nav class="deck-dots off" aria-label="Slides">
+  <button type="button" aria-label="specmn"></button><button type="button" aria-label="Principles"></button><button type="button" aria-label="flacmn"></button><button type="button" aria-label="In progress"></button><button type="button" aria-label="Studio"></button><button type="button" aria-label="Contact"></button>
 </nav>
 
 <div class="editbar" id="editbar" hidden>
@@ -1022,7 +1038,7 @@ body { overflow: hidden; overscroll-behavior: none; }
   // on each project, its name in Heros Cn Bold and the mn in still dots, as in its mark, centred.
   (function deck() {
     const deckEl = document.querySelector(".deck");
-    const slides = [...deckEl.querySelectorAll(".slide")];
+    const slides = [...deckEl.querySelectorAll(".slide:not([hidden])")];   // Shop is hidden until it has real products
     const holds = slides.map((s) => s.querySelector(".logo-hold"));
     const dotsNav = document.querySelector(".deck-dots"), navBtns = [...dotsNav.querySelectorAll("button")];
     const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1033,13 +1049,17 @@ body { overflow: hidden; overscroll-behavior: none; }
     const sign = () => (Math.random() < 0.5 ? -1 : 1);
     const svgEl = (tag, attrs = {}) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
 
-    // spcmn's dot letters, one # per dot on a grid of 1 (the dots are 0.9 across): s p c, then m n
+    // the dot mn, one # per dot on a grid of 1 (the dots are 0.9 across)
     const dotsOf = (list) => list.flatMap(([x0, rows]) => rows.split("|").flatMap((row, y) =>
       [...row].flatMap((ch, x) => (ch === "#" ? [{ x: x0 + x + 0.5, y: y + 0.5, r: 0.45 }] : []))));
-    const SPC = dotsOf([[0, ".####|#####|###..|..###|#####|####."], [6, "####.|#####|##.##|##.##|#####|####.|##...|##..."],
-                        [12, ".####|#####|##...|##...|#####|.####"]]);
     const MN = dotsOf([[18, "#.#####.|########|##.##.##|##.##.##|##.##.##|##.##.##"], [27, "#.##.|#####|##.##|##.##|##.##|##.##"]]);
     const MN_LEFT = 18.05, MN_W = 13.9;                                  // the mn's left edge and width
+    // the title's mark (owner, 2026-11-04): "spec" in Heros Bold, solid, outlined as in brand/logos/specmn-charcoal.svg,
+    // then the dot mn as ferrofluid. The mark is 36.69 units wide, so it is set at 32/36.69 to span the 32 units the
+    // dot spcmn did, centred on 16. SPEC_M carries the outline from the mark's own units (mm, mn dots 0.7662 apart).
+    const T_S = 0.872096, T_X = 4.13655;                                  // the title's scale, and where unit 0 lands
+    const SPEC_M = "matrix(1.138209 0 0 1.138209 -89.42110 -187.70935)";
+    const SPEC_D = "M86.8775 167.4002Q86.8775 169.9283 85.1246 169.9283Q84.4847 169.9283 84.1001 169.4255V171.4837Q84.1001 171.5737 84.0101 171.5737H82.9854Q82.8954 171.5737 82.8954 171.4837V165.1837Q82.8954 165.0937 82.9854 165.0937H83.9741Q84.0641 165.0937 84.0641 165.1837V165.5466Q84.4788 164.9743 85.1336 164.9743Q86.8775 164.9743 86.8775 167.4002ZM91.0122 167.7838Q91.0122 167.8738 90.9222 167.8738H88.3342Q88.4439 168.785 89.1335 168.785Q89.599 168.785 89.7305 168.3543Q89.75 168.2906 89.8166 168.2906H90.8772Q90.8906 168.2906 90.9034 168.2944Q90.9895 168.3206 90.9633 168.4067Q90.5011 169.9283 89.1155 169.9283Q87.111 169.9283 87.111 167.4343Q87.111 164.9743 89.0616 164.9743Q91.0122 164.9743 91.0122 167.5707ZM82.3473 168.3038Q82.3473 169.9283 80.5136 169.9283Q78.7285 169.9283 78.5634 168.2787Q78.563 168.2742 78.563 168.2697Q78.563 168.1797 78.653 168.1797H79.7136Q79.8001 168.1797 79.8036 168.2662Q79.8262 168.8362 80.5496 168.8362Q81.1337 168.8362 81.1337 168.4573Q81.1337 168.1908 80.3538 168.0429Q78.7068 167.746 78.7068 166.5732Q78.7068 164.9743 80.4237 164.9743Q82.0295 164.9743 82.2298 166.5534Q82.2305 166.559 82.2305 166.5647Q82.2305 166.6547 82.1405 166.6547H81.1248Q81.0482 166.6547 81.036 166.5791Q80.9528 166.0665 80.4237 166.0665Q79.8935 166.0665 79.8935 166.4027Q79.8935 166.6757 80.6648 166.8087Q82.3473 167.1204 82.3473 168.3038ZM95.0835 166.7944Q95.0839 166.7989 95.0839 166.8034Q95.0839 166.8934 94.9939 166.8934H93.9513Q93.877 166.8934 93.8629 166.8205Q93.7353 166.1603 93.2861 166.1603Q92.5312 166.1603 92.5312 167.4599Q92.5312 168.768 93.2232 168.768Q93.7857 168.768 93.8527 168.0567Q93.8603 167.9751 93.9423 167.9751H94.9849Q94.9909 167.9751 94.9968 167.9759Q95.086 167.9878 95.0741 168.077Q94.8283 169.9283 93.1872 169.9283Q91.2906 169.9283 91.2906 167.511Q91.2906 164.9743 93.2412 164.9743Q94.9 164.9743 95.0835 166.7944ZM85.6369 167.4599Q85.6369 166.1944 84.846 166.1944Q84.0641 166.1944 84.0641 167.5025Q84.0641 168.768 84.864 168.768Q85.6369 168.768 85.6369 167.4599ZM88.3669 166.9095H89.7587Q89.6371 166.1347 89.0526 166.1347Q88.5058 166.1347 88.3669 166.9095Z";
     // the projects' letters are set as in their marks (where the mn's dots are 0.7662 apart): Heros Cn Bold at 8.55,
     // its baseline 0.093 above the mn's foot, and the mn 1.03 after the letters. Here, in the wordmark's units:
     const FONT = "'Heros Cn', 'Helvetica Neue', 'Arial Narrow', sans-serif";
@@ -1140,26 +1160,28 @@ body { overflow: hidden; overscroll-behavior: none; }
     }
 
     // ---- drawing
-    const blur = svgEl("feGaussianBlur", { in: "SourceGraphic", stdDeviation: "0.17" });
+    const blur = svgEl("feGaussianBlur", { in: "SourceGraphic", stdDeviation: (0.17 * T_S).toFixed(3) });
     function build() {
       holds.forEach((hold, i) => {
         const svg = svgEl("svg", { class: "logo", viewBox: VB.join(" "), overflow: "visible", "aria-hidden": "true" });
         const L = layout(slides[i].dataset.word, "plain" in slides[i].dataset);
         if (L) {                                                         // a project: its name and a still dot mn
           svg.setAttribute("viewBox", `${VB[0]} ${f(L.top)} ${VB[2]} ${f(L.bottom - L.top)}`);   // as wide as spcmn's frame, as tall as its letters
-          const t = svgEl("text", { "font-family": FONT, "font-weight": 700, x: f(L.text.x), y: f(L.text.y), "font-size": f(L.text.fs) });
+          // the letters carry the marks' outline: 0.18 mark units, round joins (font size 8.55 mark units)
+          const t = svgEl("text", { "font-family": FONT, "font-weight": 700, x: f(L.text.x), y: f(L.text.y), "font-size": f(L.text.fs),
+                                    stroke: "currentColor", "stroke-width": f(L.text.fs * 0.18 / 8.55), "stroke-linejoin": "round" });
           t.textContent = L.text.word;
           svg.append(t, ...L.mn.map((d) => svgEl("circle", { cx: f(d.x), cy: f(d.y), r: f(d.r) })));
-        } else {                                                         // the title: spcmn as ferrofluid
+        } else {                                                         // the title: specmn, its mn as ferrofluid
           // blur the droplets together, then cut back to a hard edge; an invisible rect over the whole frame keeps
           // Safari from clipping droplets to the group's first box
           const fl = svgEl("filter", { id: "goo-spcmn", filterUnits: "userSpaceOnUse", x: VB[0] - 0.8, y: VB[1] - 1, width: VB[2] + 1.6, height: VB[3] + 2, "color-interpolation-filters": "sRGB" });
           fl.append(blur, svgEl("feColorMatrix", { type: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" }));
           const g = svgEl("g", { filter: "url(#goo-spcmn)" });
           g.append(svgEl("rect", { x: VB[0], y: VB[1], width: VB[2], height: VB[3], fill: "#000", "fill-opacity": 0 }));
-          drops = [...SPC, ...MN].map(newDrop);
+          drops = MN.map((d) => newDrop({ x: T_X + T_S * d.x, y: 3 + T_S * (d.y - 3), r: 0.45 * T_S }));   // only the mn is fluid
           paths = drops.map(() => g.appendChild(svgEl("path")));
-          svg.append(svgEl("defs"), g);
+          svg.append(svgEl("defs"), svgEl("path", { d: SPEC_D, transform: SPEC_M }), g);          // "spec" stays solid
           svg.firstChild.append(fl);
           title = slides[i];
         }
@@ -1186,7 +1208,7 @@ body { overflow: hidden; overscroll-behavior: none; }
       stepSlides(now);
       if (!paths || !title.classList.contains("shown")) return;          // the fluid moves only while the title shows
       const t = now / 1000, e = still ? 0 : fluidity(t);
-      blur.setAttribute("stdDeviation", (0.17 * (still ? 1 : e)).toFixed(3));
+      blur.setAttribute("stdDeviation", (0.17 * T_S * (still ? 1 : e)).toFixed(3));   // scaled with the mark
       drops.forEach((d, i) => paths[i].setAttribute("d", shape(d, t, e)));
     }
     let running = false, last = 0;
@@ -1199,14 +1221,17 @@ body { overflow: hidden; overscroll-behavior: none; }
     function kick() { if (!running) { running = true; requestAnimationFrame(frame); } }
 
     // ---- start on the slide the address names (old links to a project page, or a category, land on its slide)
-    const old = { software: "flacmn" };                               // (flowmn, once PIVmn, is off the site since 2026-11-02: its links land on the title)
+    const old = { software: "flacmn", work: "flacmn" };   // flowmn (PIVmn) left the site on 2026-11-06: its links land on the title
     const [want, wantMore] = location.hash.replace("#", "").split("/");
     index = Math.max(0, ids.indexOf(old[want] || want));
     show([index]); place(index, 0); mark();
 
     // ---- a project's own page ("More info"): an article that slides up over the deck, at #<project>/more. Its Back
     // link (or the browser's Back, or Esc) closes it onto the project's slide.
-    const details = Object.fromEntries([...document.querySelectorAll(".detail")].map((d) => [d.dataset.page, d]));
+    // The More info and About pages are placeholders, hidden until their text is written (owner, 2026-11-04): set
+    // PAGES to true, and remove the hidden attributes from the More info buttons, to bring them back.
+    const PAGES = false;
+    const details = PAGES ? Object.fromEntries([...document.querySelectorAll(".detail")].map((d) => [d.dataset.page, d])) : {};
     function openDetail(id) {
       const d = details[id];
       if (!d) return;
@@ -1224,7 +1249,7 @@ body { overflow: hidden; overscroll-behavior: none; }
       deckEl.inert = false; dotsNav.inert = false;
     }
     if (wantMore === "more" && details[ids[index]]) { openDetail(ids[index]); mark(); }
-    else if (want === "about") { openDetail("about"); mark(); }
+    else if (want === "about" && PAGES) { openDetail("about"); mark(); }
     const fontReady = document.fonts && document.fonts.load
       ? Promise.race([document.fonts.load(`700 20px "Heros Cn"`), new Promise((r) => setTimeout(r, 2500))]).catch(() => {})
       : Promise.resolve();
@@ -1286,7 +1311,7 @@ body { overflow: hidden; overscroll-behavior: none; }
     });
     window.addEventListener("hashchange", () => {
       const [h, sub] = location.hash.replace("#", "").split("/"), id = old[h] || h, n = ids.indexOf(id);
-      if (h === "about") { closeMenu(); openDetail("about"); return; }   // About me: over whichever slide shows
+      if (h === "about" && PAGES) { closeMenu(); openDetail("about"); return; }   // About me: over whichever slide shows
       if (sub === "more" && details[id]) {                               // a project's page: open it over its slide
         openDetail(id);
         if (n !== index && !slideAnim) { index = n; show([n]); place(n, 0); mark(); }
@@ -1297,7 +1322,7 @@ body { overflow: hidden; overscroll-behavior: none; }
       if (n >= 0) go(n);
     });
 
-    // ---- the menu on the title: its links are ordinary addresses (#flacmn, #about, GitHub), handled above
+    // ---- the menu on the title: its links are ordinary addresses (#principles, #studio, GitHub), handled above
     const menu = document.querySelector(".menu"), menuBtn = menu.querySelector(".menu-btn");
     function closeMenu() { menu.classList.remove("open"); menuBtn.setAttribute("aria-expanded", "false"); }
     menuBtn.addEventListener("click", (e) => {
@@ -1337,7 +1362,7 @@ body { overflow: hidden; overscroll-behavior: none; }
     if ("ResizeObserver" in window) { const ro = new ResizeObserver(() => requestAnimationFrame(fitDemos)); document.querySelectorAll(".p-text").forEach((t) => ro.observe(t)); }
   })();
 
-  // ---- video runs (none since flowmn left the site on 2026-11-02; kept for the next): play only while on screen and not paused; under reduced motion, the still poster
+  // ---- video runs (none now; flowmn had one): play only while on screen and not paused; under reduced motion, the still poster
   (function videoRuns() {
     const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
     for (const v of document.querySelectorAll(".demo-frame video")) {
@@ -1360,7 +1385,7 @@ body { overflow: hidden; overscroll-behavior: none; }
   // into every .demo-frame[data-window]; it plays its window a-b, holds data-hold ms, fades and starts again. One clock drives
   // everything: data-t="cls:a-b" puts class cls on while a <= t < b (several spans of one class add up), data-type types
   // its text from a, data-fill grows a bar, data-clock counts m:ss from a, data-count="a-b-from-to" counts over a-b, the quality check's canvas draws its
-  // spectrogram column by column, the phone's waveform fills from data-wave on and data-left counts down. A run only moves while it is on
+  // spectrogram column by column and the phone's XY scope traces from data-scope on. A run only moves while it is on
   // screen and not paused; with reduced motion each one shows the still frame data-still.
   (function sampleRuns() {
     const TPL = { flacmn: "nf-tpl" };
@@ -1376,9 +1401,9 @@ body { overflow: hidden; overscroll-behavior: none; }
       [9300, "Paired with a six-digit code"],
       [10000, "Choose albums and a format; the sizes show before sending"],
       [11600, "Converted to ALAC, then sent to the phone"],
-      [15600, "On the phone: the album joins Albums, a band in its own colour"],
-      [17200, "Now playing, on a wash of the album's colour, with the song's quality"],
-      [19000, "The song's waveform is the scrubber"]];
+      [15600, "On the phone: new albums first, under Recently added"],
+      [17200, "Now playing, with the song's own quality"],
+      [19000, "Swipe for the XY scope, in the cover's colour"]];
     const STEPS_OF = { flacmn: STEPS };
     const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
     const span = (s) => { const [a, b] = s.split("-"); return [+a, b ? +b : Infinity]; };
@@ -1415,8 +1440,7 @@ body { overflow: hidden; overscroll-behavior: none; }
         const slices = spectra(SLICES, 150, c.dataset.cut ? +c.dataset.cut : 22050);
         return { c, ctx: c.getContext("2d"), ab: span(c.dataset.draw), slices, drawn: -1 };
       });
-      const waves = [...fm.querySelectorAll("canvas[data-wave]")].map((c) => ({ c, ctx: c.getContext("2d"), at: +c.dataset.wave, len: +c.dataset.len * 1000, drawn: -1 }));
-      const lefts = [...fm.querySelectorAll("[data-left]")].map((el) => { const [at, len] = el.dataset.left.split("-").map(Number); return { el, at, len }; });
+      const scopes = [...fm.querySelectorAll("canvas[data-scope]")].map((c) => ({ c, ctx: c.getContext("2d"), at: +c.dataset.scope, colour: c.dataset.colour }));
       const [a, b] = span(host.dataset.window), hold = host.dataset.hold ? +host.dataset.hold : 1400;
       const cap = host.closest(".demo").querySelector(".demo-step");
       let step = -1;
@@ -1440,8 +1464,7 @@ body { overflow: hidden; overscroll-behavior: none; }
           const n = Math.round(clamp01((t - s.ab[0]) / (s.ab[1] - s.ab[0])) * SLICES);
           if (n !== s.drawn) { spectrogram(s, n); s.drawn = n; }
         }
-        for (const w of waves) { const f = clamp01((t - w.at) / w.len), n = Math.round(f * 300); if (n !== w.drawn) { wave(w, f); w.drawn = n; } }
-        for (const { el, at, len } of lefts) { const s = "-" + mmss(Math.max(0, len - Math.max(0, t - at) / 1000)); if (el.textContent !== s) el.textContent = s; }
+        for (const s of scopes) scope(s, t >= s.at ? t - s.at : -1);
       };
       const btn = host.closest(".demo").querySelector(".demo-toggle");
       if (still) { fm.classList.add("snap"); p.render(+host.dataset.still); if (btn) btn.hidden = true; return p; }
@@ -1523,18 +1546,42 @@ body { overflow: hidden; overscroll-behavior: none; }
       if (n && n < SLICES) { ctx.fillStyle = "#2E2E33"; ctx.fillRect(Math.floor(n * cw), 0, 2, H); }   // the playhead
     }
 
-    // the phone's scrubber, as in the app: the song's waveform as bars, the played part in the wash's ink and the rest
-    // faint. The song is made up: a trumpet line over the rhythm section, quieter at the start and between phrases.
-    function wave({ c, ctx }, f) {
-      const Wc = c.width, H = c.height, N = 75, bw = Wc / N, ink = getComputedStyle(c).color;
-      ctx.clearRect(0, 0, Wc, H);
-      ctx.fillStyle = ink;
+    // the phone's XY scope, as in the app: left against right turned 45 degrees so mono stands upright, a thick line
+    // in six parts with the older ones fainter (phosphor), in the cover's colour. As in the apps, the radius is on a log
+    // curve (log 6, same angle), which opens up the quiet middle, and the last 100 ms of frames fade behind the newest.
+    // The sound is made up: a trumpet-like tone and a bass over a little stereo spread, swelling and changing note.
+    const LOG_K = 6, GLOW_MS = 100;
+    function figure(S, ms) {
+      const t0 = ms / 1000, N = 720, sr = 44100, norm = Math.asinh(LOG_K);
+      const note = [233, 262, 196, 175][Math.floor(t0 / 1.1) % 4], bass = [58, 65, 49, 44][Math.floor(t0 / 1.1) % 4];
+      const swell = 0.8 + 0.2 * Math.sin(t0 * 2.3) * Math.sin(t0 * 0.7 + 1);
+      const pts = [];
       for (let i = 0; i < N; i++) {
-        const x = i / N, phrase = 0.55 + 0.45 * Math.abs(Math.sin(x * 9.3 + 0.4));
-        const a = Math.min(1, 0.18 + 0.55 * phrase * (0.75 + 0.25 * Math.sin(i * 2.71) * Math.sin(i * 0.93 + 1)) + (x > 0.05 ? 0.15 : 0));
-        const h = Math.max(1.5, a * H);
-        ctx.globalAlpha = x < f ? 1 : 0.32;
-        ctx.fillRect(i * bw + bw * 0.2, (H - h) / 2, bw * 0.6, h);
+        const t = t0 + i / sr;
+        const mid = swell * (0.5 * Math.sin(2 * Math.PI * note * t) + 0.22 * Math.sin(2 * Math.PI * note * 2 * t + 0.6) + 0.12 * Math.sin(2 * Math.PI * note * 3 * t + 1.9))
+          + 0.32 * Math.sin(2 * Math.PI * bass * t);
+        const side = 0.26 * Math.sin(2 * Math.PI * note * 1.004 * t + 2.1 + t0 * 0.9) + 0.06 * Math.sin(2 * Math.PI * 1830 * t + t0 * 3);
+        const u = side * 0.8, v = mid * 0.44, rad = Math.hypot(u, v) / 0.52;      // rad within about 1 at the loudest
+        const k = rad > 0 ? (Math.asinh(LOG_K * rad) / norm) * 0.47 / (rad * 0.52) : 1;   // log radius, same angle
+        pts.push([S / 2 + u * k * S, S / 2 - v * k * S]);
+      }
+      return pts;
+    }
+    function scope({ c, ctx, colour: col }, ms) {
+      const S = c.width, PARTS = 6;
+      ctx.clearRect(0, 0, S, S);
+      if (ms < 0) return;
+      ctx.lineWidth = S * 0.013; ctx.lineJoin = ctx.lineCap = "round"; ctx.strokeStyle = col;
+      for (const back of [66, 33, 0]) {                                           // afterglow: frames at 30 a second
+        if (ms - back < 0) continue;
+        const pts = figure(S, ms - back), per = Math.ceil(pts.length / PARTS);
+        const mul = back ? 0.45 * Math.exp(-back / (GLOW_MS / 2.5)) : 1;
+        for (let k = 0; k < PARTS; k++) {
+          ctx.globalAlpha = mul * (0.18 + 0.82 * ((k + 1) / PARTS));
+          ctx.beginPath();
+          for (let i = k * per; i <= Math.min(pts.length - 1, (k + 1) * per); i++) i === k * per ? ctx.moveTo(...pts[i]) : ctx.lineTo(...pts[i]);
+          ctx.stroke();
+        }
       }
       ctx.globalAlpha = 1;
     }
